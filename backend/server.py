@@ -173,11 +173,15 @@ async def get_subscription(subscription_id: str):
     return UserSubscription(**parse_from_mongo(subscription))
 
 @api_router.put("/subscriptions/{subscription_id}/status")
-async def update_subscription_status(subscription_id: str, status: str, payment_method: Optional[str] = None):
-    """Update subscription status (for admin use)"""
+async def update_subscription_status(subscription_id: str, status: str, payment_method: Optional[str] = None, discount: Optional[int] = None, bonus: Optional[bool] = None):
+    """Update subscription status with optional discount or bonus"""
     update_data = {"status": status}
     if payment_method:
         update_data["payment_method"] = payment_method
+    if discount is not None:
+        update_data["discount"] = discount
+    if bonus is not None:
+        update_data["bonus"] = bonus
     
     result = await db.subscriptions.update_one(
         {"id": subscription_id},
@@ -188,6 +192,66 @@ async def update_subscription_status(subscription_id: str, status: str, payment_
         raise HTTPException(status_code=404, detail="Inscrição não encontrada")
     
     return {"message": f"Status da inscrição atualizado para: {status}"}
+
+@api_router.put("/users/{user_id}/reset-password")
+async def reset_user_password(user_id: str, new_password: str):
+    """Reset user password (admin function)"""
+    # Em produção, a senha seria hasheada
+    result = await db.users.update_one(
+        {"id": user_id},
+        {"$set": {"password": new_password}}  # Em produção: hash(new_password)
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    
+    return {"message": "Senha alterada com sucesso"}
+
+@api_router.get("/admin/financial-stats")
+async def get_financial_stats():
+    """Get detailed financial statistics"""
+    subscriptions = await db.subscriptions.find().to_list(1000)
+    
+    today = datetime.now(timezone.utc).date()
+    week_start = today - timedelta(days=today.weekday())
+    month_start = today.replace(day=1)
+    
+    today_paid = 0
+    week_paid = 0
+    month_paid = 0
+    today_revenue = 0
+    week_revenue = 0
+    month_revenue = 0
+    
+    for sub in subscriptions:
+        if sub.get('status') in ['paid', 'active']:
+            sub_date = datetime.fromisoformat(sub['subscription_date'].replace('Z', '+00:00')).date()
+            
+            # Calcular receita considerando desconto/bonus
+            price = sub.get('original_price', 150)
+            if sub.get('bonus'):
+                revenue = 0
+            elif sub.get('discount'):
+                revenue = price * (1 - sub['discount'] / 100)
+            else:
+                revenue = price
+            
+            if sub_date == today:
+                today_paid += 1
+                today_revenue += revenue
+            if sub_date >= week_start:
+                week_paid += 1
+                week_revenue += revenue
+            if sub_date >= month_start:
+                month_paid += 1
+                month_revenue += revenue
+    
+    return {
+        "today": {"paid": today_paid, "revenue": today_revenue},
+        "week": {"paid": week_paid, "revenue": week_revenue},
+        "month": {"paid": month_paid, "revenue": month_revenue},
+        "total_revenue": month_revenue
+    }
 
 # User management routes
 @api_router.post("/users", response_model=User)
