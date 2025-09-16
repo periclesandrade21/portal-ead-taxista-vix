@@ -91,7 +91,7 @@ const Home = () => {
               </h2>
               <p className="text-xl text-gray-600 mb-8 leading-relaxed">
                 Capacite-se com nosso curso EAD completo. Certificados reconhecidos pelo DETRAN, 
-                válidos em todo território nacional e aceitos por todas as cooperativas.
+                válidos em todo território nacional e reconhecidos pelo sindicato.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button className="px-8 py-4 text-lg bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700">
