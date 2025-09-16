@@ -203,36 +203,36 @@ const Home = () => {
           </div>
 
           {/* Módulos Opcionais */}
-          <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-2xl p-8">
+          <div className="bg-gradient-to-r from-blue-50/50 to-green-50/50 backdrop-blur-sm rounded-2xl p-8 border border-white/30">
             <h4 className="text-2xl font-bold text-gray-900 mb-6 text-center">Módulos Opcionais Exclusivos</h4>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-white p-4 rounded-lg shadow-sm">
+              <div className="bg-white/20 backdrop-blur-lg border border-white/30 p-4 rounded-lg shadow-lg hover:bg-white/30 transition-all duration-300 hover:scale-105">
                 <div className="flex items-center justify-between mb-2">
                   <Globe className="h-5 w-5 text-blue-600" />
-                  <Badge variant="secondary">60h</Badge>
+                  <Badge variant="secondary" className="bg-white/50 backdrop-blur-sm">60h</Badge>
                 </div>
-                <h5 className="font-semibold">Inglês Básico Turismo</h5>
+                <h5 className="font-semibold text-gray-900">Inglês Básico Turismo</h5>
               </div>
-              <div className="bg-white p-4 rounded-lg shadow-sm">
+              <div className="bg-white/20 backdrop-blur-lg border border-white/30 p-4 rounded-lg shadow-lg hover:bg-white/30 transition-all duration-300 hover:scale-105">
                 <div className="flex items-center justify-between mb-2">
                   <MapPin className="h-5 w-5 text-green-600" />
-                  <Badge variant="secondary">35h</Badge>
+                  <Badge variant="secondary" className="bg-white/50 backdrop-blur-sm">35h</Badge>
                 </div>
-                <h5 className="font-semibold">Turismo Local</h5>
+                <h5 className="font-semibold text-gray-900">Turismo Local</h5>
               </div>
-              <div className="bg-white p-4 rounded-lg shadow-sm">
+              <div className="bg-white/20 backdrop-blur-lg border border-white/30 p-4 rounded-lg shadow-lg hover:bg-white/30 transition-all duration-300 hover:scale-105">
                 <div className="flex items-center justify-between mb-2">
                   <Users className="h-5 w-5 text-purple-600" />
-                  <Badge variant="secondary">30h</Badge>
+                  <Badge variant="secondary" className="bg-white/50 backdrop-blur-sm">30h</Badge>
                 </div>
-                <h5 className="font-semibold">Atendimento ao Cliente</h5>
+                <h5 className="font-semibold text-gray-900">Atendimento ao Cliente</h5>
               </div>
-              <div className="bg-white p-4 rounded-lg shadow-sm">
+              <div className="bg-white/20 backdrop-blur-lg border border-white/30 p-4 rounded-lg shadow-lg hover:bg-white/30 transition-all duration-300 hover:scale-105">
                 <div className="flex items-center justify-between mb-2">
                   <BookOpen className="h-5 w-5 text-orange-600" />
-                  <Badge variant="secondary">20h</Badge>
+                  <Badge variant="secondary" className="bg-white/50 backdrop-blur-sm">20h</Badge>
                 </div>
-                <h5 className="font-semibold">Conhecimentos da Cidade</h5>
+                <h5 className="font-semibold text-gray-900">Conhecimentos da Cidade</h5>
               </div>
             </div>
           </div>
