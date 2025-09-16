@@ -560,8 +560,8 @@ const Home = () => {
             <Card className="text-center hover:shadow-lg transition-shadow">
               <CardContent className="p-6">
                 <Phone className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                <h4 className="font-semibold mb-2">WhatsApp</h4>
-                <p className="text-gray-600">(27) 9996-5200</p>
+                <h4 className="font-semibold mb-2">Telefone</h4>
+                <p className="text-gray-600">(27) 3191-1727</p>
               </CardContent>
             </Card>
 
