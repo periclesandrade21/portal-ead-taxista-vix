@@ -106,8 +106,8 @@ const Home = () => {
             </div>
             <div className="relative">
               <img 
-                src="https://images.unsplash.com/photo-1650383045243-9c37a9c5f1c8?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzd8MHwxfHNlYXJjaHwxfHxicmF6aWxpYW4lMjB0YXhpfGVufDB8fHx8MTc1Nzk5MDQwMnww&ixlib=rb-4.1.0&q=85"
-                alt="Taxi Brasileiro - Espírito Santo"
+                src="https://images.unsplash.com/photo-1642331395578-62fc20996c2a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHwxfHx0YXhpJTIwZWR1Y2F0aW9ufGVufDB8fHx8MTc1Nzk5MDAwM3ww&ixlib=rb-4.1.0&q=85"
+                alt="Taxi Profissional"
                 className="rounded-2xl shadow-2xl w-full h-[500px] object-cover"
               />
               <div className="absolute -top-6 -right-6 bg-white/10 backdrop-blur-lg border border-white/20 p-4 rounded-xl shadow-lg">
@@ -115,9 +115,6 @@ const Home = () => {
                   <div className="text-3xl font-bold text-white">28h</div>
                   <div className="text-sm text-white/80">Carga Horária</div>
                 </div>
-              </div>
-              <div className="absolute bottom-4 left-4 bg-green-600/90 backdrop-blur-sm px-4 py-2 rounded-lg">
-                <div className="text-white font-semibold text-sm">🇧🇷 Taxi Brasileiro - ES</div>
               </div>
             </div>
           </div>
