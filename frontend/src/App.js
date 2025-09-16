@@ -464,10 +464,10 @@ const Home = () => {
               </div>
               
               <div className="bg-gradient-to-r from-yellow-50 to-orange-50 p-6 rounded-lg">
-                <h4 className="font-semibold text-gray-900 mb-2">Certificado Automático</h4>
+                <h4 className="font-semibold text-gray-900 mb-2">Certificação Profissional</h4>
                 <p className="text-gray-600">
-                  Receba seu certificado automaticamente após obter nota igual ou superior a 7 
-                  e concluir todos os módulos obrigatórios.
+                  Certificados válidos em todo território nacional, com reconhecimento oficial 
+                  e QR Code de verificação anti-falsificação.
                 </p>
               </div>
             </div>
