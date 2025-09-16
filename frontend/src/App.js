@@ -24,7 +24,9 @@ import {
   BookOpen,
   Video,
   Star,
-  MapPin
+  MapPin,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
