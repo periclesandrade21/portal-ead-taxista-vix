@@ -428,9 +428,9 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <Badge className="mb-4 bg-yellow-100 text-yellow-800">Certificação Oficial</Badge>
+              <Badge className="mb-4 bg-yellow-100 text-yellow-800">Sindicato Oficial</Badge>
               <h3 className="text-4xl font-bold text-gray-900 mb-6">
-                Certificados <span className="text-yellow-600">Reconhecidos</span>
+                Sindicato que <span className="text-yellow-600">Representa a Categoria</span>
               </h3>
               <div className="space-y-4 mb-8">
                 <div className="flex items-center gap-3">
