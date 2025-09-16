@@ -38,6 +38,8 @@ const Home = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [carPlate, setCarPlate] = useState("");
+  const [licenseNumber, setLicenseNumber] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Array de imagens para o carrossel
