@@ -261,8 +261,8 @@ const Home = () => {
                     QR Code
                   </TabsTrigger>
                   <TabsTrigger value="phone" className="flex items-center gap-2">
-                    <Phone className="h-4 w-4" />
-                    Chave PIX
+                    <CreditCard className="h-4 w-4" />
+                    CNPJ PIX
                   </TabsTrigger>
                 </TabsList>
                 
