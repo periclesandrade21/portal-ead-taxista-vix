@@ -145,12 +145,12 @@ const Home = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button className="px-8 py-4 text-lg bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700">
-                  <GraduationCap className="mr-2 h-5 w-5" />
-                  Começar Agora
+                  <Users className="mr-2 h-5 w-5" />
+                  Portal do Aluno
                 </Button>
                 <Button variant="outline" className="px-8 py-4 text-lg border-2">
-                  <Video className="mr-2 h-5 w-5" />
-                  Ver Demonstração
+                  <Shield className="mr-2 h-5 w-5" />
+                  Portal Admin
                 </Button>
               </div>
             </div>
