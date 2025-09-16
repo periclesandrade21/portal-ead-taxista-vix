@@ -617,6 +617,33 @@ const Home = () => {
                     className="mt-2"
                   />
                 </div>
+
+                <div>
+                  <Label htmlFor="carPlate">Placa do Veículo</Label>
+                  <Input
+                    id="carPlate"
+                    type="text"
+                    value={carPlate}
+                    onChange={(e) => setCarPlate(e.target.value.toUpperCase())}
+                    placeholder="ABC-1234 ou ABC1D23"
+                    required
+                    className="mt-2"
+                    maxLength="8"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="licenseNumber">Número do Alvará</Label>
+                  <Input
+                    id="licenseNumber"
+                    type="text"
+                    value={licenseNumber}
+                    onChange={(e) => setLicenseNumber(e.target.value)}
+                    placeholder="Número do alvará de taxista"
+                    required
+                    className="mt-2"
+                  />
+                </div>
                 
                 <Button type="submit" className="w-full py-4 text-lg bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700">
                   <GraduationCap className="mr-2 h-5 w-5" />
