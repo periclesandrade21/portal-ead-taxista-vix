@@ -36,6 +36,54 @@ const Home = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Array de imagens para o carrossel
+  const carouselImages = [
+    {
+      url: "https://customer-assets.emergentagent.com/job_moodle-taxistas/artifacts/sz52fpqs_image.png",
+      alt: "Taxi do Espírito Santo - 1"
+    },
+    {
+      url: "https://customer-assets.emergentagent.com/job_moodle-taxistas/artifacts/bwd2er9v_image.png",
+      alt: "Taxi do Espírito Santo - 2"
+    },
+    {
+      url: "https://customer-assets.emergentagent.com/job_moodle-taxistas/artifacts/5fytsmog_image.png",
+      alt: "Taxi do Espírito Santo - 3"
+    },
+    {
+      url: "https://customer-assets.emergentagent.com/job_moodle-taxistas/artifacts/97b16o9r_image.png",
+      alt: "Taxi do Espírito Santo - 4"
+    },
+    {
+      url: "https://images.unsplash.com/photo-1642331395578-62fc20996c2a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHwxfHx0YXhpJTIwZWR1Y2F0aW9ufGVufDB8fHx8MTc1Nzk5MDAwM3ww&ixlib=rb-4.1.0&q=85",
+      alt: "Taxi Profissional - 5"
+    }
+  ];
+
+  // Auto-avançar carrossel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === carouselImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 4000); // Muda a cada 4 segundos
+
+    return () => clearInterval(interval);
+  }, [carouselImages.length]);
+
+  const nextImage = () => {
+    setCurrentImageIndex((prevIndex) => 
+      prevIndex === carouselImages.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prevIndex) => 
+      prevIndex === 0 ? carouselImages.length - 1 : prevIndex - 1
+    );
+  };
 
   const handleSubscription = async (e) => {
     e.preventDefault();
