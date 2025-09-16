@@ -155,51 +155,15 @@ const Home = () => {
               </div>
             </div>
             <div className="relative">
-              {/* Carrossel de Imagens */}
+              {/* Vídeo Synthesia */}
               <div className="relative overflow-hidden rounded-2xl shadow-2xl">
-                <div 
-                  className="flex transition-transform duration-500 ease-in-out"
-                  style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
-                >
-                  {carouselImages.map((image, index) => (
-                    <img 
-                      key={index}
-                      src={image.url}
-                      alt={image.alt}
-                      className="w-full h-[500px] object-cover flex-shrink-0"
-                    />
-                  ))}
-                </div>
-                
-                {/* Controles do Carrossel */}
-                <button 
-                  onClick={prevImage}
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 p-2 rounded-full transition-all duration-200"
-                >
-                  <ChevronLeft className="h-6 w-6 text-white" />
-                </button>
-                
-                <button 
-                  onClick={nextImage}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 p-2 rounded-full transition-all duration-200"
-                >
-                  <ChevronRight className="h-6 w-6 text-white" />
-                </button>
-                
-                {/* Indicadores */}
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                  {carouselImages.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`w-3 h-3 rounded-full transition-all duration-200 ${
-                        index === currentImageIndex 
-                          ? 'bg-white' 
-                          : 'bg-white/50 hover:bg-white/70'
-                      }`}
-                    />
-                  ))}
-                </div>
+                <iframe 
+                  src="https://share.synthesia.io/84a6d089-2a26-4871-bc7b-0f1262605d5d"
+                  className="w-full h-[500px] border-0"
+                  allow="autoplay; fullscreen"
+                  allowFullScreen
+                  title="Vídeo Apresentação Curso EAD Taxista ES"
+                />
               </div>
               
               <div className="absolute -top-6 -right-6 bg-white/10 backdrop-blur-lg border border-white/20 p-4 rounded-xl shadow-lg">
