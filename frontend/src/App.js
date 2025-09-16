@@ -142,8 +142,9 @@ const Home = () => {
                 <span className="text-green-600 block mt-2">Taxistas do ES</span>
               </h2>
               <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                Capacite-se com nosso curso EAD completo. Certificados reconhecidos pelo DETRAN, 
-                válidos em todo território nacional e reconhecidos pelo sindicato.
+                Capacite-se com nosso curso EAD completo, com certificado reconhecido pelo DETRAN 
+                e pelas prefeituras, válido em todo o território nacional e homologado pelo 
+                Sindicato dos Taxistas do Espírito Santo.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link to="/student-portal">
