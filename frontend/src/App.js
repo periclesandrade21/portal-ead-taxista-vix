@@ -95,12 +95,16 @@ const Home = () => {
       const response = await axios.post(`${API}/subscribe`, {
         name,
         email,
-        phone
+        phone,
+        carPlate,
+        licenseNumber
       });
       alert("Inscrição realizada com sucesso! Você receberá mais informações em breve.");
       setName("");
       setEmail("");
       setPhone("");
+      setCarPlate("");
+      setLicenseNumber("");
     } catch (error) {
       console.error("Erro ao realizar inscrição:", error);
       alert("Erro ao realizar inscrição. Tente novamente.");
