@@ -266,12 +266,6 @@ const AdminDashboard = () => {
                 <Unlock className="mr-2 h-4 w-4" />
                 Entrar
               </Button>
-              
-              <div className="text-center text-sm text-gray-600 bg-gray-50 p-3 rounded">
-                <p className="font-medium">Credenciais de Teste:</p>
-                <p>Usuário: admin</p>
-                <p>Senha: admin@123</p>
-              </div>
             </form>
           </CardContent>
         </Card>
