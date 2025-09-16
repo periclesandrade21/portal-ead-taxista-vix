@@ -133,16 +133,16 @@ const Home = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <Card className="hover:shadow-lg transition-shadow border-2 hover:border-blue-200">
+            <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-white/10 backdrop-blur-lg border border-white/20 shadow-lg hover:bg-white/20 hover:scale-105">
               <CardHeader className="text-center">
-                <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="bg-blue-500/20 backdrop-blur-sm w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-300/30">
                   <Users className="h-8 w-8 text-blue-600" />
                 </div>
-                <CardTitle className="text-lg">Relações Humanas</CardTitle>
-                <CardDescription>14 horas</CardDescription>
+                <CardTitle className="text-lg text-gray-900">Relações Humanas</CardTitle>
+                <CardDescription className="text-gray-700">14 horas</CardDescription>
               </CardHeader>
-              <CardContent>
-                <ul className="text-sm text-gray-600 space-y-2">
+              <CardContent className="bg-white/50 backdrop-blur-sm rounded-lg mx-4 mb-4 p-4">
+                <ul className="text-sm text-gray-700 space-y-2">
                   <li>• Imagem do taxista na sociedade</li>
                   <li>• Segurança do passageiro</li>
                   <li>• Atendimento especializado</li>
@@ -150,16 +150,16 @@ const Home = () => {
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-lg transition-shadow border-2 hover:border-green-200">
+            <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-white/10 backdrop-blur-lg border border-white/20 shadow-lg hover:bg-white/20 hover:scale-105">
               <CardHeader className="text-center">
-                <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="bg-green-500/20 backdrop-blur-sm w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-300/30">
                   <Shield className="h-8 w-8 text-green-600" />
                 </div>
-                <CardTitle className="text-lg">Direção Defensiva</CardTitle>
-                <CardDescription>8 horas</CardDescription>
+                <CardTitle className="text-lg text-gray-900">Direção Defensiva</CardTitle>
+                <CardDescription className="text-gray-700">8 horas</CardDescription>
               </CardHeader>
-              <CardContent>
-                <ul className="text-sm text-gray-600 space-y-2">
+              <CardContent className="bg-white/50 backdrop-blur-sm rounded-lg mx-4 mb-4 p-4">
+                <ul className="text-sm text-gray-700 space-y-2">
                   <li>• Conceitos de direção defensiva</li>
                   <li>• Prevenção de acidentes</li>
                   <li>• Equipamentos obrigatórios</li>
@@ -167,16 +167,16 @@ const Home = () => {
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-lg transition-shadow border-2 hover:border-red-200">
+            <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-white/10 backdrop-blur-lg border border-white/20 shadow-lg hover:bg-white/20 hover:scale-105">
               <CardHeader className="text-center">
-                <div className="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="bg-red-500/20 backdrop-blur-sm w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-300/30">
                   <Award className="h-8 w-8 text-red-600" />
                 </div>
-                <CardTitle className="text-lg">Primeiros Socorros</CardTitle>
-                <CardDescription>2 horas</CardDescription>
+                <CardTitle className="text-lg text-gray-900">Primeiros Socorros</CardTitle>
+                <CardDescription className="text-gray-700">2 horas</CardDescription>
               </CardHeader>
-              <CardContent>
-                <ul className="text-sm text-gray-600 space-y-2">
+              <CardContent className="bg-white/50 backdrop-blur-sm rounded-lg mx-4 mb-4 p-4">
+                <ul className="text-sm text-gray-700 space-y-2">
                   <li>• Avaliação da vítima</li>
                   <li>• Cuidados básicos</li>
                   <li>• Procedimentos de emergência</li>
@@ -184,16 +184,16 @@ const Home = () => {
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-lg transition-shadow border-2 hover:border-purple-200">
+            <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-white/10 backdrop-blur-lg border border-white/20 shadow-lg hover:bg-white/20 hover:scale-105">
               <CardHeader className="text-center">
-                <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="bg-purple-500/20 backdrop-blur-sm w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-purple-300/30">
                   <Car className="h-8 w-8 text-purple-600" />
                 </div>
-                <CardTitle className="text-lg">Mecânica Básica</CardTitle>
-                <CardDescription>4 horas</CardDescription>
+                <CardTitle className="text-lg text-gray-900">Mecânica Básica</CardTitle>
+                <CardDescription className="text-gray-700">4 horas</CardDescription>
               </CardHeader>
-              <CardContent>
-                <ul className="text-sm text-gray-600 space-y-2">
+              <CardContent className="bg-white/50 backdrop-blur-sm rounded-lg mx-4 mb-4 p-4">
+                <ul className="text-sm text-gray-700 space-y-2">
                   <li>• Funcionamento do motor</li>
                   <li>• Sistemas elétricos</li>
                   <li>• Manutenção preventiva</li>
