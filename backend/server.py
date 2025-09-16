@@ -152,13 +152,20 @@ async def create_subscription(subscription_data: UserSubscriptionCreate):
     if existing_subscription:
         raise HTTPException(status_code=400, detail="Email já cadastrado no sistema")
     
-    subscription = UserSubscription(**subscription_data.dict())
+    # Convert frontend field names to backend field names
+    subscription_dict = subscription_data.dict()
+    if 'carPlate' in subscription_dict:
+        subscription_dict['car_plate'] = subscription_dict.pop('carPlate')
+    if 'licenseNumber' in subscription_dict:
+        subscription_dict['license_number'] = subscription_dict.pop('licenseNumber')
+    
+    subscription = UserSubscription(**subscription_dict)
     prepared_data = prepare_for_mongo(subscription.dict())
     
     await db.subscriptions.insert_one(prepared_data)
     
     # Log the subscription
-    logging.info(f"Nova inscrição criada: {subscription.name} - {subscription.email}")
+    logging.info(f"Nova inscrição criada: {subscription.name} - {subscription.email} - Placa: {subscription.car_plate} - Alvará: {subscription.license_number}")
     
     return subscription
 
