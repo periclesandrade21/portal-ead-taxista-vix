@@ -1,0 +1,238 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+
+packages:
+  - docker.io
+  - docker-compose
+  - nginx
+  - certbot
+  - python3-certbot-nginx
+  - git
+  - curl
+  - htop
+
+groups:
+  - docker
+
+users:
+  - default
+  - name: ubuntu
+    groups: docker
+
+write_files:
+  - path: /home/ubuntu/docker-compose.yml
+    content: |
+      version: '3.8'
+      services:
+        # MongoDB for EAD Application
+        mongodb:
+          image: mongo:7.0
+          container_name: taxista-mongodb
+          restart: unless-stopped
+          environment:
+            MONGO_INITDB_ROOT_USERNAME: admin
+            MONGO_INITDB_ROOT_PASSWORD: ${mongo_password}
+            MONGO_INITDB_DATABASE: taxista_ead
+          ports:
+            - "27017:27017"
+          volumes:
+            - mongodb_data:/data/db
+          networks:
+            - taxista-network
+
+        # PostgreSQL for Moodle
+        postgres:
+          image: postgres:15
+          container_name: taxista-postgres
+          restart: unless-stopped
+          environment:
+            POSTGRES_DB: moodle
+            POSTGRES_USER: moodle
+            POSTGRES_PASSWORD: ${postgres_password}
+          ports:
+            - "5432:5432"
+          volumes:
+            - postgres_data:/var/lib/postgresql/data
+          networks:
+            - taxista-network
+
+        # Moodle
+        moodle:
+          image: moodle:4.3-apache
+          container_name: taxista-moodle
+          restart: unless-stopped
+          environment:
+            MOODLE_DATABASE_TYPE: pgsql
+            MOODLE_DATABASE_HOST: postgres
+            MOODLE_DATABASE_NAME: moodle
+            MOODLE_DATABASE_USER: moodle
+            MOODLE_DATABASE_PASSWORD: ${postgres_password}
+            MOODLE_ADMIN_USER: admin
+            MOODLE_ADMIN_PASSWORD: Admin@123!
+            MOODLE_ADMIN_EMAIL: admin@sindtaxi-es.org
+            MOODLE_SITE_NAME: "EAD Taxistas - Moodle"
+            MOODLE_SITE_FULLNAME: "Plataforma de Ensino à Distância para Taxistas do Espírito Santo"
+            MOODLE_WWWROOT: http://localhost/moodle
+          ports:
+            - "8080:80"
+          volumes:
+            - moodle_data:/var/www/html
+          depends_on:
+            - postgres
+          networks:
+            - taxista-network
+
+        # Backend API
+        backend:
+          build:
+            context: /home/ubuntu/taxista-ead/backend
+            dockerfile: Dockerfile
+          container_name: taxista-backend
+          restart: unless-stopped
+          environment:
+            MONGO_URL: mongodb://admin:${mongo_password}@mongodb:27017/taxista_ead?authSource=admin
+            DB_NAME: taxista_ead
+            CORS_ORIGINS: "*"
+            AUTH0_DOMAIN: ${auth0_domain}
+            AUTH0_CLIENT_ID: ${auth0_client_id}
+            AUTH0_CLIENT_SECRET: ${auth0_client_secret}
+          ports:
+            - "8001:8001"
+          depends_on:
+            - mongodb
+          networks:
+            - taxista-network
+
+        # Frontend
+        frontend:
+          build:
+            context: /home/ubuntu/taxista-ead/frontend
+            dockerfile: Dockerfile
+          container_name: taxista-frontend
+          restart: unless-stopped
+          environment:
+            REACT_APP_BACKEND_URL: http://localhost:8001
+            REACT_APP_AUTH0_DOMAIN: ${auth0_domain}
+            REACT_APP_AUTH0_CLIENT_ID: ${auth0_client_id}
+            REACT_APP_MOODLE_URL: http://localhost/moodle
+          ports:
+            - "3000:3000"
+          depends_on:
+            - backend
+          networks:
+            - taxista-network
+
+        # Nginx Reverse Proxy
+        nginx:
+          image: nginx:alpine
+          container_name: taxista-nginx
+          restart: unless-stopped
+          ports:
+            - "80:80"
+            - "443:443"
+          volumes:
+            - /home/ubuntu/nginx.conf:/etc/nginx/nginx.conf:ro
+            - /etc/letsencrypt:/etc/letsencrypt:ro
+          depends_on:
+            - frontend
+            - backend
+            - moodle
+          networks:
+            - taxista-network
+
+      volumes:
+        mongodb_data:
+        postgres_data:
+        moodle_data:
+
+      networks:
+        taxista-network:
+          driver: bridge
+
+  - path: /home/ubuntu/nginx.conf
+    content: |
+      events {
+          worker_connections 1024;
+      }
+
+      http {
+          upstream frontend {
+              server frontend:3000;
+          }
+
+          upstream backend {
+              server backend:8001;
+          }
+
+          upstream moodle {
+              server moodle:80;
+          }
+
+          server {
+              listen 80;
+              server_name _;
+
+              # Frontend routes
+              location / {
+                  proxy_pass http://frontend;
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+              }
+
+              # Backend API routes
+              location /api {
+                  proxy_pass http://backend;
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+              }
+
+              # Moodle routes
+              location /moodle {
+                  proxy_pass http://moodle;
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+              }
+          }
+      }
+
+  - path: /home/ubuntu/setup.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      
+      # Wait for Docker to be ready
+      sleep 30
+      
+      # Clone the application repository (if needed)
+      cd /home/ubuntu
+      
+      # Create application directories
+      mkdir -p taxista-ead/backend taxista-ead/frontend
+      
+      # Build and start containers
+      docker-compose up -d
+      
+      # Wait for services to be ready
+      sleep 60
+      
+      # Setup Moodle (initial configuration)
+      echo "Moodle setup completed"
+      
+      # Enable and start services
+      systemctl enable docker
+      systemctl start docker
+
+runcmd:
+  - systemctl enable docker
+  - systemctl start docker
+  - usermod -aG docker ubuntu
+  - /home/ubuntu/setup.sh
+
+final_message: "Taxista EAD platform installation completed successfully!"
