@@ -38,6 +38,8 @@ class UserSubscription(BaseModel):
     name: str
     email: EmailStr
     phone: str
+    car_plate: Optional[str] = None      # Placa do veículo
+    license_number: Optional[str] = None # Número do alvará
     subscription_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     status: str = "pending"  # pending, paid, active, completed
     payment_method: Optional[str] = None
@@ -49,6 +51,8 @@ class UserSubscriptionCreate(BaseModel):
     name: str
     email: EmailStr
     phone: str
+    carPlate: Optional[str] = None
+    licenseNumber: Optional[str] = None
 
 class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
