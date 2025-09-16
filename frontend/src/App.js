@@ -106,7 +106,19 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 relative">
+      {/* Marca d'água da Terceira Ponte */}
+      <div 
+        className="fixed inset-0 z-0 opacity-5 bg-center bg-no-repeat bg-contain"
+        style={{
+          backgroundImage: "url('https://images.unsplash.com/photo-1725132620980-808ebeee990b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzh8MHwxfHNlYXJjaHwyfHx0ZXJjZWlyYSUyMHBvbnRlJTIwZXNwaXJpdG8lMjBzYW50b3xlbnwwfHx8fDE3NTc5OTg1NDF8MA&ixlib=rb-4.1.0&q=85')",
+          backgroundSize: '60%',
+          backgroundPosition: 'center center'
+        }}
+      />
+      
+      {/* Conteúdo da página */}
+      <div className="relative z-10">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
