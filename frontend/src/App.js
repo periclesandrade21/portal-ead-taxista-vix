@@ -137,9 +137,12 @@ const Home = () => {
               <Badge className="mb-4 bg-blue-100 text-blue-800 hover:bg-blue-200">
                 Certificação Profissional Reconhecida
               </Badge>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                Educação <span className="text-blue-600">Profissional</span><br/>
-                <span className="text-2xl md:text-3xl text-green-600 font-semibold">para Taxistas do Espírito Santo</span>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 mb-6 leading-relaxed">
+                <span className="font-semibold">Educação</span> <span className="text-blue-600 font-medium">Profissional</span>
+                <br />
+                <span className="text-lg md:text-xl lg:text-2xl text-green-600 font-normal tracking-wide">
+                  para Taxistas do Espírito Santo
+                </span>
               </h2>
               <p className="text-xl text-gray-600 mb-8 leading-relaxed">
                 Capacite-se com nosso curso EAD completo, com certificado reconhecido pelo DETRAN 
