@@ -744,11 +744,12 @@ const Home = () => {
 
             <Card className="text-center hover:shadow-lg transition-shadow">
               <CardContent className="p-6">
-                <Clock className="h-12 w-12 text-orange-600 mx-auto mb-4" />
-                <h4 className="font-semibold mb-2">Horários</h4>
+                <MapPin className="h-12 w-12 text-orange-600 mx-auto mb-4" />
+                <h4 className="font-semibold mb-2">Endereço</h4>
                 <p className="text-gray-600 text-sm">
-                  Seg-Sex: 7h às 19h<br/>
-                  Sáb: 8h às 14h
+                  Rua Construtor Camilo Gianordoli 575<br/>
+                  Vitória - ES<br/>
+                  29045-180
                 </p>
               </CardContent>
             </Card>
