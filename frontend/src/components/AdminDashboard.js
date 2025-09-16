@@ -427,6 +427,8 @@ const AdminDashboard = () => {
                         <th className="text-left p-2">Nome</th>
                         <th className="text-left p-2">Email</th>
                         <th className="text-left p-2">Telefone</th>
+                        <th className="text-left p-2">Placa</th>
+                        <th className="text-left p-2">Alvará</th>
                         <th className="text-left p-2">Data</th>
                         <th className="text-left p-2">Status</th>
                         <th className="text-left p-2">Valor</th>
@@ -439,6 +441,8 @@ const AdminDashboard = () => {
                           <td className="p-2 font-medium">{subscription.name}</td>
                           <td className="p-2 text-gray-600">{subscription.email}</td>
                           <td className="p-2 text-gray-600">{subscription.phone}</td>
+                          <td className="p-2 text-gray-600 font-mono">{subscription.car_plate || '-'}</td>
+                          <td className="p-2 text-gray-600">{subscription.license_number || '-'}</td>
                           <td className="p-2 text-gray-600">
                             {new Date(subscription.subscription_date).toLocaleDateString('pt-BR')}
                           </td>
