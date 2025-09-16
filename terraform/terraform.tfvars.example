@@ -11,11 +11,19 @@ compartment_id   = "ocid1.compartment.oc1..aaaaaaaa..."
 # SSH Key (content of your public key file)
 ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAB..."
 
+# GitHub Repository Configuration
+github_repo = "https://github.com/periclesandrade21/portal-ead-taxista-vix.git"
+github_token = ""  # Leave empty for public repos, or add Personal Access Token for private repos
+webhook_secret = "taxista-webhook-secret-2025"
+
+# Domain Configuration (optional)
+domain_name = ""  # Example: "taxista-es.com.br" - leave empty to use IP only
+
 # Auth0 Configuration
 auth0_domain        = "your-domain.auth0.com"
 auth0_client_id     = "your-auth0-client-id"
 auth0_client_secret = "your-auth0-client-secret"
 
-# Database Passwords
-mongo_password    = "your-secure-mongo-password"
-postgres_password = "your-secure-postgres-password"
+# Database Passwords (change these!)
+mongo_password    = "SecureMongoPassword123!"
+postgres_password = "SecurePostgresPassword123!"
