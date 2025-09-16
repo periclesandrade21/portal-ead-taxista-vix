@@ -133,7 +133,7 @@ const Home = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-white/10 backdrop-blur-lg border border-white/20 shadow-lg hover:bg-white/20 hover:scale-105">
+            <Card className="group hover:shadow-xl transition-all duration-300 border-0 bg-white/10 backdrop-blur-lg border border-white/20 shadow-lg hover:bg-white/20 hover:scale-105 relative overflow-hidden">
               <CardHeader className="text-center">
                 <div className="bg-blue-500/20 backdrop-blur-sm w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-300/30">
                   <Users className="h-8 w-8 text-blue-600" />
@@ -144,13 +144,44 @@ const Home = () => {
               <CardContent className="bg-white/50 backdrop-blur-sm rounded-lg mx-4 mb-4 p-4">
                 <ul className="text-sm text-gray-700 space-y-2">
                   <li>• Imagem do taxista na sociedade</li>
-                  <li>• Segurança do passageiro</li>
-                  <li>• Atendimento especializado</li>
+                  <li>• Condições físicas e emocionais</li>
+                  <li>• Segurança no transporte dos usuários</li>
+                  <li>• Comportamento solidário no trânsito</li>
                 </ul>
               </CardContent>
+              
+              {/* Hover Details */}
+              <div className="absolute inset-0 bg-blue-600/95 backdrop-blur-lg opacity-0 group-hover:opacity-100 transition-all duration-300 p-4 overflow-y-auto">
+                <div className="text-white">
+                  <h3 className="font-bold text-lg mb-3 text-center">RELAÇÕES HUMANAS - 14h</h3>
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <h4 className="font-semibold mb-1">A imagem do taxista na sociedade:</h4>
+                      <p>• Postura, vestuário, higiene pessoal e do veículo</p>
+                      <p>• Responsabilidade e disciplina no trabalho</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">Condições físicas e emocionais:</h4>
+                      <p>• Fadiga, tempo de direção e descanso</p>
+                      <p>• Consumo de álcool e drogas</p>
+                      <p>• Estresse (controle emocional)</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">Segurança no transporte:</h4>
+                      <p>• Cinto de segurança, lotação, velocidade</p>
+                      <p>• Respeito à sinalização</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">Atendimento especializado:</h4>
+                      <p>• Gestantes, idosos, pessoas com deficiência</p>
+                      <p>• Normas do órgão autorizatário</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </Card>
 
-            <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-white/10 backdrop-blur-lg border border-white/20 shadow-lg hover:bg-white/20 hover:scale-105">
+            <Card className="group hover:shadow-xl transition-all duration-300 border-0 bg-white/10 backdrop-blur-lg border border-white/20 shadow-lg hover:bg-white/20 hover:scale-105 relative overflow-hidden">
               <CardHeader className="text-center">
                 <div className="bg-green-500/20 backdrop-blur-sm w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-300/30">
                   <Shield className="h-8 w-8 text-green-600" />
@@ -160,14 +191,46 @@ const Home = () => {
               </CardHeader>
               <CardContent className="bg-white/50 backdrop-blur-sm rounded-lg mx-4 mb-4 p-4">
                 <ul className="text-sm text-gray-700 space-y-2">
-                  <li>• Conceitos de direção defensiva</li>
+                  <li>• Conceito de direção defensiva</li>
+                  <li>• Riscos e perigos no trânsito</li>
+                  <li>• Embarque e desembarque</li>
                   <li>• Prevenção de acidentes</li>
-                  <li>• Equipamentos obrigatórios</li>
                 </ul>
               </CardContent>
+              
+              {/* Hover Details */}
+              <div className="absolute inset-0 bg-green-600/95 backdrop-blur-lg opacity-0 group-hover:opacity-100 transition-all duration-300 p-4 overflow-y-auto">
+                <div className="text-white">
+                  <h3 className="font-bold text-lg mb-3 text-center">DIREÇÃO DEFENSIVA - 8h</h3>
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <h4 className="font-semibold mb-1">Conceito de direção defensiva</h4>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">Riscos e perigos no trânsito:</h4>
+                      <p>• Veículos, condutores, vias</p>
+                      <p>• O ambiente e comportamento das pessoas</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">Embarque e desembarque de passageiros</h4>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">Ver e ser visto</h4>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">Como evitar acidentes:</h4>
+                      <p>• Especialmente com pedestres</p>
+                      <p>• Motociclistas e ciclistas</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">Equipamentos obrigatórios do veículo</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </Card>
 
-            <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-white/10 backdrop-blur-lg border border-white/20 shadow-lg hover:bg-white/20 hover:scale-105">
+            <Card className="group hover:shadow-xl transition-all duration-300 border-0 bg-white/10 backdrop-blur-lg border border-white/20 shadow-lg hover:bg-white/20 hover:scale-105 relative overflow-hidden">
               <CardHeader className="text-center">
                 <div className="bg-red-500/20 backdrop-blur-sm w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-300/30">
                   <Award className="h-8 w-8 text-red-600" />
@@ -177,14 +240,38 @@ const Home = () => {
               </CardHeader>
               <CardContent className="bg-white/50 backdrop-blur-sm rounded-lg mx-4 mb-4 p-4">
                 <ul className="text-sm text-gray-700 space-y-2">
-                  <li>• Avaliação da vítima</li>
+                  <li>• Sinalização do local</li>
+                  <li>• Acionamento de recursos</li>
+                  <li>• Verificação da vítima</li>
                   <li>• Cuidados básicos</li>
-                  <li>• Procedimentos de emergência</li>
                 </ul>
               </CardContent>
+              
+              {/* Hover Details */}
+              <div className="absolute inset-0 bg-red-600/95 backdrop-blur-lg opacity-0 group-hover:opacity-100 transition-all duration-300 p-4 overflow-y-auto">
+                <div className="text-white">
+                  <h3 className="font-bold text-lg mb-3 text-center">PRIMEIROS SOCORROS - 2h</h3>
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <h4 className="font-semibold mb-1">Sinalização do local</h4>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">Acionamento de recursos:</h4>
+                      <p>• Bombeiros, polícia, ambulância</p>
+                      <p>• Concessionária da via, etc</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">Verificação das condições gerais da vítima</h4>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">Cuidados com a vítima</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </Card>
 
-            <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-white/10 backdrop-blur-lg border border-white/20 shadow-lg hover:bg-white/20 hover:scale-105">
+            <Card className="group hover:shadow-xl transition-all duration-300 border-0 bg-white/10 backdrop-blur-lg border border-white/20 shadow-lg hover:bg-white/20 hover:scale-105 relative overflow-hidden">
               <CardHeader className="text-center">
                 <div className="bg-purple-500/20 backdrop-blur-sm w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-purple-300/30">
                   <Car className="h-8 w-8 text-purple-600" />
@@ -195,10 +282,36 @@ const Home = () => {
               <CardContent className="bg-white/50 backdrop-blur-sm rounded-lg mx-4 mb-4 p-4">
                 <ul className="text-sm text-gray-700 space-y-2">
                   <li>• Funcionamento do motor</li>
-                  <li>• Sistemas elétricos</li>
+                  <li>• Sistemas elétricos e eletrônicos</li>
+                  <li>• Suspensão, freios, pneus</li>
                   <li>• Manutenção preventiva</li>
                 </ul>
               </CardContent>
+              
+              {/* Hover Details */}
+              <div className="absolute inset-0 bg-purple-600/95 backdrop-blur-lg opacity-0 group-hover:opacity-100 transition-all duration-300 p-4 overflow-y-auto">
+                <div className="text-white">
+                  <h3 className="font-bold text-lg mb-3 text-center">MECÂNICA BÁSICA - 4h</h3>
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <h4 className="font-semibold mb-1">O funcionamento do motor</h4>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">Sistemas elétricos e eletrônicos do veículo</h4>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">Suspensão, freios, pneus:</h4>
+                      <p>• Alinhamento e balanceamento do veículo</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">Instrumentos de indicação e advertência eletrônica</h4>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">Manutenção preventiva do veículo</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </Card>
           </div>
 
