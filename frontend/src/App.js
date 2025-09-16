@@ -513,10 +513,6 @@ const Home = () => {
                 </div>
                 <div className="flex items-center gap-3">
                   <CheckCircle className="h-6 w-6 text-green-600 flex-shrink-0" />
-                  <span className="text-gray-700">Válidos para empresas de aplicativo</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="h-6 w-6 text-green-600 flex-shrink-0" />
                   <span className="text-gray-700">Reconhecido pelas prefeituras do Espírito Santo</span>
                 </div>
                 <div className="flex items-center gap-3">
