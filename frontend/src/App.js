@@ -548,6 +548,75 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Bot de Atendimento */}
+      <section className="py-20 bg-gradient-to-r from-green-600 to-blue-600">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <Badge className="mb-4 bg-white/20 text-white">Atendimento Automático</Badge>
+          <h3 className="text-4xl font-bold text-white mb-6">Bot de Atendimento 24h</h3>
+          <p className="text-xl text-green-100 mb-8">
+            Tire suas dúvidas, desbloqueie senhas ou equipamentos a qualquer hora
+          </p>
+          
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <Card className="bg-white/10 backdrop-blur-lg border border-white/20 text-center">
+              <CardContent className="p-6">
+                <div className="bg-white/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Phone className="h-8 w-8 text-white" />
+                </div>
+                <h4 className="font-semibold text-white mb-2">Desbloqueio de Dispositivos</h4>
+                <p className="text-green-100 text-sm">Desbloqueie seu acesso em novos aparelhos</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-white/10 backdrop-blur-lg border border-white/20 text-center">
+              <CardContent className="p-6">
+                <div className="bg-white/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Users className="h-8 w-8 text-white" />
+                </div>
+                <h4 className="font-semibold text-white mb-2">Recuperação de Senha</h4>
+                <p className="text-green-100 text-sm">Recupere sua senha de acesso rapidamente</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-white/10 backdrop-blur-lg border border-white/20 text-center">
+              <CardContent className="p-6">
+                <div className="bg-white/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <BookOpen className="h-8 w-8 text-white" />
+                </div>
+                <h4 className="font-semibold text-white mb-2">Dúvidas sobre Cursos</h4>
+                <p className="text-green-100 text-sm">Informações sobre valores e conteúdos</p>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button 
+              className="px-8 py-4 text-lg bg-green-600 hover:bg-green-700 text-white border-0"
+              onClick={() => window.open('https://wa.me/5527319117277?text=Olá! Preciso de ajuda com o curso EAD Taxista ES', '_blank')}
+            >
+              <Phone className="mr-2 h-5 w-5" />
+              WhatsApp Bot
+            </Button>
+            <Button 
+              variant="outline" 
+              className="px-8 py-4 text-lg border-white text-white hover:bg-white hover:text-green-600"
+              onClick={() => window.open('tel:27319117277', '_blank')}
+            >
+              <Phone className="mr-2 h-5 w-5" />
+              Ligar Agora
+            </Button>
+          </div>
+          
+          <div className="mt-8 p-6 bg-white/10 backdrop-blur-lg rounded-lg border border-white/20">
+            <h4 className="font-semibold text-white mb-2">🤖 Atendimento Inteligente</h4>
+            <p className="text-green-100 text-sm">
+              Nosso bot está disponível 24 horas para resolver questões sobre:
+              desbloqueios, senhas, valores, dúvidas do curso e suporte técnico.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Contato */}
       <section id="contato" className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
