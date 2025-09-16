@@ -787,13 +787,13 @@ const Home = () => {
             </div>
             
             <div>
-              <h5 className="font-semibold mb-4">Certificações</h5>
-              <ul className="space-y-2 text-gray-400 text-sm">
-                <li>✓ Resolução CONTRAN nº 456/2013</li>
-                <li>✓ Reconhecido pelo DETRAN</li>
-                <li>✓ Válido nacionalmente</li>
-                <li>✓ Anti-falsificação</li>
-              </ul>
+              <h5 className="font-semibold mb-4">Endereço</h5>
+              <div className="text-gray-400 text-sm space-y-1">
+                <p>Rua Construtor Camilo Gianordoli 575</p>
+                <p>Vitória, Espírito Santo</p>
+                <p>CEP: 29045-180</p>
+                <p className="mt-2">Email: diretoria@sindtaxi-es.org</p>
+              </div>
             </div>
           </div>
           
