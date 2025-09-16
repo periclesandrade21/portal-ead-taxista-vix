@@ -41,6 +41,9 @@ class UserSubscription(BaseModel):
     subscription_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     status: str = "pending"  # pending, paid, active, completed
     payment_method: Optional[str] = None
+    discount: Optional[int] = None  # Porcentagem de desconto
+    bonus: Optional[bool] = False   # Indica se foi bonificado
+    original_price: float = 150.0   # Preço original do curso
 
 class UserSubscriptionCreate(BaseModel):
     name: str
