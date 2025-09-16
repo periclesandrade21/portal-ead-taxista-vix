@@ -75,7 +75,6 @@ resource "oci_core_security_list" "taxista_security_list" {
   ingress_security_rules {
     protocol = "6"
     source   = "0.0.0.0/0"
-
     tcp_options {
       max = "22"
       min = "22"
@@ -85,7 +84,6 @@ resource "oci_core_security_list" "taxista_security_list" {
   ingress_security_rules {
     protocol = "6"
     source   = "0.0.0.0/0"
-
     tcp_options {
       max = "80"
       min = "80"
@@ -95,7 +93,6 @@ resource "oci_core_security_list" "taxista_security_list" {
   ingress_security_rules {
     protocol = "6"
     source   = "0.0.0.0/0"
-
     tcp_options {
       max = "443"
       min = "443"
@@ -105,7 +102,6 @@ resource "oci_core_security_list" "taxista_security_list" {
   ingress_security_rules {
     protocol = "6"
     source   = "0.0.0.0/0"
-
     tcp_options {
       max = "3000"
       min = "3000"
@@ -115,10 +111,18 @@ resource "oci_core_security_list" "taxista_security_list" {
   ingress_security_rules {
     protocol = "6"
     source   = "0.0.0.0/0"
-
     tcp_options {
       max = "8001"
       min = "8001"
+    }
+  }
+
+  ingress_security_rules {
+    protocol = "6"
+    source   = "0.0.0.0/0"
+    tcp_options {
+      max = "9000"
+      min = "9000"
     }
   }
 }
@@ -157,11 +161,15 @@ resource "oci_core_instance" "taxista_instance" {
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
     user_data = base64encode(templatefile("${path.module}/cloud-init.yaml", {
+      github_repo = var.github_repo
+      github_token = var.github_token
       auth0_domain = var.auth0_domain
       auth0_client_id = var.auth0_client_id
       auth0_client_secret = var.auth0_client_secret
       mongo_password = var.mongo_password
       postgres_password = var.postgres_password
+      webhook_secret = var.webhook_secret
+      domain_name = var.domain_name
     }))
   }
 }
@@ -177,4 +185,16 @@ output "instance_private_ip" {
 
 output "ssh_connection" {
   value = "ssh ubuntu@${oci_core_instance.taxista_instance.public_ip}"
+}
+
+output "webhook_url" {
+  value = "http://${oci_core_instance.taxista_instance.public_ip}:9000/webhook"
+}
+
+output "application_urls" {
+  value = {
+    ead_platform = "http://${oci_core_instance.taxista_instance.public_ip}"
+    moodle = "http://${oci_core_instance.taxista_instance.public_ip}/moodle"
+    api = "http://${oci_core_instance.taxista_instance.public_ip}/api"
+  }
 }

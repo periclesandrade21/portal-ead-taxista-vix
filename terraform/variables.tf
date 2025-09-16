@@ -35,6 +35,34 @@ variable "ssh_public_key" {
   type        = string
 }
 
+# GitHub Repository Variables
+variable "github_repo" {
+  description = "GitHub repository URL"
+  type        = string
+  default     = "https://github.com/periclesandrade21/portal-ead-taxista-vix.git"
+}
+
+variable "github_token" {
+  description = "GitHub personal access token for private repos"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "webhook_secret" {
+  description = "GitHub webhook secret for CI/CD"
+  type        = string
+  sensitive   = true
+  default     = "taxista-webhook-secret-2025"
+}
+
+# Domain Configuration
+variable "domain_name" {
+  description = "Domain name for the application (optional)"
+  type        = string
+  default     = ""
+}
+
 # Application Variables
 variable "auth0_domain" {
   description = "Auth0 domain"
