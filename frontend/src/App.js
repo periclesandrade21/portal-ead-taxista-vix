@@ -279,17 +279,17 @@ const Home = () => {
                 
                 <TabsContent value="phone" className="text-center space-y-6">
                   <div className="bg-blue-50 p-8 rounded-lg">
-                    <Phone className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                    <div className="text-3xl font-bold text-gray-900 mb-2">(27) 9996-5200</div>
-                    <p className="text-gray-600">Use esta chave PIX para realizar o pagamento</p>
+                    <div className="text-4xl mb-4">🏢</div>
+                    <div className="text-3xl font-bold text-gray-900 mb-2">02.914.651/0001-12</div>
+                    <p className="text-gray-600">Use este CNPJ como chave PIX para realizar o pagamento</p>
                   </div>
                   <Button 
-                    onClick={() => navigator.clipboard.writeText('2799965200')}
+                    onClick={() => navigator.clipboard.writeText('02914651000112')}
                     variant="outline"
                     className="w-full"
                   >
                     <CreditCard className="mr-2 h-4 w-4" />
-                    Copiar Chave PIX
+                    Copiar CNPJ PIX
                   </Button>
                 </TabsContent>
               </Tabs>
