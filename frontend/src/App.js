@@ -730,7 +730,7 @@ const Home = () => {
               <CardContent className="p-6">
                 <Mail className="h-12 w-12 text-green-600 mx-auto mb-4" />
                 <h4 className="font-semibold mb-2">Email</h4>
-                <p className="text-gray-600">contato@taxistaead.com.br</p>
+                <p className="text-gray-600">diretoria@sindtaxi-es.org</p>
               </CardContent>
             </Card>
 
