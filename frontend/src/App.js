@@ -355,10 +355,65 @@ const Home = () => {
             </div>
             <div className="relative">
               <img 
-                src="https://images.unsplash.com/photo-1574966390692-5140d4310743?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzh8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBlZHVjYXRpb258ZW58MHx8fHwxNzU3OTkwMDE3fDA&ixlib=rb-4.1.0&q=85"
-                alt="Certificação Profissional"
+                src="https://images.unsplash.com/photo-1554068741-2456f561031a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzd8MHwxfHNlYXJjaHw0fHxicmF6aWxpYW4lMjB0YXhpfGVufDB8fHx8MTc1Nzk5MDQwMnww&ixlib=rb-4.1.0&q=85"
+                alt="Taxi Brasileiro com Bandeira do Brasil"
                 className="rounded-2xl shadow-2xl w-full h-[400px] object-cover"
               />
+              <div className="absolute bottom-4 right-4 bg-green-600/90 backdrop-blur-sm px-4 py-2 rounded-lg">
+                <div className="text-white font-semibold text-sm">🏆 Certificação Nacional</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Galeria de Táxis Brasileiros */}
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <Badge className="mb-4 bg-blue-100 text-blue-800">Nosso Brasil</Badge>
+            <h3 className="text-4xl font-bold text-gray-900 mb-4">Táxis do Brasil</h3>
+            <p className="text-xl text-gray-600">Profissionais como você, de todo o país</p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300">
+              <img 
+                src="https://images.unsplash.com/photo-1590905652146-8e169292f5de?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzd8MHwxfHNlYXJjaHwyfHxlc3Bpcml0byUyMHNhbnRvJTIwdGF4aXxlbnwwfHx8fDE3NTc5OTA0MDJ8MA&ixlib=rb-4.1.0&q=85"
+                alt="Taxi em operação"
+                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+              <div className="absolute bottom-4 left-4 text-white">
+                <h4 className="font-semibold">Taxi Clássico</h4>
+                <p className="text-sm text-gray-200">Tradição no transporte</p>
+              </div>
+            </div>
+            
+            <div className="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300">
+              <img 
+                src="https://images.unsplash.com/photo-1648931140039-edd56e11179b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzd8MHwxfHNlYXJjaHw0fHxicmF6aWxpYW4lMjB0YXhpfGVufDB8fHx8MTc1Nzk5MDQwMnww&ixlib=rb-4.1.0&q=85"
+                alt="Taxi amarelo brasileiro"
+                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+              <div className="absolute bottom-4 left-4 text-white">
+                <h4 className="font-semibold">Taxi Amarelo</h4>
+                <p className="text-sm text-gray-200">Padrão brasileiro</p>
+              </div>
+            </div>
+            
+            <div className="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300">
+              <img 
+                src="https://images.unsplash.com/photo-1650383045243-9c37a9c5f1c8?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzd8MHwxfHNlYXJjaHwxfHxicmF6aWxpYW4lMjB0YXhpfGVufDB8fHx8MTc1Nzk5MDQwMnww&ixlib=rb-4.1.0&q=85"
+                alt="Taxi brasileiro estacionado"
+                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+              <div className="absolute bottom-4 left-4 text-white">
+                <h4 className="font-semibold">Profissional</h4>
+                <p className="text-sm text-gray-200">Sempre pronto</p>
+              </div>
             </div>
           </div>
         </div>
