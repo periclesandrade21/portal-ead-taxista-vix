@@ -1,55 +1,55 @@
-# Taxista EAD Platform - Oracle Cloud Deployment
+# Portal EAD Taxista VIX - Oracle Cloud Infrastructure
 
-Esta é a infraestrutura completa para deploy da plataforma EAD Taxista ES na Oracle Cloud, incluindo:
+Infraestrutura completa para deploy do **Portal EAD Taxista VIX** na Oracle Cloud com pipeline CI/CD automatizado.
 
-- **Aplicação EAD Taxistas** (React + FastAPI + MongoDB)
-- **Moodle LMS** (PHP + PostgreSQL)
-- **Auth0 Single Sign-On** para ambas as plataformas
-- **Nginx** como reverse proxy
-
-## 🏗️ Arquitetura
+## 🏗️ Arquitetura da Solução
 
 ```
-Internet → Nginx (80/443) → {
-  /         → Frontend React (3000)
-  /api      → Backend FastAPI (8001)
-  /moodle   → Moodle LMS (8080)
-}
-
-Databases:
-- MongoDB (27017) ← EAD Application
-- PostgreSQL (5432) ← Moodle
+GitHub → Actions CI/CD → Webhook → Oracle Cloud VM
+                                        ↓
+    Internet → Nginx (80/443) → {
+      /         → Frontend React (3000)
+      /api      → Backend FastAPI (8001)  
+      /moodle   → Moodle LMS (8080)
+    }
+    
+    Databases:
+    - MongoDB (27017) ← EAD Application
+    - PostgreSQL (5432) ← Moodle
+    
+    Auth0 SSO ← Both Applications
 ```
 
-## 📋 Pré-requisitos
-
-### 1. Oracle Cloud Infrastructure
-- Conta OCI ativa
-- Chaves API configuradas
-- Compartment criado
-
-### 2. Auth0 Account
-- Conta Auth0 ativa
-- Aplicações configuradas (SPA + Regular Web App)
-
-### 3. Ferramentas Locais
-- Terraform >= 1.0
-- SSH key pair
-
-## 🚀 Deploy Rápido
+## 🚀 Deploy Rápido (5 minutos)
 
 ### 1. Configuração Inicial
 
 ```bash
-# Clone os arquivos de configuração
-cd terraform/
+# Clone este repositório de infraestrutura
+git clone https://github.com/periclesandrade21/portal-ead-taxista-vix.git
+cd portal-ead-taxista-vix/terraform
 
-# Copie e configure as variáveis
+# Configure as variáveis
 cp terraform.tfvars.example terraform.tfvars
-nano terraform.tfvars
+nano terraform.tfvars  # Preencha com suas credenciais
 ```
 
-### 2. Configure terraform.tfvars
+### 2. Deploy Automático
+
+```bash
+# Execute o deploy completo
+chmod +x scripts/deploy-production.sh
+./scripts/deploy-production.sh
+```
+
+### 3. Configure CI/CD (Opcional)
+
+```bash
+# Configure GitHub Actions
+./scripts/setup-github-actions.sh
+```
+
+## 📋 Configuração do terraform.tfvars
 
 ```hcl
 # Oracle Cloud Infrastructure
@@ -63,98 +63,109 @@ compartment_id   = "ocid1.compartment.oc1..aaaaaaaa..."
 # SSH Key
 ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAB..."
 
+# GitHub Repository (já configurado)
+github_repo = "https://github.com/periclesandrade21/portal-ead-taxista-vix.git"
+
 # Auth0 Configuration
 auth0_domain        = "taxista-es.auth0.com"
 auth0_client_id     = "your-client-id"
 auth0_client_secret = "your-client-secret"
 
-# Database Passwords
-mongo_password    = "SecurePassword123!"
-postgres_password = "MoodlePassword123!"
+# Senhas dos bancos (altere!)
+mongo_password    = "SuaSenhaSegura123!"
+postgres_password = "SuaSenhaMoodle123!"
 ```
 
-### 3. Deploy
+## 🔧 Recursos Implementados
 
-```bash
-# Torne o script executável
-chmod +x scripts/deploy.sh
+### ✅ Aplicação EAD Completa
+- **Frontend React** - Interface moderna para taxistas
+- **Backend FastAPI** - API robusta com MongoDB
+- **Painel Administrativo** - Gestão completa de alunos
+- **Sistema de Pagamento PIX** - Integrado com QR Code
+- **Certificados Automáticos** - Válidos nacionalmente
 
-# Execute o deploy
-./scripts/deploy.sh
+### ✅ Moodle LMS Integrado
+- **Moodle 4.3** - Plataforma LMS completa
+- **PostgreSQL** - Banco dedicado
+- **Cursos Interativos** - Fóruns, quizzes, certificados
+- **Single Sign-On** - Integração com Auth0
+
+### ✅ CI/CD Pipeline
+- **GitHub Actions** - Deploy automático
+- **Webhook Integration** - Deploy em tempo real
+- **Health Checks** - Verificação automática
+- **Rollback** - Reversão rápida em caso de falha
+
+### ✅ Infraestrutura
+- **Oracle Cloud VM** - Always Free tier
+- **Docker Containers** - Aplicações isoladas
+- **Nginx Reverse Proxy** - Load balancing
+- **SSL/TLS Ready** - Certificados Let's Encrypt
+
+## 🌐 URLs da Aplicação
+
+Após o deploy, sua aplicação estará disponível em:
+
+- **EAD Platform**: `http://YOUR_IP/`
+- **Admin Panel**: `http://YOUR_IP/admin` (admin / admin@123)
+- **Moodle LMS**: `http://YOUR_IP/moodle` (admin / Admin@123!)
+- **API Health**: `http://YOUR_IP/api/health`
+- **Webhook**: `http://YOUR_IP:9000/webhook`
+
+## 🔄 Pipeline CI/CD
+
+### Fluxo Automatizado
+1. **Push para main** → Dispara GitHub Actions
+2. **Tests** → Frontend + Backend
+3. **Build** → Imagens Docker
+4. **Deploy** → Via webhook para Oracle Cloud
+5. **Health Check** → Verificação automática
+6. **Notify** → Status do deployment
+
+### Configuração do Pipeline
+
+```yaml
+# .github/workflows/deploy.yml
+name: Deploy Portal EAD Taxista VIX
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test: # Testes automatizados
+  build: # Build das imagens Docker  
+  deploy: # Deploy via webhook
+  notify: # Notificações
 ```
-
-## 🔧 Configuração Manual Pós-Deploy
-
-### 1. Auth0 Setup
-
-```bash
-# Execute o script de configuração do Auth0
-./scripts/setup-auth0.sh YOUR_SERVER_IP
-```
-
-### 2. SSL Certificate (Opcional)
-
-```bash
-# SSH para o servidor
-ssh ubuntu@YOUR_SERVER_IP
-
-# Configure SSL com Let's Encrypt
-sudo certbot --nginx
-```
-
-### 3. DNS Configuration
-
-Aponte seu domínio para o IP público do servidor.
-
-## 📱 Aplicações
-
-### EAD Taxista ES
-- **URL**: `http://YOUR_IP/`
-- **Admin**: admin / admin@123
-- **Features**: 
-  - Cadastro de taxistas
-  - Cursos CONTRAN
-  - Certificados
-  - Pagamento PIX
-
-### Moodle LMS
-- **URL**: `http://YOUR_IP/moodle`
-- **Admin**: admin / Admin@123!
-- **Features**:
-  - Cursos completos
-  - Fóruns
-  - Quizzes
-  - Certificados
 
 ## 🔐 Auth0 Integration
 
-### Frontend (React)
-```javascript
-// Auth0 Provider configuration
-const domain = process.env.REACT_APP_AUTH0_DOMAIN;
-const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID;
+### Configuração SSO
+- **SPA Application** para Frontend React
+- **Regular Web App** para Moodle
+- **API Authentication** para Backend
+- **Role-based Access** (admin, student, instructor)
 
-<Auth0Provider
-  domain={domain}
-  clientId={clientId}
-  redirectUri={window.location.origin}
->
-  <App />
-</Auth0Provider>
-```
+### Roles Disponíveis
+- `admin`: Acesso total ao painel administrativo
+- `student`: Acesso ao portal do aluno
+- `instructor`: Criação e gestão de cursos
 
-### Backend (FastAPI)
-```python
-# JWT verification
-from jose import jwt
+## 💰 Custos (Oracle Cloud)
 
-def verify_token(token: str):
-    return jwt.decode(token, key, audience=API_AUDIENCE)
-```
+### Always Free Tier
+- **VM.StandardE2.1.Micro**: Gratuito
+- **Block Storage (50GB)**: Gratuito
+- **Outbound Transfer (10TB)**: Gratuito
+- **Networking**: Gratuito
+
+**💰 Total mensal: R$ 0,00**
 
 ## 🛠️ Administração
 
-### Monitoramento de Containers
+### Comandos Úteis
 
 ```bash
 # SSH para o servidor
@@ -163,85 +174,151 @@ ssh ubuntu@YOUR_SERVER_IP
 # Ver status dos containers
 docker-compose ps
 
-# Ver logs
+# Ver logs em tempo real
 docker-compose logs -f
 
-# Restart serviços
+# Restart todos os serviços
 docker-compose restart
+
+# Atualizar código manualmente
+cd portal-ead-taxista-vix
+git pull origin main
+cd ..
+./deploy.sh
 ```
 
 ### Backup dos Dados
 
 ```bash
 # Backup MongoDB
-docker exec taxista-mongodb mongodump --archive=/backup.archive
+docker exec taxista-mongodb mongodump --archive=/tmp/backup-$(date +%Y%m%d).archive
 
 # Backup PostgreSQL
-docker exec taxista-postgres pg_dump -U moodle moodle > moodle_backup.sql
+docker exec taxista-postgres pg_dump -U moodle moodle > backup-moodle-$(date +%Y%m%d).sql
+
+# Copiar backups para local
+scp ubuntu@YOUR_SERVER_IP:/tmp/backup-*.* ./backups/
 ```
 
-## 🔧 Troubleshooting
+## 🔒 Segurança
 
-### Serviços não inicializando
-
-```bash
-# Verificar logs do cloud-init
-sudo cat /var/log/cloud-init-output.log
-
-# Verificar status do Docker
-sudo systemctl status docker
-
-# Recriar containers
-docker-compose down && docker-compose up -d
-```
-
-### Problemas de conectividade
-
-```bash
-# Verificar security groups
-# Verificar se as portas 80, 443, 22 estão abertas
-
-# Testar conectividade interna
-docker exec taxista-backend curl -f http://localhost:8001/api/health
-```
-
-## 💰 Custos Estimados (Oracle Cloud)
-
-- **VM.StandardE2.1.Micro**: Gratuito (Always Free)
-- **Block Storage (50GB)**: Gratuito (Always Free)
-- **Outbound Data Transfer**: Gratuito (10TB/mês Always Free)
-
-**Total mensal**: R$ 0,00 (dentro do free tier)
-
-## 🚨 Segurança
-
-### Recomendações de Produção
-
-1. **Firewall**: Configure apenas as portas necessárias
-2. **SSL**: Use certificados SSL válidos
-3. **Backup**: Configure backup automático
-4. **Monitoramento**: Configure alertas
-5. **Updates**: Mantenha o sistema atualizado
+### Configurações de Produção
+- 🔐 **Firewall**: Apenas portas necessárias abertas
+- 🔑 **SSH Keys**: Autenticação por chave
+- 🛡️ **SSL/TLS**: Certificados automáticos
+- 🔄 **Auto Updates**: Sistema sempre atualizado
+- 📊 **Monitoring**: Logs centralizados
 
 ### Alteração de Senhas Padrão
 
 ```bash
-# MongoDB
+# Via painel administrativo
+# 1. EAD Admin: http://YOUR_IP/admin
+# 2. Moodle Admin: http://YOUR_IP/moodle
+
+# Via linha de comando
+ssh ubuntu@YOUR_SERVER_IP
 docker exec -it taxista-mongodb mongo admin -u admin -p
-
-# PostgreSQL
 docker exec -it taxista-postgres psql -U moodle
+```
 
-# Aplicação
-# Altere via painel administrativo
+## 🧪 Testing
+
+### Testes Locais
+```bash
+# Frontend
+cd frontend
+npm test
+
+# Backend  
+cd backend
+pytest tests/ -v
+```
+
+### Testes de Integração
+```bash
+# Health checks
+curl http://YOUR_SERVER_IP/api/health
+
+# Auth flow
+curl -H "Authorization: Bearer TOKEN" http://YOUR_SERVER_IP/api/user/profile
+```
+
+## 📊 Monitoramento
+
+### Métricas Disponíveis
+- Status dos containers
+- Uso de CPU/Memória
+- Logs de aplicação
+- Métricas de banco de dados
+
+### Dashboards
+- **Docker Stats**: `docker stats`
+- **System Monitor**: `htop`
+- **Application Logs**: `docker-compose logs`
+
+## 🚨 Troubleshooting
+
+### Problemas Comuns
+
+#### Serviços não inicializando
+```bash
+# Verificar logs
+docker-compose logs
+
+# Recriar containers
+docker-compose down && docker-compose up -d --build
+```
+
+#### Pipeline CI/CD falha
+```bash
+# Verificar webhook
+curl -X POST http://YOUR_SERVER_IP:9000/webhook
+
+# Ver logs do webhook
+docker logs taxista-webhook
+```
+
+#### SSL não funciona
+```bash
+# Configurar certificado
+ssh ubuntu@YOUR_SERVER_IP
+sudo certbot --nginx -d your-domain.com
 ```
 
 ## 📞 Suporte
 
-Para suporte técnico:
-- Email: suporte@sindtaxi-es.org
-- Telefone: (27) 3191-1727
+### Contatos Técnicos
+- **Email**: suporte@sindtaxi-es.org  
+- **Telefone**: (27) 3191-1727
+- **GitHub Issues**: [Portal EAD Issues](https://github.com/periclesandrade21/portal-ead-taxista-vix/issues)
 
-## 📝 Licença
+### Documentação Adicional
+- 📖 [Auth0 Integration Guide](../auth0-integration.md)
+- 🔄 [CI/CD Pipeline Guide](github-actions/README.md)
+- 🐳 [Docker Configuration](../docker-compose.yml)
 
-Este projeto está licenciado sob a Licença MIT.
+## 🎯 Roadmap
+
+### Próximas Funcionalidades
+- [ ] Multi-tenant (vários sindicatos)
+- [ ] App mobile (React Native)
+- [ ] Analytics avançados
+- [ ] Integração com sistemas de pagamento
+- [ ] Certificação digital blockchain
+- [ ] API REST completa
+
+### Melhorias de Infraestrutura
+- [ ] Load balancer
+- [ ] Database clustering
+- [ ] CDN integration
+- [ ] Monitoring stack (Prometheus/Grafana)
+- [ ] Log aggregation (ELK Stack)
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
+
+**🎉 Desenvolvido com 💙 para os Taxistas do Espírito Santo**
