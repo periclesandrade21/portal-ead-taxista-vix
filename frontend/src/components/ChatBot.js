@@ -155,12 +155,23 @@ const ChatBot = () => {
             <CardHeader className="bg-gradient-to-r from-blue-600 to-green-600 text-white p-4 rounded-t-lg">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="bg-white/20 p-2 rounded-full">
-                    <Bot className="h-5 w-5" />
+                  <div className="bg-white p-1 rounded-full">
+                    <img 
+                      src={botAvatarUrl} 
+                      alt="TaxiBot Avatar" 
+                      className="w-10 h-10 rounded-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                    <div className="bg-blue-500 p-2 rounded-full hidden items-center justify-center">
+                      <Bot className="h-6 w-6 text-white" />
+                    </div>
                   </div>
                   <div>
-                    <CardTitle className="text-lg font-semibold">Assistente EAD</CardTitle>
-                    <p className="text-sm opacity-90">Sindicato Taxistas ES</p>
+                    <CardTitle className="text-lg font-semibold">TaxiBot</CardTitle>
+                    <p className="text-sm opacity-90">Assistente EAD Taxista ES</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
