@@ -501,10 +501,11 @@ const AdminDashboard = () => {
                           </td>
                           <td className="p-2">
                             <Badge 
-                              variant={
-                                subscription.status === 'pending' ? 'secondary' :
-                                subscription.status === 'paid' ? 'default' :
-                                subscription.status === 'active' ? 'default' : 'secondary'
+                              className={
+                                subscription.status === 'pending' ? 'bg-red-100 text-red-800 border-red-200' :
+                                subscription.status === 'paid' ? 'bg-green-100 text-green-800 border-green-200' :
+                                subscription.status === 'active' ? 'bg-green-100 text-green-800 border-green-200' : 
+                                'bg-gray-100 text-gray-800 border-gray-200'
                               }
                             >
                               {subscription.status === 'pending' ? 'Pendente' :
