@@ -957,26 +957,49 @@ const Home = () => {
                           <Label htmlFor="customCity" className="text-sm font-semibold text-gray-700">
                             Qual sua cidade? *
                           </Label>
-                          <Input
-                            id="customCity"
-                            type="text"
-                            value={customCity}
-                            onChange={(e) => {
-                              setCustomCity(e.target.value);
-                              // Limpar erro quando usuário digita
-                              if (validationErrors.customCity) {
-                                setValidationErrors(prev => ({...prev, customCity: ''}));
-                              }
-                            }}
-                            placeholder="Digite o nome da sua cidade"
-                            required
-                            className={`mt-2 h-12 text-lg ${validationErrors.customCity ? 'border-red-500' : ''}`}
-                          />
+                          
+                          {/* Botão de geolocalização */}
+                          <div className="flex gap-2 mt-2">
+                            <Input
+                              id="customCity"
+                              type="text"
+                              value={customCity}
+                              onChange={(e) => {
+                                setCustomCity(e.target.value);
+                                // Limpar erro quando usuário digita
+                                if (validationErrors.customCity) {
+                                  setValidationErrors(prev => ({...prev, customCity: ''}));
+                                }
+                              }}
+                              placeholder="Digite o nome da sua cidade"
+                              required
+                              className={`h-12 text-lg flex-1 ${validationErrors.customCity ? 'border-red-500' : ''}`}
+                            />
+                            <Button
+                              type="button"
+                              onClick={detectUserLocation}
+                              disabled={isDetectingLocation}
+                              className="h-12 px-4 bg-blue-600 hover:bg-blue-700 text-white"
+                            >
+                              {isDetectingLocation ? (
+                                <div className="flex items-center">
+                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                  <MapPin className="h-4 w-4" />
+                                </div>
+                              ) : (
+                                <div className="flex items-center">
+                                  <MapPin className="h-4 w-4 mr-1" />
+                                  📍
+                                </div>
+                              )}
+                            </Button>
+                          </div>
+                          
                           {validationErrors.customCity && (
                             <p className="text-red-500 text-xs mt-1">{validationErrors.customCity}</p>
                           )}
                           <p className="text-xs text-gray-500 mt-1">
-                            📍 Digite o nome completo da sua cidade no Espírito Santo
+                            📍 Digite sua cidade no ES ou clique no botão de localização para detectar automaticamente
                           </p>
                         </div>
                       )}
