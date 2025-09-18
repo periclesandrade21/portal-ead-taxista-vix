@@ -134,6 +134,7 @@ const ChatBot = () => {
           <Button
             onClick={toggleChat}
             className="h-14 w-14 rounded-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse"
+            data-testid="chat-toggle-button"
           >
             <MessageCircle className="h-6 w-6 text-white" />
           </Button>
