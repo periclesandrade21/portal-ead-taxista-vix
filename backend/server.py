@@ -88,6 +88,31 @@ class Exam(BaseModel):
     difficulty: str  # easy, medium, hard
     passing_score: int = 7
 
+# Chat Bot Models
+class ChatMessage(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    session_id: str
+    user_message: str
+    bot_response: str
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ChatRequest(BaseModel):
+    session_id: str
+    message: str
+
+class ChatResponse(BaseModel):
+    session_id: str
+    response: str
+    timestamp: datetime
+
+class PasswordResetRequest(BaseModel):
+    email: EmailStr
+    contact_method: str  # "email" only now (removed SMS)
+
+class PasswordResetResponse(BaseModel):
+    message: str
+    status: str
+
 # Helper function to prepare data for MongoDB
 def prepare_for_mongo(data):
     if isinstance(data, dict):
