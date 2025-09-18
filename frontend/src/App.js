@@ -150,6 +150,80 @@ const Home = () => {
 
   return (
     <>
+      {/* Popup de Senha Enviada */}
+      {showPasswordPopup && passwordSentInfo && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-8 max-w-md mx-4 shadow-2xl">
+            <div className="text-center">
+              {/* Ícone de sucesso */}
+              <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="h-12 w-12 text-green-600" />
+              </div>
+              
+              {/* Título */}
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                🎉 Cadastro Realizado!
+              </h3>
+              
+              {/* Mensagem principal */}
+              <p className="text-lg text-gray-600 mb-6">
+                {passwordSentInfo.message}
+              </p>
+              
+              {/* Status de envio */}
+              <div className="bg-gray-50 p-4 rounded-lg mb-6">
+                <h4 className="font-semibold mb-3 text-gray-800">📱 Status do Envio:</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center">
+                      <Mail className="h-4 w-4 mr-2" />
+                      Email:
+                    </span>
+                    <Badge className={passwordSentInfo.password_sent_email ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
+                      {passwordSentInfo.password_sent_email ? "✅ Enviado" : "❌ Falhou"}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center">
+                      <Phone className="h-4 w-4 mr-2" />
+                      WhatsApp:
+                    </span>
+                    <Badge className={passwordSentInfo.password_sent_whatsapp ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
+                      {passwordSentInfo.password_sent_whatsapp ? "✅ Enviado" : "❌ Falhou"}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Senha temporária (apenas para desenvolvimento) */}
+              {passwordSentInfo.temporary_password && (
+                <div className="bg-blue-50 p-4 rounded-lg mb-6">
+                  <p className="text-sm text-blue-800">
+                    <strong>Senha temporária:</strong> {passwordSentInfo.temporary_password}
+                  </p>
+                  <p className="text-xs text-blue-600 mt-1">
+                    (Esta informação será removida em produção)
+                  </p>
+                </div>
+              )}
+              
+              {/* Instruções */}
+              <p className="text-sm text-gray-500 mb-6">
+                Use sua senha para acessar o portal do aluno após confirmar o pagamento.
+              </p>
+              
+              {/* Botão para continuar */}
+              <Button
+                onClick={handlePasswordPopupClose}
+                className="w-full py-3 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-bold rounded-xl"
+              >
+                🚀 Continuar para Pagamento
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Fluxo de Pagamento */}
       {currentStep === "payment" && userSubscription && (
         <PaymentFlow
