@@ -105,6 +105,7 @@ const ChatBot = () => {
   };
 
   const toggleChat = () => {
+    console.log('Toggling chat, current isOpen:', isOpen);
     setIsOpen(!isOpen);
     setIsMinimized(false);
   };
@@ -131,123 +132,110 @@ const ChatBot = () => {
     }
   };
 
+  console.log('ChatBot render - isOpen:', isOpen, 'isMinimized:', isMinimized);
+
   return (
-    <>
+    <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 9999 }}>
       {/* Botão flutuante */}
       {!isOpen && (
-        <div className="fixed bottom-6 right-6 z-50">
-          <Button
-            onClick={toggleChat}
-            className="h-14 w-14 rounded-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse"
-            data-testid="chat-toggle-button"
-          >
-            <MessageCircle className="h-6 w-6 text-white" />
-          </Button>
-          <div className="absolute -top-2 -left-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center animate-bounce">
+        <button
+          onClick={toggleChat}
+          className="h-14 w-14 rounded-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse flex items-center justify-center"
+          data-testid="chat-toggle-button"
+          style={{ border: 'none', cursor: 'pointer' }}
+        >
+          <MessageCircle className="h-6 w-6 text-white" />
+          <div style={{ 
+            position: 'absolute', 
+            top: '-8px', 
+            left: '-8px', 
+            backgroundColor: '#ef4444', 
+            color: 'white', 
+            fontSize: '12px', 
+            borderRadius: '50%', 
+            width: '20px', 
+            height: '20px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            animation: 'bounce 1s infinite'
+          }}>
             💬
           </div>
-        </div>
+        </button>
       )}
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-2rem)]">
-          <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-lg">
-            {/* Header */}
-            <CardHeader className="bg-gradient-to-r from-blue-600 to-green-600 text-white p-4 rounded-t-lg">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="bg-white p-1 rounded-full">
-                    <img 
-                      src={botAvatarUrl} 
-                      alt="TaxiBot Avatar" 
-                      className="w-10 h-10 rounded-full object-cover"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
-                      }}
-                    />
-                    <div className="bg-blue-500 p-2 rounded-full hidden items-center justify-center">
-                      <Bot className="h-6 w-6 text-white" />
-                    </div>
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg font-semibold">TaxiBot</CardTitle>
-                    <p className="text-sm opacity-90">Assistente EAD Taxista ES</p>
+        <div 
+          className="w-96 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-2xl border"
+          style={{ 
+            position: 'relative',
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(10px)'
+          }}
+        >
+          {/* Header */}
+          <div className="bg-gradient-to-r from-blue-600 to-green-600 text-white p-4 rounded-t-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="bg-white p-1 rounded-full">
+                  <img 
+                    src={botAvatarUrl} 
+                    alt="TaxiBot Avatar" 
+                    className="w-10 h-10 rounded-full object-cover"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
+                  />
+                  <div className="bg-blue-500 p-2 rounded-full hidden items-center justify-center">
+                    <Bot className="h-6 w-6 text-white" />
                   </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={toggleMinimize}
-                    className="text-white hover:bg-white/20 p-1 h-8 w-8"
-                  >
-                    {isMinimized ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={toggleChat}
-                    className="text-white hover:bg-white/20 p-1 h-8 w-8"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
+                <div>
+                  <h3 className="text-lg font-semibold">TaxiBot</h3>
+                  <p className="text-sm opacity-90">Assistente EAD Taxista ES</p>
                 </div>
               </div>
-            </CardHeader>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={toggleMinimize}
+                  className="text-white hover:bg-white/20 p-1 h-8 w-8 rounded"
+                  style={{ border: 'none', cursor: 'pointer', background: 'transparent' }}
+                >
+                  {isMinimized ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+                </button>
+                <button
+                  onClick={toggleChat}
+                  className="text-white hover:bg-white/20 p-1 h-8 w-8 rounded"
+                  style={{ border: 'none', cursor: 'pointer', background: 'transparent' }}
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </div>
 
-            {/* Chat Content */}
-            {!isMinimized && (
-              <CardContent className="p-0">
-                {/* Messages */}
-                <div className="h-96 overflow-y-auto p-4 space-y-4">
-                  {messages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div className={`flex items-start space-x-2 max-w-[85%] ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center overflow-hidden ${
-                          message.type === 'user' 
-                            ? 'bg-blue-600 text-white' 
-                            : 'bg-white border-2 border-green-600'
-                        }`}>
-                          {message.type === 'user' ? (
-                            <User className="h-4 w-4" />
-                          ) : (
-                            <img 
-                              src={botAvatarUrl} 
-                              alt="TaxiBot" 
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                e.target.style.display = 'none';
-                                e.target.parentNode.classList.add('bg-green-600');
-                                e.target.parentNode.innerHTML = '<svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
-                              }}
-                            />
-                          )}
-                        </div>
-                        <div className={`rounded-lg p-3 ${
-                          message.type === 'user'
-                            ? 'bg-blue-600 text-white rounded-br-none'
-                            : 'bg-gray-100 text-gray-900 rounded-bl-none'
-                        }`}>
-                          <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                          <p className={`text-xs mt-1 opacity-70 ${
-                            message.type === 'user' ? 'text-blue-100' : 'text-gray-500'
-                          }`}>
-                            {formatTimestamp(message.timestamp)}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  
-                  {isLoading && (
-                    <div className="flex justify-start">
-                      <div className="flex items-start space-x-2">
-                        <div className="w-8 h-8 rounded-full bg-white border-2 border-green-600 flex items-center justify-center overflow-hidden">
+          {/* Chat Content */}
+          {!isMinimized && (
+            <div className="p-0">
+              {/* Messages */}
+              <div className="h-96 overflow-y-auto p-4 space-y-4">
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div className={`flex items-start space-x-2 max-w-[85%] ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                      <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center overflow-hidden ${
+                        message.type === 'user' 
+                          ? 'bg-blue-600 text-white' 
+                          : 'bg-white border-2 border-green-600'
+                      }`}>
+                        {message.type === 'user' ? (
+                          <User className="h-4 w-4" />
+                        ) : (
                           <img 
                             src={botAvatarUrl} 
                             alt="TaxiBot" 
@@ -258,74 +246,105 @@ const ChatBot = () => {
                               e.target.parentNode.innerHTML = '<svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
                             }}
                           />
-                        </div>
-                        <div className="bg-gray-100 rounded-lg rounded-bl-none p-3">
-                          <div className="flex space-x-1">
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                          </div>
-                          <p className="text-xs text-gray-500 mt-1">TaxiBot está digitando...</p>
-                        </div>
+                        )}
+                      </div>
+                      <div className={`rounded-lg p-3 ${
+                        message.type === 'user'
+                          ? 'bg-blue-600 text-white rounded-br-none'
+                          : 'bg-gray-100 text-gray-900 rounded-bl-none'
+                      }`}>
+                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                        <p className={`text-xs mt-1 opacity-70 ${
+                          message.type === 'user' ? 'text-blue-100' : 'text-gray-500'
+                        }`}>
+                          {formatTimestamp(message.timestamp)}
+                        </p>
                       </div>
                     </div>
-                  )}
-                  
-                  <div ref={messagesEndRef} />
-                </div>
-
-                {/* Quick Suggestions */}
-                {messages.length === 1 && (
-                  <div className="px-4 pb-2">
-                    <p className="text-xs text-gray-500 mb-2">Sugestões rápidas:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {quickSuggestions.map((suggestion, index) => (
-                        <Button
-                          key={index}
-                          variant="outline"
-                          size="sm"
-                          className="text-xs h-6 px-2 hover:bg-blue-50"
-                          onClick={() => handleSuggestionClick(suggestion)}
-                        >
-                          {suggestion}
-                        </Button>
-                      ))}
+                  </div>
+                ))}
+                
+                {isLoading && (
+                  <div className="flex justify-start">
+                    <div className="flex items-start space-x-2">
+                      <div className="w-8 h-8 rounded-full bg-white border-2 border-green-600 flex items-center justify-center overflow-hidden">
+                        <img 
+                          src={botAvatarUrl} 
+                          alt="TaxiBot" 
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.parentNode.classList.add('bg-green-600');
+                            e.target.parentNode.innerHTML = '<svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+                          }}
+                        />
+                      </div>
+                      <div className="bg-gray-100 rounded-lg rounded-bl-none p-3">
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">TaxiBot está digitando...</p>
+                      </div>
                     </div>
                   </div>
                 )}
+                
+                <div ref={messagesEndRef} />
+              </div>
 
-                {/* Input */}
-                <div className="border-t p-4">
-                  <form onSubmit={sendMessage} className="flex space-x-2">
-                    <Input
-                      ref={inputRef}
-                      type="text"
-                      placeholder="Digite sua mensagem..."
-                      value={inputMessage}
-                      onChange={(e) => setInputMessage(e.target.value)}
-                      disabled={isLoading}
-                      className="flex-1 text-sm"
-                      data-testid="chat-input"
-                    />
-                    <Button
-                      type="submit"
-                      disabled={isLoading || !inputMessage.trim()}
-                      className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 px-4"
-                      data-testid="chat-send-button"
-                    >
-                      <Send className="h-4 w-4" />
-                    </Button>
-                  </form>
-                  <p className="text-xs text-gray-500 mt-2 text-center">
-                    Para suporte técnico: suporte@sindtaxi-es.org
-                  </p>
+              {/* Quick Suggestions */}
+              {messages.length === 1 && (
+                <div className="px-4 pb-2">
+                  <p className="text-xs text-gray-500 mb-2">Sugestões rápidas:</p>
+                  <div className="flex flex-wrap gap-1">
+                    {quickSuggestions.map((suggestion, index) => (
+                      <button
+                        key={index}
+                        className="text-xs h-6 px-2 bg-gray-100 hover:bg-blue-50 border border-gray-200 rounded"
+                        onClick={() => handleSuggestionClick(suggestion)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {suggestion}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </CardContent>
-            )}
-          </Card>
+              )}
+
+              {/* Input */}
+              <div className="border-t p-4">
+                <form onSubmit={sendMessage} className="flex space-x-2">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    placeholder="Digite sua mensagem..."
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    disabled={isLoading}
+                    className="flex-1 text-sm p-2 border border-gray-300 rounded"
+                    data-testid="chat-input"
+                  />
+                  <button
+                    type="submit"
+                    disabled={isLoading || !inputMessage.trim()}
+                    className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 px-4 py-2 rounded text-white disabled:opacity-50"
+                    data-testid="chat-send-button"
+                    style={{ border: 'none', cursor: 'pointer' }}
+                  >
+                    <Send className="h-4 w-4" />
+                  </button>
+                </form>
+                <p className="text-xs text-gray-500 mt-2 text-center">
+                  Para suporte técnico: suporte@sindtaxi-es.org
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       )}
-    </>
+    </div>
   );
 };
 
