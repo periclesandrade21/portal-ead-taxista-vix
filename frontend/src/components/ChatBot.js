@@ -265,11 +265,13 @@ const ChatBot = () => {
                       onChange={(e) => setInputMessage(e.target.value)}
                       disabled={isLoading}
                       className="flex-1 text-sm"
+                      data-testid="chat-input"
                     />
                     <Button
                       type="submit"
                       disabled={isLoading || !inputMessage.trim()}
                       className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 px-4"
+                      data-testid="chat-send-button"
                     >
                       <Send className="h-4 w-4" />
                     </Button>
