@@ -195,6 +195,48 @@ const AdminDashboard = () => {
     }
   };
 
+  // Função para excluir usuário
+  const deleteUser = async () => {
+    try {
+      await axios.delete(`${API}/subscriptions/${deleteModal.user.id}`);
+      await fetchAdminData();
+      setDeleteModal({ show: false, user: null });
+      alert('Usuário excluído com sucesso!');
+    } catch (error) {
+      console.error('Erro ao excluir usuário:', error);
+      alert('Erro ao excluir usuário');
+    }
+  };
+
+  // Função para carregar dados de região (simulado)
+  const loadRegionData = () => {
+    // Simular dados de região do ES
+    const cities = [
+      'Vitória', 'Vila Velha', 'Serra', 'Cariacica', 'Viana', 
+      'Guarapari', 'Cachoeiro de Itapemirim', 'Linhares', 
+      'São Mateus', 'Colatina', 'Aracruz', 'Nova Venécia'
+    ];
+    
+    const regionData = cities.reduce((acc, city) => {
+      acc[city] = Math.floor(Math.random() * 50) + 5; // Simular usuários por cidade
+      return acc;
+    }, {});
+    
+    setRegionStats(regionData);
+  };
+
+  // Função para carregar dados de pagamento (simulado)
+  const loadPaymentChartData = () => {
+    const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
+    const data = months.map((month, index) => ({
+      month,
+      pagamentos: Math.floor(Math.random() * 100) + 20,
+      receita: Math.floor(Math.random() * 15000) + 3000
+    }));
+    
+    setPaymentChartData(data);
+  };
+
   const getFilteredSubscriptions = () => {
     let filtered = subscriptions.filter(sub =>
       sub.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
