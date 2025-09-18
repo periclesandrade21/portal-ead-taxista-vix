@@ -12,7 +12,7 @@ const ProgressSteps = ({ currentStep }) => {
     {
       id: 'payment',
       title: 'Pagamento',
-      description: 'PIX R$ 150',
+      description: 'PIX CNPJ',
       icon: CreditCard
     }
   ];
