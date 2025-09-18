@@ -47,6 +47,11 @@ const AdminDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [dateFilter, setDateFilter] = useState('all');
   const [paymentStats, setPaymentStats] = useState({});
+  
+  // Estados para as novas funcionalidades
+  const [deleteModal, setDeleteModal] = useState({ show: false, user: null });
+  const [regionStats, setRegionStats] = useState({});
+  const [paymentChartData, setPaymentChartData] = useState([]);
 
   // Novos estados para funcionalidades administrativas
   const [discountModal, setDiscountModal] = useState({ show: false, userId: null, discount: 0 });
