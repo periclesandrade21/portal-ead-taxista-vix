@@ -625,76 +625,131 @@ const Home = () => {
             </CardHeader>
             <CardContent className="p-8">
               <form onSubmit={handleSubscription} className="space-y-8">
-                <div>
-                  <Label htmlFor="name">Nome Completo</Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Seu nome completo"
-                    required
-                    className="mt-2"
-                  />
-                </div>
                 
-                <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="seu@email.com"
-                    required
-                    className="mt-2"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="phone">Telefone/WhatsApp</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="(27) 99999-9999"
-                    required
-                    className="mt-2"
-                  />
+                {/* Seção Dados Pessoais */}
+                <div className="bg-slate-50 p-6 rounded-lg border-l-4 border-blue-500">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    👤 Dados Pessoais
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <Label htmlFor="name" className="text-sm font-semibold text-gray-700">Nome Completo *</Label>
+                      <Input
+                        id="name"
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Seu nome completo"
+                        required
+                        className="mt-2 h-12 text-lg"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="email" className="text-sm font-semibold text-gray-700">Email *</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="seu@email.com"
+                        required
+                        className="mt-2 h-12 text-lg"
+                      />
+                    </div>
+                    
+                    <div className="md:col-span-2">
+                      <Label htmlFor="phone" className="text-sm font-semibold text-gray-700">Telefone/WhatsApp *</Label>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="(27) 99999-9999"
+                        required
+                        className="mt-2 h-12 text-lg"
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="carPlate">Placa do Veículo</Label>
-                  <Input
-                    id="carPlate"
-                    type="text"
-                    value={carPlate}
-                    onChange={(e) => setCarPlate(e.target.value.toUpperCase())}
-                    placeholder="ABC-1234 ou ABC1D23"
-                    required
-                    className="mt-2"
-                    maxLength="8"
-                  />
+                {/* Seção Dados Profissionais */}
+                <div className="bg-green-50 p-6 rounded-lg border-l-4 border-green-500">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    🚕 Dados do Taxista
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <Label htmlFor="carPlate" className="text-sm font-semibold text-gray-700">Placa do Veículo *</Label>
+                      <Input
+                        id="carPlate"
+                        type="text"
+                        value={carPlate}
+                        onChange={(e) => setCarPlate(e.target.value.toUpperCase())}
+                        placeholder="ABC-1234 ou ABC1D23"
+                        required
+                        className="mt-2 h-12 text-lg font-mono"
+                        maxLength="8"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="licenseNumber" className="text-sm font-semibold text-gray-700">Número do Alvará *</Label>
+                      <Input
+                        id="licenseNumber"
+                        type="text"
+                        value={licenseNumber}
+                        onChange={(e) => setLicenseNumber(e.target.value)}
+                        placeholder="Número do seu alvará"
+                        required
+                        className="mt-2 h-12 text-lg"
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="licenseNumber">Número do Alvará</Label>
-                  <Input
-                    id="licenseNumber"
-                    type="text"
-                    value={licenseNumber}
-                    onChange={(e) => setLicenseNumber(e.target.value)}
-                    placeholder="Número do alvará de taxista"
-                    required
-                    className="mt-2"
-                  />
+                {/* Informações importantes */}
+                <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
+                  <div className="flex items-start space-x-3">
+                    <div className="bg-blue-100 p-2 rounded-full">
+                      <span className="text-blue-600 text-xl">💡</span>
+                    </div>
+                    <div className="flex-1">
+                      <h5 className="font-semibold text-blue-800 mb-2">Importante:</h5>
+                      <ul className="text-sm text-blue-700 space-y-1">
+                        <li>• Use seus dados reais para garantir a validade do certificado</li>
+                        <li>• O certificado será emitido com o nome informado aqui</li>
+                        <li>• WhatsApp será usado para suporte e comunicações importantes</li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
-                
-                <Button type="submit" className="w-full py-4 text-lg bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700">
-                  <CreditCard className="mr-2 h-5 w-5" />
-                  Cadastrar e Prosseguir para Pagamento
-                </Button>
+
+                {/* Botão de envio melhorado */}
+                <div className="text-center pt-4">
+                  <Button 
+                    type="submit" 
+                    className="w-full py-6 text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  >
+                    <CreditCard className="mr-3 h-6 w-6" />
+                    💳 Finalizar Cadastro e Pagar via PIX
+                  </Button>
+                  
+                  <div className="mt-4 flex items-center justify-center space-x-4 text-sm text-gray-600">
+                    <div className="flex items-center">
+                      <span className="text-green-600 mr-1">✅</span>
+                      Pagamento seguro
+                    </div>
+                    <div className="flex items-center">
+                      <span className="text-blue-600 mr-1">⚡</span>
+                      Aprovação instantânea
+                    </div>
+                    <div className="flex items-center">
+                      <span className="text-purple-600 mr-1">🔒</span>
+                      Dados protegidos
+                    </div>
+                  </div>
+                </div>
               </form>
             </CardContent>
           </Card>
