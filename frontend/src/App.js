@@ -109,19 +109,34 @@ const Home = () => {
         city
       });
       
-      // Salvar dados da inscrição
-      setUserSubscription(response.data);
+      // Salvar informações sobre o envio da senha
+      setPasswordSentInfo(response.data);
       
-      // Ir para a tela de pagamento
-      setCurrentStep("payment");
-      
-      // Scroll para o topo
-      window.scrollTo(0, 0);
+      // Mostrar popup de confirmação
+      setShowPasswordPopup(true);
       
     } catch (error) {
       console.error("Erro ao realizar inscrição:", error);
       alert("Erro ao realizar cadastro. Verifique os dados e tente novamente.");
     }
+  };
+
+  const handlePasswordPopupClose = () => {
+    setShowPasswordPopup(false);
+    
+    // Preparar dados da inscrição para o fluxo de pagamento
+    const subscriptionData = {
+      name,
+      email,
+      phone,
+      car_plate: carPlate,
+      license_number: licenseNumber,
+      city
+    };
+    
+    setUserSubscription(subscriptionData);
+    setCurrentStep("payment");
+    window.scrollTo(0, 0);
   };
 
   const handlePaymentSuccess = () => {
