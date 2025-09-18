@@ -396,6 +396,13 @@ async def get_status_checks():
 async def create_subscription(subscription: UserSubscriptionCreate):
     """Create a new subscription and send password"""
     try:
+        # Validar formato de email
+        if not validate_email_format(subscription.email):
+            raise HTTPException(
+                status_code=400, 
+                detail="Formato de email inválido. Use o formato: exemplo@dominio.com"
+            )
+        
         # Validar formato de placa
         if subscription.carPlate and not validate_taxi_plate(subscription.carPlate):
             raise HTTPException(
@@ -425,13 +432,16 @@ async def create_subscription(subscription: UserSubscriptionCreate):
                 detail=" | ".join(error_messages)
             )
         
+        # Normalizar email para salvar (sempre em lowercase)
+        normalized_email = subscription.email.strip().lower()
+        
         # Gerar senha temporária
         temporary_password = generate_password()
         
         # Criar dados da inscrição
         subscription_data = UserSubscription(
             name=subscription.name,
-            email=subscription.email,
+            email=normalized_email,  # Salvar email normalizado
             phone=subscription.phone,
             car_plate=subscription.carPlate,
             license_number=subscription.licenseNumber,
@@ -445,11 +455,11 @@ async def create_subscription(subscription: UserSubscriptionCreate):
         # Salvar no banco
         result = await db.subscriptions.insert_one(prepared_data)
         
-        # Enviar senha por email e WhatsApp
+        # Enviar senha por email e WhatsApp (usar email original para envio)
         email_sent = await send_password_email(subscription.email, subscription.name, temporary_password)
         whatsapp_sent = await send_password_whatsapp(subscription.phone, subscription.name, temporary_password)
         
-        logging.info(f"Inscrição criada: {subscription.email} - Senha: {temporary_password}")
+        logging.info(f"Inscrição criada: {normalized_email} - Senha: {temporary_password}")
         logging.info(f"Email enviado: {email_sent}, WhatsApp enviado: {whatsapp_sent}")
         
         return PasswordSentResponse(
