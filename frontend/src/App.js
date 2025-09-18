@@ -108,6 +108,8 @@ const Home = () => {
     
     if (!city) {
       errors.city = "Cidade é obrigatória";
+    } else if (city === "Outra" && !customCity.trim()) {
+      errors.customCity = "Por favor, informe sua cidade";
     }
     
     setValidationErrors(errors);
