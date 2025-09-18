@@ -160,8 +160,8 @@ const Home = () => {
     
     if (!email.trim()) {
       errors.email = "Email é obrigatório";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      errors.email = "Email inválido";
+    } else if (!validateEmail(email)) {
+      errors.email = "Email inválido. Use o formato: exemplo@dominio.com";
     }
     
     if (!phone.trim()) {
