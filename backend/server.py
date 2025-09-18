@@ -171,6 +171,69 @@ def generate_password(length=8):
     characters = string.ascii_letters + string.digits
     return ''.join(secrets.choice(characters) for _ in range(length))
 
+def validate_taxi_plate(plate: str) -> bool:
+    """Valida formato de placa de táxi do Espírito Santo"""
+    if not plate:
+        return False
+    
+    plate = plate.upper().strip()
+    
+    # Padrões aceitos para placas de táxi do ES
+    patterns = [
+        r'^[A-Z]{3}-\d{4}-T$',      # ABC-1234-T (formato tradicional)
+        r'^[A-Z]{3}\d{1}[A-Z]{1}\d{2}$',  # ABC1D23 (Mercosul)
+        r'^[A-Z]{3}\d{4}$',         # ABC1234 (formato sem hífen)
+    ]
+    
+    for pattern in patterns:
+        if re.match(pattern, plate):
+            return True
+    
+    return False
+
+def validate_taxi_license(license_number: str) -> bool:
+    """Valida formato de alvará de táxi"""
+    if not license_number:
+        return False
+    
+    license_number = license_number.upper().strip()
+    
+    # Padrões aceitos para alvará de táxi
+    patterns = [
+        r'^TA-\d{4,6}$',           # TA-12345
+        r'^TAX-\d{4}-\d{4}$',      # TAX-2023-1234
+        r'^T-\d{4,7}$',            # T-1234567
+        r'^[A-Z]{2,3}-\d{4,6}$',   # Outros prefixos com letras
+        r'^\d{4,8}$',              # Apenas números (formato simples)
+    ]
+    
+    for pattern in patterns:
+        if re.match(pattern, license_number):
+            return True
+    
+    return False
+
+async def check_duplicate_registration(db, name: str, email: str) -> dict:
+    """Verifica duplicidade de nome e email"""
+    duplicates = {}
+    
+    # Verificar email duplicado
+    email_exists = await db.subscriptions.find_one({"email": email})
+    if email_exists:
+        duplicates["email"] = True
+    
+    # Verificar nome duplicado (ignorando case e espaços extras)
+    name_normalized = " ".join(name.strip().lower().split())
+    existing_names = await db.subscriptions.find({}, {"name": 1}).to_list(length=None)
+    
+    for existing in existing_names:
+        existing_normalized = " ".join(existing["name"].strip().lower().split())
+        if existing_normalized == name_normalized:
+            duplicates["name"] = True
+            break
+    
+    return duplicates
+
 async def send_password_email(email: str, name: str, password: str):
     """Envia senha por email"""
     try:
