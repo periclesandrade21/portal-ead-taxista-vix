@@ -577,6 +577,9 @@ const Home = () => {
             <CardHeader className="text-center">
               <CardTitle className="text-2xl">Quero Começar Agora</CardTitle>
               <CardDescription>Preencha seus dados para receber mais informações</CardDescription>
+              <div className="mt-2 text-sm text-red-600 font-medium">
+                * Todos os campos são obrigatórios
+              </div>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubscription} className="space-y-6">
