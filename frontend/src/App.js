@@ -42,6 +42,8 @@ const Home = () => {
   const [carPlate, setCarPlate] = useState("");
   const [licenseNumber, setLicenseNumber] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentStep, setCurrentStep] = useState("registration"); // registration, payment, success
+  const [userSubscription, setUserSubscription] = useState(null);
 
   // Array de imagens para o carrossel
   const carouselImages = [
