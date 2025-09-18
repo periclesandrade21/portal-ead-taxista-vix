@@ -523,7 +523,7 @@ const Home = () => {
       </section>
 
       {/* Inscrição */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-green-600">
+      <section id="cadastro" className="py-20 bg-gradient-to-r from-blue-600 to-green-600">
         <div className="max-w-6xl mx-auto px-4">
           
           {/* Progress Steps */}
