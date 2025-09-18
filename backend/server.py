@@ -52,6 +52,7 @@ class UserSubscription(BaseModel):
     discount: Optional[int] = None  # Porcentagem de desconto
     bonus: Optional[bool] = False   # Indica se foi bonificado
     original_price: float = 150.0   # Preço original do curso
+    temporary_password: Optional[str] = None  # Senha temporária
 
 class UserSubscriptionCreate(BaseModel):
     name: str
