@@ -841,9 +841,19 @@ const Home = () => {
                       <select
                         id="city"
                         value={city}
-                        onChange={(e) => setCity(e.target.value)}
+                        onChange={(e) => {
+                          setCity(e.target.value);
+                          // Limpar cidade personalizada se não for "Outra"
+                          if (e.target.value !== "Outra") {
+                            setCustomCity("");
+                          }
+                          // Limpar erro quando usuário seleciona
+                          if (validationErrors.city) {
+                            setValidationErrors(prev => ({...prev, city: ''}));
+                          }
+                        }}
                         required
-                        className="mt-2 h-12 text-lg w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className={`mt-2 h-12 text-lg w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${validationErrors.city ? 'border-red-500' : ''}`}
                       >
                         <option value="">Selecione sua cidade</option>
                         <option value="Vitória">Vitória</option>
@@ -865,8 +875,41 @@ const Home = () => {
                         <option value="Iconha">Iconha</option>
                         <option value="Piúma">Piúma</option>
                         <option value="Anchieta">Anchieta</option>
-                        <option value="Outra">Outra cidade do ES</option>
+                        <option value="Outra">🏙️ Outra cidade do ES</option>
                       </select>
+                      {validationErrors.city && (
+                        <p className="text-red-500 text-xs mt-1">{validationErrors.city}</p>
+                      )}
+                      
+                      {/* Campo adicional para cidade personalizada */}
+                      {city === "Outra" && (
+                        <div className="mt-4">
+                          <Label htmlFor="customCity" className="text-sm font-semibold text-gray-700">
+                            Qual sua cidade? *
+                          </Label>
+                          <Input
+                            id="customCity"
+                            type="text"
+                            value={customCity}
+                            onChange={(e) => {
+                              setCustomCity(e.target.value);
+                              // Limpar erro quando usuário digita
+                              if (validationErrors.customCity) {
+                                setValidationErrors(prev => ({...prev, customCity: ''}));
+                              }
+                            }}
+                            placeholder="Digite o nome da sua cidade"
+                            required
+                            className={`mt-2 h-12 text-lg ${validationErrors.customCity ? 'border-red-500' : ''}`}
+                          />
+                          {validationErrors.customCity && (
+                            <p className="text-red-500 text-xs mt-1">{validationErrors.customCity}</p>
+                          )}
+                          <p className="text-xs text-gray-500 mt-1">
+                            📍 Digite o nome completo da sua cidade no Espírito Santo
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
