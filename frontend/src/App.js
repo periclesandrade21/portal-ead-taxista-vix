@@ -43,6 +43,7 @@ const Home = () => {
   const [phone, setPhone] = useState("");
   const [carPlate, setCarPlate] = useState("");
   const [licenseNumber, setLicenseNumber] = useState("");
+  const [city, setCity] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currentStep, setCurrentStep] = useState("registration"); // registration, payment, success
   const [userSubscription, setUserSubscription] = useState(null);
