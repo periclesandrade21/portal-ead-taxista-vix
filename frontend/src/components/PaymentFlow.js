@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
-import ProgressSteps from "./ProgressSteps";
 import { 
-  CreditCard, 
   QrCode, 
   CheckCircle, 
   Clock, 
   ArrowLeft,
-  Smartphone,
   AlertCircle
 } from "lucide-react";
 
