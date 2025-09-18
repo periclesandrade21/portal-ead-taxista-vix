@@ -826,7 +826,7 @@ const Home = () => {
               <h5 className="font-semibold mb-4">Links Úteis</h5>
               <ul className="space-y-2 text-gray-400">
                 <li><a href="#cursos" className="hover:text-white transition-colors">Cursos</a></li>
-                <li><a href="#pagamento" className="hover:text-white transition-colors">Pagamento</a></li>
+                <li><a href="#cadastro" className="hover:text-white transition-colors">Cadastro</a></li>
                 <li><a href="#contato" className="hover:text-white transition-colors">Contato</a></li>
                 <li><a href="https://sindtaxi-es.org/" className="hover:text-white transition-colors">Portal do Taxista</a></li>
               </ul>
