@@ -104,6 +104,10 @@ const AdminDashboard = () => {
       
       // Calcular estatísticas de pagamento
       calculatePaymentStats(subscriptionsRes.data);
+      
+      // Carregar dados dos novos gráficos
+      loadRegionData();
+      loadPaymentChartData();
     } catch (error) {
       console.error('Erro ao carregar dados administrativos:', error);
     } finally {
