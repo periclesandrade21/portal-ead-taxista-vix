@@ -102,15 +102,19 @@ const Home = () => {
         carPlate,
         licenseNumber
       });
-      alert("Inscrição realizada com sucesso! Você receberá mais informações em breve.");
-      setName("");
-      setEmail("");
-      setPhone("");
-      setCarPlate("");
-      setLicenseNumber("");
+      
+      // Salvar dados da inscrição
+      setUserSubscription(response.data);
+      
+      // Ir para a tela de pagamento
+      setCurrentStep("payment");
+      
+      // Scroll para o topo
+      window.scrollTo(0, 0);
+      
     } catch (error) {
       console.error("Erro ao realizar inscrição:", error);
-      alert("Erro ao realizar inscrição. Tente novamente.");
+      alert("Erro ao realizar cadastro. Verifique os dados e tente novamente.");
     }
   };
 
