@@ -337,7 +337,7 @@ const ChatBot = () => {
                   </button>
                 </form>
                 <p className="text-xs text-gray-500 mt-2 text-center">
-                  Para suporte técnico: suporte@sindtaxi-es.org
+                  Para suporte técnico: 📧 suporte@sindtaxi-es.org
                 </p>
               </div>
             </div>
