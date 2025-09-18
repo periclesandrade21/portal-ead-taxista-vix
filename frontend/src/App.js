@@ -10,7 +10,7 @@ import { Label } from "./components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import AdminDashboard from "./components/AdminDashboard";
 import StudentPortal from "./components/StudentPortal";
-import ChatBot from "./components/ChatBot";
+import SimpleChatBot from "./components/SimpleChatBot";
 import { 
   Car, 
   GraduationCap, 
