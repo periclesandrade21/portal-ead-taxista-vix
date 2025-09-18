@@ -637,6 +637,39 @@ const Home = () => {
                         className="mt-2 h-12 text-lg"
                       />
                     </div>
+
+                    <div className="md:col-span-2">
+                      <Label htmlFor="city" className="text-sm font-semibold text-gray-700">Cidade do Espírito Santo *</Label>
+                      <select
+                        id="city"
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        required
+                        className="mt-2 h-12 text-lg w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      >
+                        <option value="">Selecione sua cidade</option>
+                        <option value="Vitória">Vitória</option>
+                        <option value="Vila Velha">Vila Velha</option>
+                        <option value="Serra">Serra</option>
+                        <option value="Cariacica">Cariacica</option>
+                        <option value="Viana">Viana</option>
+                        <option value="Guarapari">Guarapari</option>
+                        <option value="Cachoeiro de Itapemirim">Cachoeiro de Itapemirim</option>
+                        <option value="Linhares">Linhares</option>
+                        <option value="São Mateus">São Mateus</option>
+                        <option value="Colatina">Colatina</option>
+                        <option value="Aracruz">Aracruz</option>
+                        <option value="Nova Venécia">Nova Venécia</option>
+                        <option value="Domingos Martins">Domingos Martins</option>
+                        <option value="Santa Teresa">Santa Teresa</option>
+                        <option value="Castelo">Castelo</option>
+                        <option value="Venda Nova do Imigrante">Venda Nova do Imigrante</option>
+                        <option value="Iconha">Iconha</option>
+                        <option value="Piúma">Piúma</option>
+                        <option value="Anchieta">Anchieta</option>
+                        <option value="Outra">Outra cidade do ES</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
 
