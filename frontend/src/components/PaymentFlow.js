@@ -152,9 +152,9 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
         
         {/* Header com informações importantes */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">🎯 Finalizar com PIX</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">💳 Finalizar Pagamento</h1>
           <p className="text-xl text-gray-600 mb-4">
-            Última etapa: realize o pagamento via PIX e comece seus estudos!
+            Complete seu pagamento via PIX de forma segura e rápida
           </p>
           
           {timeLeft > 0 && paymentStatus === "pending" && (
