@@ -151,6 +151,72 @@ def parse_from_mongo(item):
         return parsed
     return item
 
+# Chat Bot Helper Functions
+def get_bot_context():
+    """Sistema de contexto para o bot IA dos taxistas"""
+    return """Você é um assistente virtual especializado em cursos EAD para taxistas do Espírito Santo. 
+    
+    INFORMAÇÕES IMPORTANTES:
+    - Você trabalha para a plataforma EAD do Sindicato dos Taxistas do ES (sindtaxi-es.org)
+    - Cursos obrigatórios: Relações Humanas, Direção Defensiva, Primeiros Socorros, Mecânica Básica (total 28h)
+    - Cursos opcionais: Inglês Básico Turismo, Turismo Local, Atendimento ao Cliente, Conhecimentos da Cidade
+    - Para dúvidas técnicas ou problemas que não conseguir resolver, direcione para: suporte@sindtaxi-es.org
+    
+    IMPORTANTE SOBRE VALORES:
+    - Quando perguntado sobre preços/valores/custos: SEMPRE responda "Os valores do treinamento serão divulgados em breve"
+    - Não invente valores nem dê estimativas
+    
+    SOBRE RESET DE SENHA:
+    - Se alguém solicitar reset de senha, ofereça ajuda para resetar via email
+    - Explique que elas receberão um link por email para criar nova senha
+    
+    SOBRE CERTIFICADOS:
+    - Certificados são emitidos após completar todos os módulos obrigatórios
+    - Nota mínima de 7.0 nos exames
+    - Certificados reconhecidos por cooperativas, sindicatos, prefeituras e governo estadual/federal
+    - Válidos nacionalmente com QR code anti-falsificação
+    
+    Responda sempre em português brasileiro, seja cordial e profissional."""
+
+async def get_chat_history(session_id: str, limit: int = 10):
+    """Busca histórico de chat de uma sessão"""
+    history = await db.chat_messages.find(
+        {"session_id": session_id}
+    ).sort("timestamp", -1).limit(limit).to_list(limit)
+    
+    return [ChatMessage(**parse_from_mongo(msg)) for msg in reversed(history)]
+
+async def save_chat_message(session_id: str, user_message: str, bot_response: str):
+    """Salva mensagem do chat no banco"""
+    chat_msg = ChatMessage(
+        session_id=session_id,
+        user_message=user_message,
+        bot_response=bot_response
+    )
+    prepared_data = prepare_for_mongo(chat_msg.dict())
+    await db.chat_messages.insert_one(prepared_data)
+    return chat_msg
+
+def detect_password_reset_request(message: str) -> bool:
+    """Detecta se o usuário está solicitando reset de senha"""
+    reset_keywords = [
+        "reset", "resetar", "senha", "password", "esqueci", "recuperar", 
+        "recuperação", "alterar senha", "mudar senha", "nova senha",
+        "não consigo entrar", "não lembro", "perdi a senha"
+    ]
+    message_lower = message.lower()
+    return any(keyword in message_lower for keyword in reset_keywords)
+
+def detect_value_question(message: str) -> bool:
+    """Detecta se o usuário está perguntando sobre valores"""
+    value_keywords = [
+        "preço", "valor", "custo", "quanto custa", "preços", "valores",
+        "mensalidade", "pagamento", "pagar", "taxa", "dinheiro", 
+        "real", "reais", "r$", "investimento", "quanto é"
+    ]
+    message_lower = message.lower()
+    return any(keyword in message_lower for keyword in value_keywords)
+
 # Routes
 @api_router.get("/")
 async def root():
