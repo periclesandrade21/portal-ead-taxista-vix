@@ -272,7 +272,7 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
                       {/* Botão Principal do Asaas */}
                       <div className="mb-6">
                         <button
-                          onClick={() => window.open('https://www.asaas.com/c/vyric6wrm1ufvo3c', '_blank')}
+                          onClick={() => window.open('https://sandbox.asaas.com/i/bsnw3pmz2yiacw1w', '_blank')}
                           className="w-full py-6 px-8 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold rounded-xl text-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                         >
                           <div className="flex items-center justify-center space-x-3">
@@ -284,7 +284,7 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
                           </div>
                         </button>
                         <p className="text-sm text-gray-600 mt-3">
-                          ✅ Seguro • ⚡ Instantâneo • 🔒 Criptografado
+                          ✅ Seguro • ⚡ Instantâneo • 🔒 Criptografado • 🧪 Sandbox
                         </p>
                       </div>
                       
