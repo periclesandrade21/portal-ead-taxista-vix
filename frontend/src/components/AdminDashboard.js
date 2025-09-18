@@ -512,6 +512,14 @@ const AdminDashboard = () => {
                               >
                                 <Key className="h-3 w-3" />
                               </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                className="text-red-600 border-red-300 hover:bg-red-50"
+                                onClick={() => setDeleteModal({ show: true, user: subscription })}
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
                             </div>
                           </td>
                         </tr>
