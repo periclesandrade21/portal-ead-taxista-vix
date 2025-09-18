@@ -103,7 +103,8 @@ const Home = () => {
         email,
         phone,
         carPlate,
-        licenseNumber
+        licenseNumber,
+        city
       });
       
       // Salvar dados da inscrição
