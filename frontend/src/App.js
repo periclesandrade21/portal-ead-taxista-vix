@@ -697,7 +697,7 @@ const Home = () => {
                     className="w-full py-6 text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                   >
                     <CreditCard className="mr-3 h-6 w-6" />
-                    💳 Finalizar Cadastro e Pagar via PIX
+                    💳 Finalizar Pagamento
                   </Button>
                   
                   <div className="mt-4 flex items-center justify-center space-x-4 text-sm text-gray-600">
