@@ -162,6 +162,13 @@ const Home = () => {
 
   const handleSubscription = async (e) => {
     e.preventDefault();
+    
+    // Validar formulário
+    if (!validateForm()) {
+      alert("Por favor, corrija os erros no formulário antes de continuar.");
+      return;
+    }
+    
     try {
       const response = await axios.post(`${API}/subscribe`, {
         name,
@@ -180,7 +187,12 @@ const Home = () => {
       
     } catch (error) {
       console.error("Erro ao realizar inscrição:", error);
-      alert("Erro ao realizar cadastro. Verifique os dados e tente novamente.");
+      
+      if (error.response && error.response.data && error.response.data.detail) {
+        alert(`Erro: ${error.response.data.detail}`);
+      } else {
+        alert("Erro ao realizar cadastro. Verifique os dados e tente novamente.");
+      }
     }
   };
 
