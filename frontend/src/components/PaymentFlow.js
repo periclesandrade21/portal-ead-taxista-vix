@@ -167,20 +167,22 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
 
         <div className="grid lg:grid-cols-3 gap-8">
           
-          {/* Resumo do Pedido - Mais compacto */}
+          {/* Resumo do Pedido - Sem valores */}
           <div className="lg:col-span-1">
             <Card className="sticky top-4">
               <CardHeader className="bg-gradient-to-r from-blue-600 to-green-600 text-white">
                 <CardTitle className="flex items-center text-lg">
                   <DollarSign className="h-5 w-5 mr-2" />
-                  Resumo do Pedido
+                  Resumo do Cadastro
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center py-3 border-b">
-                    <span className="font-medium">Curso EAD Taxista ES</span>
-                    <span className="font-bold text-green-600">R$ 150,00</span>
+                  <div className="py-3 border-b">
+                    <span className="font-bold text-lg text-center block">Curso EAD Taxista ES</span>
+                    <p className="text-sm text-gray-600 text-center mt-2">
+                      Valores serão informados após aprovação da API de pagamento
+                    </p>
                   </div>
                   
                   <div className="bg-gray-50 p-4 rounded-lg">
@@ -206,9 +208,9 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
                   </div>
 
                   <div className="border-t pt-4">
-                    <div className="flex justify-between items-center text-2xl font-bold">
-                      <span>Total:</span>
-                      <span className="text-green-600">R$ 150,00</span>
+                    <div className="text-center">
+                      <p className="text-lg font-bold text-blue-600">PIX via CNPJ</p>
+                      <p className="text-sm text-gray-600">02.914.651/0001-12</p>
                     </div>
                   </div>
                 </div>
