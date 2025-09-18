@@ -148,9 +148,22 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
           <Card className="shadow-xl">
             <CardContent className="p-8 text-center">
               
-              {/* Resumo dos Dados */}
+              {/* Link da documentação do Cora */}
+              <div className="mb-8">
+                <p className="text-sm text-gray-600 mb-4">Documentação de integração:</p>
+                <a 
+                  href="https://developers.cora.com.br/docs/instrucoes-iniciais" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 underline text-sm"
+                >
+                  https://developers.cora.com.br/docs/instrucoes-iniciais
+                </a>
+              </div>
+
+              {/* Dados do Taxista */}
               <div className="bg-gray-50 p-6 rounded-lg mb-8">
-                <h3 className="font-bold text-lg mb-4">📋 Resumo do Cadastro</h3>
+                <h3 className="font-bold text-lg mb-4">👤 Dados do Taxista</h3>
                 <div className="text-sm space-y-2">
                   <p><strong>Nome:</strong> {userSubscription?.name}</p>
                   <p><strong>Email:</strong> {userSubscription?.email}</p>
