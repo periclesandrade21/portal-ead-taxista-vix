@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Button } from './ui/button.jsx';
+import { Input } from './ui/input.jsx';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card.jsx';
 import { 
   MessageCircle, 
   X, 
