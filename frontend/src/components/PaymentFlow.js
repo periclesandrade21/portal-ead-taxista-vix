@@ -371,7 +371,7 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
                       </p>
                       <ul className="text-sm text-gray-600 text-left space-y-1">
                         <li>• O pagamento ainda está sendo processado pelo banco</li>
-                        <li>• Verifique se o valor está correto (R$ 150,00)</li>
+                        <li>• Verifique se o CNPJ está correto (02.914.651/0001-12)</li>
                         <li>• Aguarde alguns minutos e tente novamente</li>
                       </ul>
                     </div>
