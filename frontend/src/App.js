@@ -575,8 +575,8 @@ const Home = () => {
 
           <Card className="max-w-2xl mx-auto shadow-2xl">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl">Quero Começar Agora</CardTitle>
-              <CardDescription>Preencha seus dados para receber mais informações</CardDescription>
+              <CardTitle className="text-2xl">Cadastre-se e Comece Agora</CardTitle>
+              <CardDescription>Complete seu cadastro e prossiga para o pagamento</CardDescription>
               <div className="mt-2 text-sm text-red-600 font-medium">
                 * Todos os campos são obrigatórios
               </div>
