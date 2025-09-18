@@ -173,13 +173,15 @@ const Home = () => {
     }
     
     try {
+      const finalCity = city === "Outra" ? customCity : city;
+      
       const response = await axios.post(`${API}/subscribe`, {
         name,
         email,
         phone,
         carPlate,
         licenseNumber,
-        city
+        city: finalCity
       });
       
       // Salvar informações sobre o envio da senha
