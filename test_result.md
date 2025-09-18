@@ -132,17 +132,20 @@ backend:
         agent: "main"
         comment: "Preparar integração email suporte@sindtaxi-es.org"
 
-  - task: "Fluxo unificado cadastro+pagamento"
-    implemented: false
+  - task: "Fluxo unificado cadastro+pagamento com Asaas"
+    implemented: true
     working: "NA"
-    file: "server.py"
+    file: "PaymentFlow.js + server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Aguardando API de pagamento para implementar fluxo completo"
+      - working: "NA"
+        agent: "main"
+        comment: "✅ Implementado link Asaas sandbox (https://sandbox.asaas.com/i/bsnw3pmz2yiacw1w) no PaymentFlow.js. Webhook /webhook/asaas-payment já existe no backend para validar pagamentos automaticamente. Corrigido imports axios e REACT_APP_BACKEND_URL."
 
 frontend:
   - task: "Interface do Bot IA"
