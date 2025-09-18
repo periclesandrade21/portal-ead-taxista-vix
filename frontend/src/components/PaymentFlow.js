@@ -10,13 +10,8 @@ import {
   CheckCircle, 
   Clock, 
   ArrowLeft,
-  Copy,
   Smartphone,
-  DollarSign,
-  AlertCircle,
-  Zap,
-  Shield,
-  ChevronDown
+  AlertCircle
 } from "lucide-react";
 
 const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
