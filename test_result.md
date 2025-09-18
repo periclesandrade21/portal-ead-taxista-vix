@@ -229,6 +229,18 @@ metadata:
   test_sequence: 0
   run_ui: false
 
+  - task: "Sistema de cidade personalizada"
+    implemented: true
+    working: true
+    file: "App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ FUNCIONALIDADE DE CIDADE PERSONALIZADA TOTALMENTE OPERACIONAL - Testes abrangentes executados com sucesso em 7 cenários: 1) CAMPO CONDICIONAL: Campo adicional NÃO aparece com cidades normais (Vitória) ✅, campo adicional APARECE corretamente ao selecionar '🏙️ Outra cidade do ES' ✅. 2) PREENCHIMENTO: Campo aceita texto corretamente ('Fundão') ✅. 3) VALIDAÇÃO: Sistema usa alert() para validação (comportamento esperado), erro desaparece ao preencher campo ✅. 4) CADASTRO COMPLETO: Aceita cadastro completo com cidade personalizada, popup de confirmação aparece corretamente ✅. 5) ALTERNÂNCIA: Campo desaparece ao mudar para cidade normal ✅, dados são limpos automaticamente ao alternar ✅. Funcionalidade implementada conforme especificações: lista de cidades ES + opção personalizada, campo condicional, validação específica, limpeza automática. Sistema pronto para produção."
+
 test_plan:
   current_focus: []
   stuck_tasks: []
