@@ -824,7 +824,7 @@ const Home = () => {
       </div>
       
       {/* Chat Bot */}
-      <SimpleChatBot />
+      <ChatBot />
     </div>
   );
 };
