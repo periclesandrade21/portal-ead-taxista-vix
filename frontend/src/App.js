@@ -47,6 +47,8 @@ const Home = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currentStep, setCurrentStep] = useState("registration"); // registration, payment, success
   const [userSubscription, setUserSubscription] = useState(null);
+  const [showPasswordPopup, setShowPasswordPopup] = useState(false);
+  const [passwordSentInfo, setPasswordSentInfo] = useState(null);
 
   // Array de imagens para o carrossel
   const carouselImages = [
