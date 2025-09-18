@@ -119,6 +119,15 @@ const Home = () => {
     }
   };
 
+  const handlePaymentSuccess = () => {
+    // Redirecionar para portal do aluno
+    window.location.href = "/student-portal";
+  };
+
+  const handleBackToRegistration = () => {
+    setCurrentStep("registration");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 relative">
       {/* Marca d'água da Terceira Ponte */}
