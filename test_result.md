@@ -146,40 +146,49 @@ backend:
 
 frontend:
   - task: "Interface do Bot IA"
-    implemented: false
+    implemented: true
     working: "NA"
-    file: "App.js"
+    file: "ChatBot.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Criar componente de chat para bot IA"
+      - working: "NA"
+        agent: "main"
+        comment: "✅ Componente ChatBot.js criado com interface completa, integrado no App.js. Inclui chat flutuante, histórico, sugestões rápidas, detecção de status, envio de mensagens, integração com backend /api/chat"
 
   - task: "Autoplay do vídeo na landing"
-    implemented: false
+    implemented: true
     working: "NA"
     file: "App.js"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implementar autoplay no vídeo Synthesia"
+      - working: "NA"
+        agent: "main"
+        comment: "✅ Autoplay implementado no iframe Synthesia adicionando ?autoplay=1 na URL"
 
   - task: "Melhorar formulário - campos obrigatórios"
-    implemented: false
+    implemented: true
     working: "NA"
     file: "App.js"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Adicionar 'todos os campos obrigatórios' no formulário"
+      - working: "NA"
+        agent: "main"
+        comment: "✅ Mensagem '* Todos os campos são obrigatórios' adicionada ao formulário de cadastro em vermelho destacado"
 
 metadata:
   created_by: "main_agent"
