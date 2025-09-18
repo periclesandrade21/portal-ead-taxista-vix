@@ -198,8 +198,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Bot IA para taxistas - API endpoints"
     - "Interface do Bot IA"
+    - "Autoplay do vídeo na landing"
     - "Melhorar formulário - campos obrigatórios"
   stuck_tasks: []
   test_all: false
@@ -208,5 +208,7 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: "Iniciando implementação do bot IA. Prioridades: 1) Bot IA funcional, 2) Ajustes no formulário, 3) Autoplay video, 4) Preparar estrutura para fluxo cadastro+pagamento"
+  - agent: "main"
+    message: "✅ IMPLEMENTAÇÕES CONCLUÍDAS: 1) Bot IA completo (backend + frontend), 2) Autoplay do vídeo, 3) Formulário melhorado. Backend testado e funcionando. Frontend precisa de teste para validar integração completa."
   - agent: "testing"
     message: "BACKEND TESTING COMPLETED SUCCESSFULLY - All chat bot functionality tested and working perfectly. The new chat bot system is fully operational with LLM integration, proper keyword detection for values and password reset, session isolation, and database persistence. All 9 comprehensive tests passed. The system correctly responds in Portuguese about EAD courses for taxistas, detects value questions with the required response 'Os valores do treinamento serão divulgados em breve', and handles password reset requests appropriately. Ready for production use."
