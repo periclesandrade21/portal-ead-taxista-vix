@@ -35,22 +35,6 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleCopyPixCode = async () => {
-    try {
-      await navigator.clipboard.writeText(pixCode);
-      alert("✅ Código PIX copiado com sucesso!");
-    } catch (err) {
-      // Fallback for older browsers
-      const textArea = document.createElement('textarea');
-      textArea.value = pixCode;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
-      alert("✅ Código PIX copiado!");
-    }
-  };
-
   const handlePaymentSuccess = () => {
     setPaymentStatus("success");
     setTimeout(() => {
