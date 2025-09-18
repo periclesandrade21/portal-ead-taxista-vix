@@ -255,16 +255,26 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
                 {paymentStatus === "pending" && (
                   <div className="space-y-6">
                     
-                    {/* QR Code e Instruções */}
+                    {/* QR Code e PIX CNPJ */}
                     <div className="bg-gradient-to-br from-blue-50 to-green-50 p-8 rounded-2xl text-center border-2 border-blue-200">
+                      
+                      {/* QR Code */}
                       <div className="bg-white p-6 rounded-xl shadow-lg inline-block mb-6">
                         <QrCode className="h-32 w-32 mx-auto text-blue-600" />
                       </div>
                       
                       <h3 className="text-2xl font-bold mb-4 text-gray-800">
-                        📱 Escaneie com seu celular
+                        📱 PIX via CNPJ ou QR Code
                       </h3>
                       
+                      {/* PIX CNPJ em destaque */}
+                      <div className="bg-white p-6 rounded-xl shadow-sm mb-6 border-2 border-green-300">
+                        <p className="text-sm text-gray-600 mb-2">PIX CNPJ:</p>
+                        <p className="text-2xl font-bold text-green-700 mb-4">02.914.651/0001-12</p>
+                        <p className="text-lg font-semibold text-gray-800">SINDTAXI-ES</p>
+                      </div>
+
+                      {/* Código PIX Copia e Cola */}
                       <div className="bg-white p-6 rounded-xl shadow-sm mb-6">
                         <p className="text-sm text-gray-500 mb-3">Código PIX Copia e Cola:</p>
                         <div className="bg-gray-50 p-4 rounded-lg border-2 border-dashed border-gray-300">
@@ -281,7 +291,7 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
                       
                       {/* Instruções passo a passo */}
                       <div className="bg-white p-6 rounded-xl shadow-sm mb-6">
-                        <h4 className="font-bold mb-4 text-gray-800">📝 Como pagar:</h4>
+                        <h4 className="font-bold mb-4 text-gray-800">📝 Como fazer o PIX:</h4>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                           <div className="text-center">
                             <div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
@@ -294,15 +304,15 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
                             <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
                               <span className="font-bold text-green-600">2</span>
                             </div>
-                            <p className="font-semibold">Escaneie o QR</p>
-                            <p className="text-gray-600">Ou cole o código PIX</p>
+                            <p className="font-semibold">Use CNPJ ou QR Code</p>
+                            <p className="text-gray-600">02.914.651/0001-12 ou escaneie</p>
                           </div>
                           <div className="text-center">
                             <div className="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
                               <span className="font-bold text-purple-600">3</span>
                             </div>
-                            <p className="font-semibold">Confirme R$ 150</p>
-                            <p className="text-gray-600">E finalize o pagamento</p>
+                            <p className="font-semibold">Confirme o valor</p>
+                            <p className="text-gray-600">Digite o valor informado</p>
                           </div>
                         </div>
                       </div>
@@ -311,17 +321,17 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
                     {/* Botão de verificação */}
                     <div className="text-center">
                       <p className="text-lg text-gray-700 mb-4">
-                        💳 <strong>Já fez o pagamento?</strong>
+                        💳 <strong>Já fez o PIX?</strong>
                       </p>
                       <Button
                         onClick={checkPaymentStatus}
                         className="w-full py-6 text-xl font-bold bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-300"
                       >
                         <Smartphone className="h-6 w-6 mr-3" />
-                        ✅ Verificar Meu Pagamento
+                        ✅ Verificar Meu PIX
                       </Button>
                       <p className="text-sm text-gray-500 mt-2">
-                        Clique aqui após realizar o pagamento
+                        Clique aqui após realizar o PIX
                       </p>
                     </div>
                   </div>
