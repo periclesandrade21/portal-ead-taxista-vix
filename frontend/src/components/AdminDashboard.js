@@ -438,6 +438,7 @@ const AdminDashboard = () => {
           <TabsList>
             <TabsTrigger value="subscriptions">Inscrições</TabsTrigger>
             <TabsTrigger value="payments">Pagamentos</TabsTrigger>
+            <TabsTrigger value="charts">Gráficos</TabsTrigger>
             <TabsTrigger value="discounts">Descontos & Bônus</TabsTrigger>
             <TabsTrigger value="reports">Relatórios</TabsTrigger>
           </TabsList>
