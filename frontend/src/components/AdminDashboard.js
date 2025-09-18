@@ -609,6 +609,122 @@ const AdminDashboard = () => {
             </Card>
           </TabsContent>
 
+          {/* Nova Aba: Gráficos */}
+          <TabsContent value="charts" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              
+              {/* Gráfico de Pagamentos por Mês */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <BarChart3 className="h-5 w-5 mr-2" />
+                    Evolução de Pagamentos
+                  </CardTitle>
+                  <CardDescription>Pagamentos e receita dos últimos meses</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {paymentChartData.map((data, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div className="flex items-center">
+                          <div className="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="font-medium">{data.month}</span>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-bold text-green-600">R$ {data.receita.toLocaleString()}</div>
+                          <div className="text-sm text-gray-500">{data.pagamentos} pagamentos</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Gráfico de Usuários por Região */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <PieChart className="h-5 w-5 mr-2" />
+                    Usuários por Cidade
+                  </CardTitle>
+                  <CardDescription>Distribuição de usuários no Espírito Santo</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {Object.entries(regionStats)
+                      .sort(([,a], [,b]) => b - a)
+                      .slice(0, 8)
+                      .map(([city, count], index) => {
+                        const colors = [
+                          'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500',
+                          'bg-red-500', 'bg-indigo-500', 'bg-pink-500', 'bg-gray-500'
+                        ];
+                        const maxCount = Math.max(...Object.values(regionStats));
+                        const percentage = (count / maxCount * 100);
+                        
+                        return (
+                          <div key={city} className="flex items-center justify-between">
+                            <div className="flex items-center flex-1">
+                              <div className={`w-3 h-3 ${colors[index]} rounded-full mr-3`}></div>
+                              <span className="text-sm font-medium">{city}</span>
+                            </div>
+                            <div className="flex items-center">
+                              <div className="w-24 bg-gray-200 rounded-full h-2 mr-3">
+                                <div 
+                                  className={`h-2 ${colors[index]} rounded-full`}
+                                  style={{ width: `${percentage}%` }}
+                                ></div>
+                              </div>
+                              <span className="text-sm font-bold w-8 text-right">{count}</span>
+                            </div>
+                          </div>
+                        );
+                      })
+                    }
+                  </div>
+                  <div className="mt-4 pt-4 border-t">
+                    <div className="flex justify-between text-sm text-gray-600">
+                      <span>Total de usuários:</span>
+                      <span className="font-bold">{Object.values(regionStats).reduce((a, b) => a + b, 0)}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Estatísticas Gerais */}
+              <Card className="lg:col-span-2">
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Activity className="h-5 w-5 mr-2" />
+                    Resumo Geral
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="text-center p-4 bg-blue-50 rounded-lg">
+                      <div className="text-2xl font-bold text-blue-600">{stats.total_subscriptions || 0}</div>
+                      <div className="text-sm text-gray-600">Total Inscrições</div>
+                    </div>
+                    <div className="text-center p-4 bg-green-50 rounded-lg">
+                      <div className="text-2xl font-bold text-green-600">{stats.paid_subscriptions || 0}</div>
+                      <div className="text-sm text-gray-600">Pagamentos</div>
+                    </div>
+                    <div className="text-center p-4 bg-yellow-50 rounded-lg">
+                      <div className="text-2xl font-bold text-yellow-600">{stats.pending_subscriptions || 0}</div>
+                      <div className="text-sm text-gray-600">Pendentes</div>
+                    </div>
+                    <div className="text-center p-4 bg-purple-50 rounded-lg">
+                      <div className="text-2xl font-bold text-purple-600">
+                        {stats.total_subscriptions ? ((stats.paid_subscriptions / stats.total_subscriptions) * 100).toFixed(1) : 0}%
+                      </div>
+                      <div className="text-sm text-gray-600">Taxa Conversão</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
           <TabsContent value="discounts">
             <Card>
               <CardHeader>
