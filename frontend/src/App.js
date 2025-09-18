@@ -49,6 +49,69 @@ const Home = () => {
   const [userSubscription, setUserSubscription] = useState(null);
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [passwordSentInfo, setPasswordSentInfo] = useState(null);
+  const [validationErrors, setValidationErrors] = useState({});
+
+  // Funções de validação
+  const validateTaxiPlate = (plate) => {
+    if (!plate) return false;
+    
+    const plateUpper = plate.toUpperCase().trim();
+    const patterns = [
+      /^[A-Z]{3}-\d{4}-T$/,      // ABC-1234-T
+      /^[A-Z]{3}\d{1}[A-Z]{1}\d{2}$/,  // ABC1D23 (Mercosul)
+      /^[A-Z]{3}\d{4}$/,         // ABC1234
+    ];
+    
+    return patterns.some(pattern => pattern.test(plateUpper));
+  };
+
+  const validateTaxiLicense = (license) => {
+    if (!license) return false;
+    
+    const licenseUpper = license.toUpperCase().trim();
+    const patterns = [
+      /^TA-\d{4,6}$/,           // TA-12345
+      /^TAX-\d{4}-\d{4}$/,      // TAX-2023-1234
+      /^T-\d{4,7}$/,            // T-1234567
+      /^[A-Z]{2,3}-\d{4,6}$/,   // Outros prefixos
+      /^\d{4,8}$/,              // Apenas números
+    ];
+    
+    return patterns.some(pattern => pattern.test(licenseUpper));
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    
+    if (!name.trim()) {
+      errors.name = "Nome é obrigatório";
+    }
+    
+    if (!email.trim()) {
+      errors.email = "Email é obrigatório";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      errors.email = "Email inválido";
+    }
+    
+    if (!phone.trim()) {
+      errors.phone = "Telefone é obrigatório";
+    }
+    
+    if (carPlate && !validateTaxiPlate(carPlate)) {
+      errors.carPlate = "Formato inválido. Use: ABC-1234-T, ABC1D23 ou ABC1234";
+    }
+    
+    if (licenseNumber && !validateTaxiLicense(licenseNumber)) {
+      errors.licenseNumber = "Formato inválido. Use: TA-12345, TAX-2023-1234, T-1234567 ou números";
+    }
+    
+    if (!city) {
+      errors.city = "Cidade é obrigatória";
+    }
+    
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   // Array de imagens para o carrossel
   const carouselImages = [
