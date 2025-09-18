@@ -118,22 +118,22 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="max-w-2xl mx-auto p-4 pt-8">
 
-        {/* Interface Ultra Minimalista - Apenas o Link */}
+        {/* Redirecionamento automático */}
         <div className="flex items-center justify-center min-h-[60vh]">
           <Card className="shadow-xl w-full max-w-md">
             <CardContent className="p-8 text-center">
               
               {paymentStatus === "pending" && (
                 <div>
-                  <button
-                    onClick={() => window.open('https://sandbox.asaas.com/i/bsnw3pmz2yiacw1w', '_blank')}
-                    className="w-full py-8 px-8 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold rounded-xl text-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                  >
-                    <div className="flex items-center justify-center space-x-3">
-                      <QrCode className="h-8 w-8" />
-                      <span>💳 Finalizar Pagamento</span>
-                    </div>
-                  </button>
+                  <div className="animate-spin mb-6 mx-auto">
+                    <Clock className="h-16 w-16 text-blue-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                    🚀 Redirecionando para pagamento...
+                  </h3>
+                  <p className="text-gray-600">
+                    Você será redirecionado automaticamente para a página de pagamento segura.
+                  </p>
                 </div>
               )}
 
