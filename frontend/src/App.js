@@ -205,13 +205,14 @@ const Home = () => {
     setShowPasswordPopup(false);
     
     // Preparar dados da inscrição para o fluxo de pagamento
+    const finalCity = city === "Outra" ? customCity : city;
     const subscriptionData = {
       name,
       email,
       phone,
       car_plate: carPlate,
       license_number: licenseNumber,
-      city
+      city: finalCity
     };
     
     setUserSubscription(subscriptionData);
