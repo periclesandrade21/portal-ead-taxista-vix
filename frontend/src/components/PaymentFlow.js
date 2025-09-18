@@ -16,20 +16,6 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
   // URL do backend
   const API = process.env.REACT_APP_BACKEND_URL;
 
-  // Timer countdown
-  useEffect(() => {
-    if (timeLeft > 0 && paymentStatus === "pending") {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [timeLeft, paymentStatus]);
-
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
   const handlePaymentSuccess = () => {
     setPaymentStatus("success");
     setTimeout(() => {
