@@ -23,6 +23,9 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
   const [paymentStatus, setPaymentStatus] = useState("pending"); // pending, processing, success, failed
   const [pixCode, setPixCode] = useState("");
   const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutos em segundos
+  
+  // URL do backend
+  const API = process.env.REACT_APP_BACKEND_URL;
 
   // Gerar código PIX automaticamente com CNPJ
   useEffect(() => {
