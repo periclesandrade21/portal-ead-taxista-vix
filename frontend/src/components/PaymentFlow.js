@@ -21,13 +21,6 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
   // URL do backend
   const API = process.env.REACT_APP_BACKEND_URL;
 
-  // Gerar código PIX automaticamente com CNPJ
-  useEffect(() => {
-    // PIX CNPJ: 02.914.651/0001-12
-    const simulatedPixCode = `00020126580014BR.GOV.BCB.PIX013602914651000112520400005303986540005802BR5909SINDTAXI6009VITORIA62070503***6304`;
-    setPixCode(simulatedPixCode);
-  }, []);
-
   // Timer countdown
   useEffect(() => {
     if (timeLeft > 0 && paymentStatus === "pending") {
