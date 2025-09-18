@@ -155,6 +155,7 @@ const Home = () => {
           filter: 'contrast(1.2) brightness(0.8)',
           mixBlendMode: 'multiply'
         }}
+      ></div>
         }}
       />
       
