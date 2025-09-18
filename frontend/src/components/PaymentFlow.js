@@ -14,7 +14,8 @@ import {
   DollarSign,
   AlertCircle,
   Zap,
-  Shield
+  Shield,
+  ChevronDown
 } from "lucide-react";
 
 const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
