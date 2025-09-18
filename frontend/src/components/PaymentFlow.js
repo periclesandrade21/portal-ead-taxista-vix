@@ -248,7 +248,7 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
                   </div>
                 </div>
 
-                {/* Status do Pagamento */}
+                {/* PIX Payment - Status do Pagamento */}
                 {paymentStatus === "pending" && (
                   <div className="space-y-6">
                     
