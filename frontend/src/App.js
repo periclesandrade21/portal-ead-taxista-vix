@@ -129,7 +129,19 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 relative">
+    <>
+      {/* Fluxo de Pagamento */}
+      {currentStep === "payment" && userSubscription && (
+        <PaymentFlow
+          userSubscription={userSubscription}
+          onPaymentSuccess={handlePaymentSuccess}
+          onBack={handleBackToRegistration}
+        />
+      )}
+
+      {/* Página Principal */}
+      {currentStep === "registration" && (
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 relative">
       {/* Marca d'água da Terceira Ponte */}
       <div 
         className="fixed inset-0 z-0 opacity-5 bg-center bg-no-repeat bg-contain"
