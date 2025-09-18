@@ -312,30 +312,47 @@ async def get_status_checks():
     return [StatusCheck(**parse_from_mongo(status_check)) for status_check in status_checks]
 
 # Subscription routes
-@api_router.post("/subscribe", response_model=UserSubscription)
-async def create_subscription(subscription_data: UserSubscriptionCreate):
-    """Create a new user subscription"""
-    # Check if email already exists
-    existing_subscription = await db.subscriptions.find_one({"email": subscription_data.email})
-    if existing_subscription:
-        raise HTTPException(status_code=400, detail="Email já cadastrado no sistema")
-    
-    # Convert frontend field names to backend field names
-    subscription_dict = subscription_data.dict()
-    if 'carPlate' in subscription_dict:
-        subscription_dict['car_plate'] = subscription_dict.pop('carPlate')
-    if 'licenseNumber' in subscription_dict:
-        subscription_dict['license_number'] = subscription_dict.pop('licenseNumber')
-    
-    subscription = UserSubscription(**subscription_dict)
-    prepared_data = prepare_for_mongo(subscription.dict())
-    
-    await db.subscriptions.insert_one(prepared_data)
-    
-    # Log the subscription
-    logging.info(f"Nova inscrição criada: {subscription.name} - {subscription.email} - Placa: {subscription.car_plate} - Alvará: {subscription.license_number}")
-    
-    return subscription
+@api_router.post("/subscribe", response_model=PasswordSentResponse)
+async def create_subscription(subscription: UserSubscriptionCreate):
+    """Create a new subscription and send password"""
+    try:
+        # Gerar senha temporária
+        temporary_password = generate_password()
+        
+        # Criar dados da inscrição
+        subscription_data = UserSubscription(
+            name=subscription.name,
+            email=subscription.email,
+            phone=subscription.phone,
+            car_plate=subscription.carPlate,
+            license_number=subscription.licenseNumber,
+            status="pending",
+            temporary_password=temporary_password
+        )
+        
+        # Preparar para MongoDB
+        prepared_data = prepare_for_mongo(subscription_data.dict())
+        
+        # Salvar no banco
+        result = await db.subscriptions.insert_one(prepared_data)
+        
+        # Enviar senha por email e WhatsApp
+        email_sent = await send_password_email(subscription.email, subscription.name, temporary_password)
+        whatsapp_sent = await send_password_whatsapp(subscription.phone, subscription.name, temporary_password)
+        
+        logging.info(f"Inscrição criada: {subscription.email} - Senha: {temporary_password}")
+        logging.info(f"Email enviado: {email_sent}, WhatsApp enviado: {whatsapp_sent}")
+        
+        return PasswordSentResponse(
+            message="Cadastro realizado com sucesso! Senha enviada por email e WhatsApp.",
+            password_sent_email=email_sent,
+            password_sent_whatsapp=whatsapp_sent,
+            temporary_password=temporary_password  # Remover em produção
+        )
+        
+    except Exception as e:
+        logging.error(f"Erro ao criar inscrição: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro ao processar cadastro")
 
 @api_router.get("/subscriptions", response_model=List[UserSubscription])
 async def get_subscriptions():
