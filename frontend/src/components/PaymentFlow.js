@@ -224,7 +224,7 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
               <CardHeader className="bg-gradient-to-r from-green-600 to-blue-600 text-white">
                 <CardTitle className="flex items-center text-xl">
                   <QrCode className="h-6 w-6 mr-3" />
-                  💳 Finalizar Cadastro e Pagar via PIX
+                  💳 Finalizar Pagamento via PIX
                 </CardTitle>
                 <CardDescription className="text-green-100">
                   ⚡ Aprovação instantânea - Comece seus estudos agora mesmo!
