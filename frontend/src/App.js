@@ -156,8 +156,6 @@ const Home = () => {
           mixBlendMode: 'multiply'
         }}
       ></div>
-        }}
-      />
       
       {/* Conteúdo da página */}
       <div className="relative z-10">
