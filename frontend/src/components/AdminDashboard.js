@@ -465,6 +465,35 @@ const AdminDashboard = () => {
                         className="pl-8"
                       />
                     </div>
+                    
+                    {/* Filtros por Status */}
+                    <div className="flex gap-1 border rounded-lg p-1">
+                      <Button 
+                        size="sm"
+                        variant={statusFilter === 'all' ? 'default' : 'ghost'}
+                        onClick={() => setStatusFilter('all')}
+                        className="text-xs"
+                      >
+                        Todos
+                      </Button>
+                      <Button 
+                        size="sm"
+                        variant={statusFilter === 'paid' ? 'default' : 'ghost'}
+                        onClick={() => setStatusFilter('paid')}
+                        className={`text-xs ${statusFilter === 'paid' ? 'bg-green-600 hover:bg-green-700' : 'text-green-700 hover:bg-green-50'}`}
+                      >
+                        ✅ Pagos
+                      </Button>
+                      <Button 
+                        size="sm"
+                        variant={statusFilter === 'pending' ? 'default' : 'ghost'}
+                        onClick={() => setStatusFilter('pending')}
+                        className={`text-xs ${statusFilter === 'pending' ? 'bg-red-600 hover:bg-red-700' : 'text-red-700 hover:bg-red-50'}`}
+                      >
+                        ⏳ Pendentes
+                      </Button>
+                    </div>
+                    
                     <Button variant="outline">
                       <Download className="h-4 w-4 mr-2" />
                       Exportar
