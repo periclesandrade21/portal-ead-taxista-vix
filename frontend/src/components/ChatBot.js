@@ -23,13 +23,16 @@ const ChatBot = () => {
     {
       id: 1,
       type: 'bot',
-      content: 'Olá! 👋 Sou o assistente virtual do EAD Taxista ES. Como posso ajudá-lo hoje?',
+      content: 'Olá! 👋 Sou o TaxiBot, seu assistente virtual do EAD Taxista ES. Como posso ajudá-lo hoje?',
       timestamp: new Date()
     }
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random()}`);
+  
+  // Avatar do bot
+  const botAvatarUrl = "https://images.unsplash.com/photo-1684369175833-4b445ad6bfb5?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzh8MHwxfHNlYXJjaHwzfHxmcmllbmRseSUyMGNoYXRib3QlMjBhdmF0YXJ8ZW58MHx8fHwxNzU4MjE3MTk3fDA&ixlib=rb-4.1.0&q=85";
   
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
