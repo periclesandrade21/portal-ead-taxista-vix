@@ -115,11 +115,13 @@ const ChatBot = () => {
 
   // Sugestões rápidas
   const quickSuggestions = [
-    "Como funcionam os cursos?",
-    "Quais são os módulos obrigatórios?",
+    "Como funcionam os cursos EAD?",
+    "Quais cursos são obrigatórios?",
     "Como é o certificado?",
-    "Preciso resetar minha senha",
-    "Qual o valor do curso?"
+    "Esqueci minha senha",
+    "Qual o valor do curso?",
+    "Quanto tempo dura o curso?",
+    "O certificado é válido em todo Brasil?"
   ];
 
   const handleSuggestionClick = (suggestion) => {
