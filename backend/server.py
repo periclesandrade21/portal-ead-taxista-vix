@@ -164,6 +164,69 @@ def parse_from_mongo(item):
     return item
 
 # Chat Bot Helper Functions
+def generate_password(length=8):
+    """Gera uma senha aleatória"""
+    characters = string.ascii_letters + string.digits
+    return ''.join(secrets.choice(characters) for _ in range(length))
+
+async def send_password_email(email: str, name: str, password: str):
+    """Envia senha por email"""
+    try:
+        # Configurações do email (usando Gmail como exemplo)
+        smtp_server = "smtp.gmail.com"
+        smtp_port = 587
+        sender_email = "suporte@sindtaxi-es.org"  # Você precisará configurar isso
+        sender_password = os.environ.get('EMAIL_PASSWORD', '')  # Adicione no .env
+        
+        # Criar mensagem
+        message = MIMEMultipart()
+        message["From"] = sender_email
+        message["To"] = email
+        message["Subject"] = "Sua senha de acesso - EAD Taxista ES"
+        
+        body = f"""
+        Olá {name},
+        
+        Seu cadastro foi realizado com sucesso!
+        
+        Sua senha temporária de acesso é: {password}
+        
+        Você pode usar esta senha para acessar o portal do aluno após a confirmação do pagamento.
+        
+        Atenciosamente,
+        Equipe EAD Taxista ES
+        Sindicato dos Taxistas do Espírito Santo
+        """
+        
+        message.attach(MIMEText(body, "plain"))
+        
+        # Enviar email
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        text = message.as_string()
+        server.sendmail(sender_email, email, text)
+        server.quit()
+        
+        return True
+    except Exception as e:
+        logging.error(f"Erro ao enviar email: {str(e)}")
+        return False
+
+async def send_password_whatsapp(phone: str, name: str, password: str):
+    """Envia senha por WhatsApp - Simulado por enquanto"""
+    try:
+        # Por enquanto, vamos simular o envio
+        # Em produção, você integraria com API do WhatsApp Business ou similar
+        logging.info(f"WhatsApp enviado para {phone}: Senha {password}")
+        
+        # Simular sucesso (70% de sucesso)
+        import random
+        return random.random() > 0.3
+    except Exception as e:
+        logging.error(f"Erro ao enviar WhatsApp: {str(e)}")
+        return False
+
 def get_bot_context():
     """Sistema de contexto para o bot IA dos taxistas"""
     return """Você é um assistente virtual especializado em cursos EAD para taxistas do Espírito Santo. 
