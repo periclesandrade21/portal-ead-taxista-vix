@@ -101,3 +101,98 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Implementar bot IA para taxistas (português), alterar Auth0 para Keycloak, unificar cadastro+pagamento, autoplay video, melhorar formulário, email suporte@sindtaxi-es.org"
+
+backend:
+  - task: "Bot IA para taxistas - API endpoints"
+    implemented: false
+    working: "NA"
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Iniciando implementação do bot IA com LLM integration"
+
+  - task: "Sistema de email com Titan Email"
+    implemented: false
+    working: "NA" 
+    file: "server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Preparar integração email suporte@sindtaxi-es.org"
+
+  - task: "Fluxo unificado cadastro+pagamento"
+    implemented: false
+    working: "NA"
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Aguardando API de pagamento para implementar fluxo completo"
+
+frontend:
+  - task: "Interface do Bot IA"
+    implemented: false
+    working: "NA"
+    file: "App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Criar componente de chat para bot IA"
+
+  - task: "Autoplay do vídeo na landing"
+    implemented: false
+    working: "NA"
+    file: "App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implementar autoplay no vídeo Synthesia"
+
+  - task: "Melhorar formulário - campos obrigatórios"
+    implemented: false
+    working: "NA"
+    file: "App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Adicionar 'todos os campos obrigatórios' no formulário"
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 0
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Bot IA para taxistas - API endpoints"
+    - "Interface do Bot IA"
+    - "Melhorar formulário - campos obrigatórios"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: "Iniciando implementação do bot IA. Prioridades: 1) Bot IA funcional, 2) Ajustes no formulário, 3) Autoplay video, 4) Preparar estrutura para fluxo cadastro+pagamento"
