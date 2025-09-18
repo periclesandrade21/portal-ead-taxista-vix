@@ -170,7 +170,7 @@ const Home = () => {
             </div>
             <nav className="hidden md:flex space-x-8">
               <a href="#cursos" className="text-gray-600 hover:text-blue-600 font-medium">Cursos</a>
-              <a href="#pagamento" className="text-gray-600 hover:text-blue-600 font-medium">Pagamento</a>
+              <a href="#cadastro" className="text-gray-600 hover:text-blue-600 font-medium">Cadastro</a>
               <a href="#contato" className="text-gray-600 hover:text-blue-600 font-medium">Contato</a>
             </nav>
           </div>
