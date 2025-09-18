@@ -18,19 +18,15 @@ import {
 } from "lucide-react";
 
 const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
-  const [paymentMethod, setPaymentMethod] = useState("pix");
   const [paymentStatus, setPaymentStatus] = useState("pending"); // pending, processing, success, failed
   const [pixCode, setPixCode] = useState("");
   const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutos em segundos
-  const [showPixInstructions, setShowPixInstructions] = useState(false);
 
-  // Gerar código PIX simulado
+  // Gerar código PIX automaticamente
   useEffect(() => {
-    if (paymentMethod === "pix") {
-      const simulatedPixCode = `00020126580014BR.GOV.BCB.PIX013602914651000112520400005303986540${(150).toFixed(2)}5802BR5909SINDTAXI6009VITORIA62070503***6304`;
-      setPixCode(simulatedPixCode);
-    }
-  }, [paymentMethod]);
+    const simulatedPixCode = `00020126580014BR.GOV.BCB.PIX013602914651000112520400005303986540${(150).toFixed(2)}5802BR5909SINDTAXI6009VITORIA62070503***6304`;
+    setPixCode(simulatedPixCode);
+  }, []);
 
   // Timer countdown
   useEffect(() => {
