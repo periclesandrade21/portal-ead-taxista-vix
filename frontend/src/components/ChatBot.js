@@ -245,8 +245,17 @@ const ChatBot = () => {
                   {isLoading && (
                     <div className="flex justify-start">
                       <div className="flex items-start space-x-2">
-                        <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center">
-                          <Bot className="h-4 w-4" />
+                        <div className="w-8 h-8 rounded-full bg-white border-2 border-green-600 flex items-center justify-center overflow-hidden">
+                          <img 
+                            src={botAvatarUrl} 
+                            alt="TaxiBot" 
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              e.target.parentNode.classList.add('bg-green-600');
+                              e.target.parentNode.innerHTML = '<svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+                            }}
+                          />
                         </div>
                         <div className="bg-gray-100 rounded-lg rounded-bl-none p-3">
                           <div className="flex space-x-1">
@@ -254,6 +263,7 @@ const ChatBot = () => {
                             <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                             <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                           </div>
+                          <p className="text-xs text-gray-500 mt-1">TaxiBot está digitando...</p>
                         </div>
                       </div>
                     </div>
