@@ -389,6 +389,18 @@ async def get_user(user_id: str):
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
     return User(**parse_from_mongo(user))
 
+@api_router.delete("/subscriptions/{subscription_id}")
+async def delete_subscription(subscription_id: str):
+    """Delete a subscription"""
+    result = await db.subscriptions.delete_one({"id": subscription_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Inscrição não encontrada")
+    
+    logging.info(f"Inscrição excluída: {subscription_id}")
+    
+    return {"message": "Inscrição excluída com sucesso"}
+
 # Module routes
 @api_router.post("/modules", response_model=Module)
 async def create_module(module_data: Module):
