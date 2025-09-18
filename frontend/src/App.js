@@ -819,6 +819,9 @@ const Home = () => {
         </div>
       </footer>
       </div>
+      
+      {/* Chat Bot */}
+      <ChatBot />
     </div>
   );
 };
