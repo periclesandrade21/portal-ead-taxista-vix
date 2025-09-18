@@ -132,13 +132,8 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
         {/* Progress Steps */}
         <ProgressSteps currentStep="payment" />
         
-        {/* Header com informações importantes */}
+        {/* Header sem título de pagamento */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">💳 Finalizar Pagamento</h1>
-          <p className="text-xl text-gray-600 mb-4">
-            Complete seu pagamento via PIX de forma segura e rápida
-          </p>
-          
           {timeLeft > 0 && paymentStatus === "pending" && (
             <div className="inline-flex items-center bg-orange-100 text-orange-800 px-6 py-3 rounded-full text-lg font-semibold">
               <Clock className="h-5 w-5 mr-2" />
