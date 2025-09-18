@@ -272,6 +272,18 @@ const AdminDashboard = () => {
       });
     }
 
+    // Filtrar por status
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(sub => {
+        if (statusFilter === 'paid') {
+          return sub.status === 'paid' || sub.status === 'active';
+        } else if (statusFilter === 'pending') {
+          return sub.status === 'pending';
+        }
+        return true;
+      });
+    }
+
     return filtered;
   };
 
