@@ -145,13 +145,16 @@ const Home = () => {
       {/* Página Principal */}
       {currentStep === "registration" && (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 relative">
-      {/* Marca d'água da Terceira Ponte */}
+      {/* Marca d'água da Terceira Ponte - Melhorada */}
       <div 
-        className="fixed inset-0 z-0 opacity-5 bg-center bg-no-repeat bg-contain"
+        className="fixed inset-0 z-0 opacity-15 bg-center bg-no-repeat bg-contain"
         style={{
           backgroundImage: "url('https://images.unsplash.com/photo-1725132620980-808ebeee990b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzh8MHwxfHNlYXJjaHwyfHx0ZXJjZWlyYSUyMHBvbnRlJTIwZXNwaXJpdG8lMjBzYW50b3xlbnwwfHx8fDE3NTc5OTg1NDF8MA&ixlib=rb-4.1.0&q=85')",
-          backgroundSize: '60%',
-          backgroundPosition: 'center center'
+          backgroundSize: '80%',
+          backgroundPosition: 'center center',
+          filter: 'contrast(1.2) brightness(0.8)',
+          mixBlendMode: 'multiply'
+        }}
         }}
       />
       
