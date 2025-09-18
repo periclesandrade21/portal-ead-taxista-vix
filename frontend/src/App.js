@@ -594,24 +594,37 @@ const Home = () => {
 
       {/* Inscrição */}
       <section className="py-20 bg-gradient-to-r from-blue-600 to-green-600">
-        <div className="max-w-4xl mx-auto px-4">
+        <div className="max-w-6xl mx-auto px-4">
+          
+          {/* Progress Steps */}
+          <div className="mb-12">
+            <ProgressSteps currentStep="registration" />  
+          </div>
+          
           <div className="text-center mb-12">
-            <h3 className="text-4xl font-bold text-white mb-4">Comece Sua Jornada Agora</h3>
-            <p className="text-xl text-blue-100">
-              Não perca tempo - Sua carreira não pode esperar!
+            <h3 className="text-4xl font-bold text-white mb-4">🚀 Comece Sua Jornada Agora</h3>
+            <p className="text-xl text-blue-100 mb-2">
+              Complete seu cadastro e prossiga para o pagamento PIX
+            </p>
+            <p className="text-lg text-blue-200">
+              ⚡ Processo rápido e seguro - Acesso liberado automaticamente!
             </p>
           </div>
 
-          <Card className="max-w-2xl mx-auto shadow-2xl">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl">Cadastre-se e Comece Agora</CardTitle>
-              <CardDescription>Complete seu cadastro e prossiga para o pagamento</CardDescription>
-              <div className="mt-2 text-sm text-red-600 font-medium">
-                * Todos os campos são obrigatórios
+          <Card className="max-w-3xl mx-auto shadow-2xl border-0">
+            <CardHeader className="text-center bg-gradient-to-r from-slate-50 to-blue-50 rounded-t-lg">
+              <CardTitle className="text-3xl font-bold text-gray-800">📝 Dados do Taxista</CardTitle>
+              <CardDescription className="text-lg text-gray-600">
+                Preencha seus dados para criar sua conta
+              </CardDescription>
+              <div className="mt-4 p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
+                <p className="text-sm text-red-700 font-medium">
+                  ⚠️ <strong>Todos os campos são obrigatórios</strong> - Preencha com seus dados reais
+                </p>
               </div>
             </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubscription} className="space-y-6">
+            <CardContent className="p-8">
+              <form onSubmit={handleSubscription} className="space-y-8">
                 <div>
                   <Label htmlFor="name">Nome Completo</Label>
                   <Input
