@@ -785,12 +785,24 @@ const Home = () => {
                         id="carPlate"
                         type="text"
                         value={carPlate}
-                        onChange={(e) => setCarPlate(e.target.value.toUpperCase())}
-                        placeholder="ABC-1234 ou ABC1D23"
+                        onChange={(e) => {
+                          setCarPlate(e.target.value.toUpperCase());
+                          // Limpar erro quando usuário digita
+                          if (validationErrors.carPlate) {
+                            setValidationErrors(prev => ({...prev, carPlate: ''}));
+                          }
+                        }}
+                        placeholder="ABC-1234-T, ABC1D23 ou ABC1234"
                         required
-                        className="mt-2 h-12 text-lg font-mono"
-                        maxLength="8"
+                        className={`mt-2 h-12 text-lg font-mono ${validationErrors.carPlate ? 'border-red-500' : ''}`}
+                        maxLength="10"
                       />
+                      {validationErrors.carPlate && (
+                        <p className="text-red-500 text-xs mt-1">{validationErrors.carPlate}</p>
+                      )}
+                      <p className="text-xs text-gray-500 mt-1">
+                        Formatos aceitos: ABC-1234-T (táxi), ABC1D23 (Mercosul), ABC1234
+                      </p>
                     </div>
 
                     <div>
@@ -799,11 +811,23 @@ const Home = () => {
                         id="licenseNumber"
                         type="text"
                         value={licenseNumber}
-                        onChange={(e) => setLicenseNumber(e.target.value)}
-                        placeholder="Número do seu alvará"
+                        onChange={(e) => {
+                          setLicenseNumber(e.target.value.toUpperCase());
+                          // Limpar erro quando usuário digita
+                          if (validationErrors.licenseNumber) {
+                            setValidationErrors(prev => ({...prev, licenseNumber: ''}));
+                          }
+                        }}
+                        placeholder="TA-12345, TAX-2023-1234, T-1234567"
                         required
-                        className="mt-2 h-12 text-lg"
+                        className={`mt-2 h-12 text-lg ${validationErrors.licenseNumber ? 'border-red-500' : ''}`}
                       />
+                      {validationErrors.licenseNumber && (
+                        <p className="text-red-500 text-xs mt-1">{validationErrors.licenseNumber}</p>
+                      )}
+                      <p className="text-xs text-gray-500 mt-1">
+                        Formatos aceitos: TA-12345, TAX-2023-1234, T-1234567 ou apenas números
+                      </p>
                     </div>
 
                     <div className="md:col-span-2">
