@@ -217,8 +217,11 @@ async def check_duplicate_registration(db, name: str, email: str) -> dict:
     """Verifica duplicidade de nome e email"""
     duplicates = {}
     
-    # Verificar email duplicado
-    email_exists = await db.subscriptions.find_one({"email": email})
+    # Verificar email duplicado (case-insensitive)
+    email_normalized = email.strip().lower()
+    email_exists = await db.subscriptions.find_one({
+        "email": {"$regex": f"^{re.escape(email_normalized)}$", "$options": "i"}
+    })
     if email_exists:
         duplicates["email"] = True
     
@@ -233,6 +236,18 @@ async def check_duplicate_registration(db, name: str, email: str) -> dict:
             break
     
     return duplicates
+
+def validate_email_format(email: str) -> bool:
+    """Valida formato de email conforme RFC 5322"""
+    if not email:
+        return False
+    
+    email = email.strip()
+    
+    # Regex mais robusta baseada na RFC 5322
+    email_pattern = r'^[a-zA-Z0-9.!#$%&\'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$'
+    
+    return re.match(email_pattern, email) is not None
 
 async def send_password_email(email: str, name: str, password: str):
     """Envia senha por email"""
