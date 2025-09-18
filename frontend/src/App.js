@@ -764,20 +764,28 @@ const Home = () => {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
-              className="px-8 py-4 text-lg bg-green-600 hover:bg-green-700 text-white border-0"
-              onClick={() => window.open('https://api.whatsapp.com/send?phone=5527319117277&text=Olá! Preciso de ajuda com o curso EAD Taxista ES', '_blank')}
+              className="px-8 py-4 text-lg bg-blue-600 hover:bg-blue-700 text-white border-0"
+              onClick={() => window.open('mailto:suporte@sindtaxi-es.org?subject=Suporte EAD Taxista ES&body=Olá! Preciso de ajuda com o curso EAD Taxista ES', '_blank')}
             >
-              <Phone className="mr-2 h-5 w-5" />
-              WhatsApp Bot
+              <Mail className="mr-2 h-5 w-5" />
+              📧 Suporte por Email
             </Button>
             <Button 
               variant="outline" 
-              className="px-8 py-4 text-lg border-white text-white hover:bg-white hover:text-green-600"
+              className="px-8 py-4 text-lg border-white text-white hover:bg-white hover:text-blue-600"
               onClick={() => window.open('tel:+5527319117277', '_blank')}
             >
               <Phone className="mr-2 h-5 w-5" />
-              Ligar Agora
+              📞 Ligar Agora
             </Button>
+          </div>
+          
+          <div className="mt-6 p-4 bg-white/10 rounded-lg backdrop-blur-sm">
+            <p className="text-sm text-center text-white">
+              ⚠️ <strong>Importante:</strong> Para suporte técnico, utilize preferencialmente o email: 
+              <br />
+              <strong>suporte@sindtaxi-es.org</strong>
+            </p>
           </div>
           
           <div className="mt-8 p-6 bg-white/10 backdrop-blur-lg rounded-lg border border-white/20">
