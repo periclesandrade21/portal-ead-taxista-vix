@@ -206,12 +206,25 @@ const ChatBot = () => {
                       className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                       <div className={`flex items-start space-x-2 max-w-[85%] ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center overflow-hidden ${
                           message.type === 'user' 
                             ? 'bg-blue-600 text-white' 
-                            : 'bg-green-600 text-white'
+                            : 'bg-white border-2 border-green-600'
                         }`}>
-                          {message.type === 'user' ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
+                          {message.type === 'user' ? (
+                            <User className="h-4 w-4" />
+                          ) : (
+                            <img 
+                              src={botAvatarUrl} 
+                              alt="TaxiBot" 
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.parentNode.classList.add('bg-green-600');
+                                e.target.parentNode.innerHTML = '<svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+                              }}
+                            />
+                          )}
                         </div>
                         <div className={`rounded-lg p-3 ${
                           message.type === 'user'
