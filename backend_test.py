@@ -574,14 +574,17 @@ def test_subscription_status_after_webhook(test_email):
 
 def run_all_tests():
     """Run all tests and provide summary"""
-    print(f"{Colors.BOLD}EAD TAXISTA ES - CHAT BOT SYSTEM TESTING{Colors.ENDC}")
+    print(f"{Colors.BOLD}EAD TAXISTA ES - COMPLETE SYSTEM TESTING{Colors.ENDC}")
     print(f"Backend URL: {BACKEND_URL}")
     print(f"Test started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
     test_results = {}
     
-    # Run all tests
+    # Run basic tests first
     test_results['health_check'] = test_health_check()
+    test_results['existing_endpoints'] = test_existing_endpoints()
+    
+    # Run chat bot tests
     test_results['chat_normal'], session_id = test_chat_normal_message()
     test_results['chat_values'] = test_chat_value_question()
     test_results['chat_password_reset'] = test_chat_password_reset()
@@ -589,26 +592,59 @@ def run_all_tests():
     test_results['password_reset_endpoint'] = test_password_reset_endpoint()
     test_results['llm_integration'] = test_llm_integration()
     test_results['session_isolation'] = test_session_isolation()
-    test_results['existing_endpoints'] = test_existing_endpoints()
+    
+    # Run Asaas payment flow tests
+    print(f"\n{Colors.BOLD}{'='*60}{Colors.ENDC}")
+    print(f"{Colors.BOLD}STARTING ASAAS PAYMENT FLOW TESTING{Colors.ENDC}")
+    print(f"{Colors.BOLD}{'='*60}{Colors.ENDC}")
+    
+    test_results['subscription_creation'], subscription_id, test_email = test_subscription_creation()
+    test_results['asaas_webhook'] = test_asaas_webhook(test_email)
+    test_results['payment_verification'] = test_payment_verification(test_email)
+    test_results['subscription_status_check'] = test_subscription_status_after_webhook(test_email)
     
     # Print summary
     print_test_header("TEST SUMMARY")
     
-    passed = sum(1 for result in test_results.values() if result)
-    total = len(test_results)
+    # Separate chat bot and payment flow results
+    chat_tests = ['health_check', 'existing_endpoints', 'chat_normal', 'chat_values', 'chat_password_reset', 
+                  'chat_history', 'password_reset_endpoint', 'llm_integration', 'session_isolation']
+    payment_tests = ['subscription_creation', 'asaas_webhook', 'payment_verification', 'subscription_status_check']
     
-    for test_name, result in test_results.items():
-        status = "PASS" if result else "FAIL"
-        color = Colors.GREEN if result else Colors.RED
-        print(f"{color}{status:>6}{Colors.ENDC} - {test_name.replace('_', ' ').title()}")
+    print(f"{Colors.BOLD}CHAT BOT SYSTEM TESTS:{Colors.ENDC}")
+    chat_passed = 0
+    for test_name in chat_tests:
+        if test_name in test_results:
+            result = test_results[test_name]
+            status = "PASS" if result else "FAIL"
+            color = Colors.GREEN if result else Colors.RED
+            print(f"{color}{status:>6}{Colors.ENDC} - {test_name.replace('_', ' ').title()}")
+            if result:
+                chat_passed += 1
     
-    print(f"\n{Colors.BOLD}OVERALL RESULT: {passed}/{total} tests passed{Colors.ENDC}")
+    print(f"\n{Colors.BOLD}ASAAS PAYMENT FLOW TESTS:{Colors.ENDC}")
+    payment_passed = 0
+    for test_name in payment_tests:
+        if test_name in test_results:
+            result = test_results[test_name]
+            status = "PASS" if result else "FAIL"
+            color = Colors.GREEN if result else Colors.RED
+            print(f"{color}{status:>6}{Colors.ENDC} - {test_name.replace('_', ' ').title()}")
+            if result:
+                payment_passed += 1
     
-    if passed == total:
-        print_success("All tests passed! Chat bot system is working correctly.")
+    total_passed = sum(1 for result in test_results.values() if result)
+    total_tests = len(test_results)
+    
+    print(f"\n{Colors.BOLD}OVERALL RESULT: {total_passed}/{total_tests} tests passed{Colors.ENDC}")
+    print(f"{Colors.BOLD}Chat Bot System: {chat_passed}/{len(chat_tests)} tests passed{Colors.ENDC}")
+    print(f"{Colors.BOLD}Payment Flow: {payment_passed}/{len(payment_tests)} tests passed{Colors.ENDC}")
+    
+    if total_passed == total_tests:
+        print_success("All tests passed! Complete system is working correctly.")
         return True
     else:
-        print_error(f"{total - passed} tests failed. Chat bot system needs attention.")
+        print_error(f"{total_tests - total_passed} tests failed. System needs attention.")
         return False
 
 if __name__ == "__main__":
