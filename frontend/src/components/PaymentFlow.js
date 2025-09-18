@@ -215,16 +215,16 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
             </Card>
           </div>
 
-          {/* Pagamento - Área principal */}
+          {/* Pagamento PIX Direto - Área principal */}
           <div className="lg:col-span-2">
             <Card className="shadow-xl">
               <CardHeader className="bg-gradient-to-r from-green-600 to-blue-600 text-white">
                 <CardTitle className="flex items-center text-xl">
                   <QrCode className="h-6 w-6 mr-3" />
-                  Pagamento via PIX
+                  💳 Finalizar Cadastro e Pagar via PIX
                 </CardTitle>
                 <CardDescription className="text-green-100">
-                  Aprovação instantânea - Comece seus estudos agora!
+                  ⚡ Aprovação instantânea - Comece seus estudos agora mesmo!
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-8">
