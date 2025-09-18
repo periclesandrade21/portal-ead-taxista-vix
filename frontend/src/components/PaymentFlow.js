@@ -149,16 +149,8 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
 
         <div className="max-w-2xl mx-auto">
           
-          {/* Interface Simplificada de Pagamento */}
+          {/* Interface Ultra Simplificada de Pagamento */}
           <Card className="shadow-xl">
-            <CardHeader className="bg-gradient-to-r from-green-600 to-blue-600 text-white text-center">
-              <CardTitle className="text-2xl">
-                🎓 Finalizar Pagamento
-              </CardTitle>
-              <CardDescription className="text-green-100">
-                Clique no botão abaixo para concluir seu pagamento via PIX
-              </CardDescription>
-            </CardHeader>
             <CardContent className="p-8 text-center">
               
               {/* Resumo dos Dados */}
@@ -175,7 +167,7 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
               {paymentStatus === "pending" && (
                 <div className="space-y-6">
                   
-                  {/* Botão Principal do Asaas - Simplificado */}
+                  {/* Botão Principal do Asaas - Ultra Simplificado */}
                   <div className="mb-8">
                     <button
                       onClick={() => window.open('https://sandbox.asaas.com/i/bsnw3pmz2yiacw1w', '_blank')}
