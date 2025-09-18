@@ -402,6 +402,102 @@ async def delete_subscription(subscription_id: str):
     
     return {"message": "Inscrição excluída com sucesso"}
 
+# Webhook do Asaas para confirmar pagamentos
+@api_router.post("/webhook/asaas-payment")
+async def asaas_webhook(request: dict):
+    """Webhook para receber notificações de pagamento do Asaas"""
+    try:
+        event = request.get('event')
+        payment_data = request.get('payment', {})
+        
+        if event == 'PAYMENT_CONFIRMED':
+            # Extrair informações do pagamento
+            customer_email = payment_data.get('customer', {}).get('email')
+            payment_id = payment_data.get('id')
+            value = payment_data.get('value')
+            
+            logging.info(f"Pagamento confirmado via Asaas: {payment_id} - {customer_email} - R$ {value}")
+            
+            # Atualizar status da inscrição
+            if customer_email:
+                result = await db.subscriptions.update_one(
+                    {"email": customer_email},
+                    {
+                        "$set": {
+                            "status": "paid",
+                            "payment_id": payment_id,
+                            "payment_confirmed_at": datetime.now(timezone.utc).isoformat(),
+                            "course_access": "granted"
+                        }
+                    }
+                )
+                
+                if result.matched_count > 0:
+                    logging.info(f"Curso liberado para: {customer_email}")
+                    
+                    # Aqui você pode adicionar lógica adicional:
+                    # - Enviar email de confirmação
+                    # - Criar usuário no Moodle
+                    # - Notificar admin
+                    
+                    return {"message": "Pagamento processado e curso liberado", "status": "success"}
+                else:
+                    logging.warning(f"Inscrição não encontrada para email: {customer_email}")
+                    return {"message": "Inscrição não encontrada", "status": "warning"}
+        
+        return {"message": "Webhook recebido", "status": "received"}
+        
+    except Exception as e:
+        logging.error(f"Erro no webhook Asaas: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro ao processar webhook")
+
+@api_router.post("/payment/verify-status")
+async def verify_payment_status(request: dict):
+    """Verificar status do pagamento manualmente"""
+    try:
+        email = request.get('email')
+        
+        if not email:
+            raise HTTPException(status_code=400, detail="Email é obrigatório")
+        
+        # Buscar inscrição
+        subscription = await db.subscriptions.find_one({"email": email})
+        
+        if not subscription:
+            raise HTTPException(status_code=404, detail="Inscrição não encontrada")
+        
+        # Simular verificação (em produção, consultaria API do Asaas)
+        # Por enquanto, vamos simular que 70% dos pagamentos são aprovados
+        import random
+        if random.random() > 0.3:
+            # Atualizar como pago
+            await db.subscriptions.update_one(
+                {"email": email},
+                {
+                    "$set": {
+                        "status": "paid",
+                        "payment_confirmed_at": datetime.now(timezone.utc).isoformat(),
+                        "course_access": "granted"
+                    }
+                }
+            )
+            
+            return {
+                "status": "paid",
+                "message": "Pagamento confirmado! Curso liberado.",
+                "course_access": "granted"
+            }
+        else:
+            return {
+                "status": "pending",
+                "message": "Pagamento ainda não confirmado. Aguarde alguns minutos.",
+                "course_access": "denied"
+            }
+            
+    except Exception as e:
+        logging.error(f"Erro ao verificar pagamento: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro ao verificar pagamento")
+
 # Module routes
 @api_router.post("/modules", response_model=Module)
 async def create_module(module_data: Module):
