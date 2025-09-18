@@ -61,6 +61,12 @@ class UserSubscriptionCreate(BaseModel):
     licenseNumber: Optional[str] = None
     city: Optional[str] = None
 
+class PasswordSentResponse(BaseModel):
+    message: str
+    password_sent_email: bool
+    password_sent_whatsapp: bool
+    temporary_password: str
+
 class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
