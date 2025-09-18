@@ -730,7 +730,7 @@ const Home = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               className="px-8 py-4 text-lg bg-green-600 hover:bg-green-700 text-white border-0"
-              onClick={() => window.open('https://wa.me/5527319117277?text=Olá! Preciso de ajuda com o curso EAD Taxista ES', '_blank')}
+              onClick={() => window.open('https://wa.me/+5527319117277?text=Olá! Preciso de ajuda com o curso EAD Taxista ES', '_blank')}
             >
               <Phone className="mr-2 h-5 w-5" />
               WhatsApp Bot
@@ -738,7 +738,7 @@ const Home = () => {
             <Button 
               variant="outline" 
               className="px-8 py-4 text-lg border-white text-white hover:bg-white hover:text-green-600"
-              onClick={() => window.open('tel:27319117277', '_blank')}
+              onClick={() => window.open('tel:+5527319117277', '_blank')}
             >
               <Phone className="mr-2 h-5 w-5" />
               Ligar Agora
