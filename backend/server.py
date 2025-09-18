@@ -381,6 +381,35 @@ async def get_status_checks():
 async def create_subscription(subscription: UserSubscriptionCreate):
     """Create a new subscription and send password"""
     try:
+        # Validar formato de placa
+        if subscription.carPlate and not validate_taxi_plate(subscription.carPlate):
+            raise HTTPException(
+                status_code=400, 
+                detail="Formato de placa inválido. Use formatos como: ABC-1234-T, ABC1D23 ou ABC1234"
+            )
+        
+        # Validar formato de alvará
+        if subscription.licenseNumber and not validate_taxi_license(subscription.licenseNumber):
+            raise HTTPException(
+                status_code=400, 
+                detail="Formato de alvará inválido. Use formatos como: TA-12345, TAX-2023-1234, T-1234567 ou apenas números"
+            )
+        
+        # Verificar duplicidades
+        duplicates = await check_duplicate_registration(db, subscription.name, subscription.email)
+        
+        if duplicates:
+            error_messages = []
+            if duplicates.get("email"):
+                error_messages.append("Email já cadastrado no sistema")
+            if duplicates.get("name"):
+                error_messages.append("Nome já cadastrado no sistema")
+            
+            raise HTTPException(
+                status_code=400, 
+                detail=" | ".join(error_messages)
+            )
+        
         # Gerar senha temporária
         temporary_password = generate_password()
         
@@ -415,6 +444,9 @@ async def create_subscription(subscription: UserSubscriptionCreate):
             temporary_password=temporary_password  # Remover em produção
         )
         
+    except HTTPException:
+        # Re-raise HTTPException para manter status code correto
+        raise
     except Exception as e:
         logging.error(f"Erro ao criar inscrição: {str(e)}")
         raise HTTPException(status_code=500, detail="Erro ao processar cadastro")
