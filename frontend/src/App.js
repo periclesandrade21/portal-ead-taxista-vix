@@ -53,7 +53,76 @@ const Home = () => {
   const [passwordSentInfo, setPasswordSentInfo] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
 
-  // Funções de validação
+  // Função de geolocalização
+  const detectUserLocation = async () => {
+    setIsDetectingLocation(true);
+    
+    try {
+      if (!navigator.geolocation) {
+        alert("Geolocalização não é suportada pelo seu navegador");
+        setIsDetectingLocation(false);
+        return;
+      }
+
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 60000
+        });
+      });
+
+      const { latitude, longitude } = position.coords;
+      
+      // Usar API de reverse geocoding para obter a cidade
+      const response = await fetch(
+        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=pt`
+      );
+      const data = await response.json();
+      
+      if (data.city || data.locality) {
+        const detectedCity = data.city || data.locality;
+        setCustomCity(detectedCity);
+        
+        // Verificar se a cidade detectada está na lista do ES
+        const esCities = ["Vitória", "Vila Velha", "Serra", "Cariacica", "Viana", "Guarapari", 
+                         "Cachoeiro de Itapemirim", "Linhares", "São Mateus", "Colatina", 
+                         "Aracruz", "Nova Venécia", "Domingos Martins", "Santa Teresa", 
+                         "Castelo", "Venda Nova do Imigrante", "Iconha", "Piúma", "Anchieta"];
+        
+        if (esCities.includes(detectedCity)) {
+          setCity(detectedCity);
+          setCustomCity("");
+          alert(`✅ Localização detectada: ${detectedCity}`);
+        } else {
+          alert(`📍 Localização detectada: ${detectedCity}\nMantenha selecionado "Outra cidade do ES" e confirme se está correto.`);
+        }
+      } else {
+        alert("Não foi possível detectar sua cidade. Digite manualmente.");
+      }
+    } catch (error) {
+      console.error("Erro na geolocalização:", error);
+      if (error.code === 1) {
+        alert("❌ Acesso à localização negado. Por favor, digite sua cidade manualmente.");
+      } else if (error.code === 2) {
+        alert("❌ Localização não disponível. Digite sua cidade manualmente.");
+      } else {
+        alert("❌ Erro ao detectar localização. Digite sua cidade manualmente.");
+      }
+    } finally {
+      setIsDetectingLocation(false);
+    }
+  };
+
+  // Melhorar validação de email conforme RFC 5322
+  const validateEmail = (email) => {
+    if (!email) return false;
+    
+    // Regex mais robusta baseada na RFC 5322
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    
+    return emailRegex.test(email.trim());
+  };
   const validateTaxiPlate = (plate) => {
     if (!plate) return false;
     
