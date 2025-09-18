@@ -650,8 +650,8 @@ const Home = () => {
                 </div>
                 
                 <Button type="submit" className="w-full py-4 text-lg bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700">
-                  <GraduationCap className="mr-2 h-5 w-5" />
-                  Quero Começar Agora
+                  <CreditCard className="mr-2 h-5 w-5" />
+                  Cadastrar e Prosseguir para Pagamento
                 </Button>
               </form>
             </CardContent>
