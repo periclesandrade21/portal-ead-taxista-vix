@@ -67,20 +67,26 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
     }, 3000);
   };
 
-  // Simular verificação de pagamento (em produção seria via webhook)
-  const checkPaymentStatus = () => {
+  // Simular verificação de pagamento (agora usando API real)
+  const checkPaymentStatus = async () => {
     setPaymentStatus("processing");
     
-    // Simular delay de processamento
-    setTimeout(() => {
-      const success = Math.random() > 0.1; // 90% de chance de sucesso para demo
-      if (success) {
+    try {
+      const response = await axios.post(`${API}/payment/verify-status`, {
+        email: userSubscription?.email
+      });
+      
+      if (response.data.status === 'paid') {
         handlePaymentSuccess();
       } else {
         setPaymentStatus("failed");
         setTimeout(() => setPaymentStatus("pending"), 4000);
       }
-    }, 4000);
+    } catch (error) {
+      console.error('Erro ao verificar pagamento:', error);
+      setPaymentStatus("failed");
+      setTimeout(() => setPaymentStatus("pending"), 4000);
+    }
   };
 
   if (paymentStatus === "success") {
