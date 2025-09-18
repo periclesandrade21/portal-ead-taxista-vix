@@ -831,6 +831,58 @@ const AdminDashboard = () => {
             </Card>
           </div>
         )}
+
+        {/* Modal de Confirmação de Exclusão */}
+        {deleteModal.show && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <Card className="w-96">
+              <CardHeader>
+                <CardTitle className="text-red-600 flex items-center">
+                  <AlertCircle className="h-5 w-5 mr-2" />
+                  Confirmar Exclusão
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+                  <p className="text-sm text-red-800 mb-2">
+                    <strong>⚠️ ATENÇÃO:</strong> Esta ação não pode ser desfeita!
+                  </p>
+                  <p className="text-sm text-gray-700">
+                    Você está prestes a excluir permanentemente o usuário:
+                  </p>
+                  <div className="mt-3 p-3 bg-white rounded border">
+                    <p className="font-bold">{deleteModal.user?.name}</p>
+                    <p className="text-sm text-gray-600">{deleteModal.user?.email}</p>
+                    <p className="text-sm text-gray-600">Placa: {deleteModal.user?.car_plate}</p>
+                  </div>
+                </div>
+                
+                <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+                  <p className="text-xs text-yellow-800">
+                    Todos os dados, histórico de pagamentos e progresso nos cursos serão perdidos definitivamente.
+                  </p>
+                </div>
+
+                <div className="flex gap-2 pt-4">
+                  <Button 
+                    onClick={deleteUser}
+                    className="bg-red-600 hover:bg-red-700 text-white flex-1"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Sim, Excluir Definitivamente
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setDeleteModal({ show: false, user: null })}
+                    className="flex-1"
+                  >
+                    Cancelar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );
