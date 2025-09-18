@@ -187,7 +187,7 @@ const Home = () => {
               {/* Vídeo Synthesia */}
               <div className="relative overflow-hidden rounded-2xl shadow-2xl">
                 <iframe 
-                  src="https://share.synthesia.io/84a6d089-2a26-4871-bc7b-0f1262605d5d"
+                  src="https://share.synthesia.io/84a6d089-2a26-4871-bc7b-0f1262605d5d?autoplay=1"
                   className="w-full h-[500px] border-0"
                   allow="autoplay; fullscreen"
                   allowFullScreen
