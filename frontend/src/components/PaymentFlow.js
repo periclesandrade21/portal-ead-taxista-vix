@@ -151,15 +151,15 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
         
         {/* Header com informações importantes */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Quase lá! 🎯</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">🎯 Finalizar com PIX</h1>
           <p className="text-xl text-gray-600 mb-4">
-            Finalize seu pagamento para acessar os cursos
+            Última etapa: realize o pagamento via PIX e comece seus estudos!
           </p>
           
           {timeLeft > 0 && paymentStatus === "pending" && (
-            <div className="inline-flex items-center bg-orange-100 text-orange-800 px-4 py-2 rounded-full">
-              <Clock className="h-4 w-4 mr-2" />
-              <span className="font-semibold">Expira em: {formatTime(timeLeft)}</span>
+            <div className="inline-flex items-center bg-orange-100 text-orange-800 px-6 py-3 rounded-full text-lg font-semibold">
+              <Clock className="h-5 w-5 mr-2" />
+              <span>⏰ Expira em: {formatTime(timeLeft)}</span>
             </div>
           )}
         </div>
