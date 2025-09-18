@@ -432,6 +432,110 @@ async def get_module_exam(module_id: str):
         raise HTTPException(status_code=404, detail="Exame não encontrado para este módulo")
     return Exam(**parse_from_mongo(exam))
 
+# Chat Bot Routes
+@api_router.post("/chat", response_model=ChatResponse)
+async def chat_with_bot(chat_request: ChatRequest):
+    """Chat com o bot IA dos taxistas"""
+    try:
+        # Inicializar o chat com LLM
+        chat = LlmChat(
+            api_key=os.getenv('EMERGENT_LLM_KEY'),
+            session_id=chat_request.session_id,
+            system_message=get_bot_context()
+        ).with_model("openai", "gpt-4o-mini")
+        
+        # Verificar se é uma solicitação de reset de senha
+        if detect_password_reset_request(chat_request.message):
+            response_text = """Entendo que você precisa resetar sua senha! 
+            
+Posso ajudá-lo com isso. Para resetar sua senha, você precisará:
+
+1. Fornecer seu email cadastrado
+2. Receberá um link por email para criar uma nova senha
+3. O link será válido por 24 horas
+
+Se quiser prosseguir, me informe seu email ou acesse diretamente nossa página de recuperação de senha.
+
+Para questões mais técnicas, também pode entrar em contato com nosso suporte em: suporte@sindtaxi-es.org"""
+        
+        # Verificar se está perguntando sobre valores
+        elif detect_value_question(chat_request.message):
+            response_text = "Os valores do treinamento serão divulgados em breve. Assim que tivermos os preços definidos, iremos comunicar através dos nossos canais oficiais. Enquanto isso, você pode se cadastrar para receber as informações assim que disponíveis!"
+        
+        else:
+            # Usar LLM para resposta normal
+            user_message = UserMessage(text=chat_request.message)
+            response_text = await chat.send_message(user_message)
+        
+        # Salvar no histórico
+        await save_chat_message(
+            chat_request.session_id,
+            chat_request.message,
+            response_text
+        )
+        
+        return ChatResponse(
+            session_id=chat_request.session_id,
+            response=response_text,
+            timestamp=datetime.now(timezone.utc)
+        )
+        
+    except Exception as e:
+        logging.error(f"Erro no chat bot: {str(e)}")
+        # Resposta de fallback
+        fallback_response = """Desculpe, estou enfrentando algumas dificuldades técnicas no momento. 
+        
+Para questões urgentes, entre em contato com nosso suporte:
+📧 suporte@sindtaxi-es.org
+
+Sobre valores: Os valores do treinamento serão divulgados em breve!"""
+        
+        await save_chat_message(
+            chat_request.session_id,
+            chat_request.message,
+            fallback_response
+        )
+        
+        return ChatResponse(
+            session_id=chat_request.session_id,
+            response=fallback_response,
+            timestamp=datetime.now(timezone.utc)
+        )
+
+@api_router.get("/chat/{session_id}/history", response_model=List[ChatMessage])
+async def get_chat_session_history(session_id: str, limit: int = 20):
+    """Buscar histórico de uma sessão de chat"""
+    history = await get_chat_history(session_id, limit)
+    return history
+
+@api_router.post("/password-reset", response_model=PasswordResetResponse)  
+async def request_password_reset(reset_request: PasswordResetRequest):
+    """Solicitar reset de senha via email"""
+    try:
+        # Verificar se email existe no sistema
+        user = await db.users.find_one({"email": reset_request.email})
+        subscription = await db.subscriptions.find_one({"email": reset_request.email})
+        
+        if not user and not subscription:
+            # Por segurança, não revelar se email existe ou não
+            return PasswordResetResponse(
+                message="Se o email estiver cadastrado em nosso sistema, você receberá instruções para resetar sua senha.",
+                status="sent"
+            )
+        
+        # TODO: Implementar envio de email real quando tiver integração
+        # Por enquanto, simular sucesso
+        logging.info(f"Solicitação de reset de senha para: {reset_request.email}")
+        
+        return PasswordResetResponse(
+            message="Se o email estiver cadastrado em nosso sistema, você receberá instruções para resetar sua senha.",
+            status="sent"
+        )
+        
+    except Exception as e:
+        logging.error(f"Erro ao processar reset de senha: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro interno do servidor")
+
 # Statistics routes for admin
 @api_router.get("/admin/stats")
 async def get_admin_stats():
