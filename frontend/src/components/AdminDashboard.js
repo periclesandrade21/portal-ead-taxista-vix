@@ -722,10 +722,6 @@ const AdminDashboard = () => {
                       <div className="text-sm text-gray-600">Taxa Conversão</div>
                     </div>
                   </div>
-                      </div>
-                      <div className="text-sm text-gray-600">Taxa Conversão</div>
-                    </div>
-                  </div>
                 </CardContent>
               </Card>
             </div>
