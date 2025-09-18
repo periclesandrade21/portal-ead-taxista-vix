@@ -12,6 +12,7 @@ import AdminDashboard from "./components/AdminDashboard";
 import StudentPortal from "./components/StudentPortal";
 import ChatBot from "./components/ChatBot";
 import PaymentFlow from "./components/PaymentFlow";
+import ProgressSteps from "./components/ProgressSteps";
 import { 
   Car, 
   GraduationCap, 
