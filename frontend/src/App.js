@@ -474,8 +474,11 @@ const Home = () => {
     alert('🎉 Cadastro concluído com sucesso! Você já pode acessar o curso.');
   };
 
+  console.log('showNewRegistration state:', showNewRegistration); // DEBUG
+
   // Renderizar o novo sistema de cadastro se solicitado
   if (showNewRegistration) {
+    console.log('Rendering MultiStepRegistration component'); // DEBUG
     return (
       <MultiStepRegistration onRegistrationComplete={handleRegistrationComplete} />
     );
