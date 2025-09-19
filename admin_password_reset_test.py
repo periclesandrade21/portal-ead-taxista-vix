@@ -40,6 +40,29 @@ def print_warning(message):
 def print_info(message):
     print(f"{Colors.BLUE}ℹ️  {message}{Colors.ENDC}")
 
+def generate_valid_cpf():
+    """Generate a valid CPF for testing"""
+    import random
+    
+    # Generate first 9 digits
+    cpf = [random.randint(0, 9) for _ in range(9)]
+    
+    # Calculate first verification digit
+    sum1 = sum(cpf[i] * (10 - i) for i in range(9))
+    digit1 = 11 - (sum1 % 11)
+    if digit1 >= 10:
+        digit1 = 0
+    cpf.append(digit1)
+    
+    # Calculate second verification digit
+    sum2 = sum(cpf[i] * (11 - i) for i in range(10))
+    digit2 = 11 - (sum2 % 11)
+    if digit2 >= 10:
+        digit2 = 0
+    cpf.append(digit2)
+    
+    return ''.join(map(str, cpf))
+
 def create_unique_test_subscription():
     """Create a unique test subscription for admin password reset testing"""
     print_test_header("Creating Unique Test Subscription for Admin Password Reset")
@@ -48,24 +71,14 @@ def create_unique_test_subscription():
     timestamp = str(int(time.time()))
     unique_suffix = timestamp[-6:]  # Use last 6 digits for uniqueness
     
-    # Use a valid CPF format - this is a test CPF that passes validation
-    valid_test_cpfs = [
-        "11144477735",  # Valid test CPF
-        "12345678909",  # Valid test CPF
-        "98765432100",  # Valid test CPF
-        "11122233344",  # Valid test CPF
-        "55566677788"   # Valid test CPF
-    ]
-    
-    # Select CPF based on timestamp to ensure uniqueness
-    cpf_index = int(unique_suffix) % len(valid_test_cpfs)
-    selected_cpf = valid_test_cpfs[cpf_index]
+    # Generate a valid CPF
+    valid_cpf = generate_valid_cpf()
     
     test_data = {
         "name": f"Admin Reset Test User {unique_suffix}",
         "email": f"admin.reset.test.{timestamp}@email.com",
         "phone": f"2799{unique_suffix}",
-        "cpf": selected_cpf,
+        "cpf": valid_cpf,
         "carPlate": f"ART-{unique_suffix[:4]}-T",
         "licenseNumber": f"TA-{unique_suffix}",
         "city": "Vitória",
