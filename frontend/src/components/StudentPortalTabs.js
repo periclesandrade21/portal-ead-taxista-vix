@@ -305,39 +305,93 @@ export const FinancialTab = ({ user }) => (
   </TabsContent>
 );
 
-export const ProfileTab = ({ profileData, user }) => (
+export const ProfileTab = ({ 
+  profileData, 
+  user, 
+  handlePhotoUpload, 
+  setChangePasswordModal, 
+  accessHistory, 
+  activityHistory 
+}) => (
   <TabsContent value="profile" className="space-y-6">
-    <Card>
-      <CardHeader>
-        <CardTitle>Meu Perfil</CardTitle>
-        <CardDescription>Informações pessoais e acadêmicas</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex items-center space-x-4 mb-6">
-          <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
-            <span className="text-white text-xl font-medium">
-              {profileData?.name?.charAt(0)?.toUpperCase() || 'A'}
-            </span>
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Coluna 1: Foto e Dados Básicos */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Foto e Dados Pessoais</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Upload de Foto */}
+          <div className="text-center">
+            <div className="relative inline-block">
+              {profileData?.photo ? (
+                <img 
+                  src={profileData.photo} 
+                  alt="Foto do perfil" 
+                  className="w-24 h-24 rounded-full object-cover border-4 border-blue-100"
+                />
+              ) : (
+                <div className="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center border-4 border-blue-100">
+                  <span className="text-white text-2xl font-medium">
+                    {profileData?.name?.charAt(0)?.toUpperCase() || 'A'}
+                  </span>
+                </div>
+              )}
+              <label className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:bg-blue-700 transition-colors">
+                <Camera className="h-4 w-4" />
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                />
+              </label>
+            </div>
+            <p className="text-sm text-gray-500 mt-2">Clique na câmera para alterar</p>
           </div>
-          <div>
-            <h3 className="text-lg font-semibold">{profileData?.name || 'Nome do Aluno'}</h3>
-            <p className="text-gray-600">{profileData?.email}</p>
-          </div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="text-sm font-medium text-gray-700">Nome Completo</label>
-            <p className="mt-1 p-2 border rounded-lg bg-gray-50">{profileData?.name || '-'}</p>
+          {/* Informações Básicas */}
+          <div className="space-y-3">
+            <div>
+              <label className="text-sm font-medium text-gray-700">Nome Completo</label>
+              <p className="mt-1 p-2 border rounded-lg bg-gray-50">{profileData?.name || '-'}</p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-700">Email</label>
+              <p className="mt-1 p-2 border rounded-lg bg-gray-50">{profileData?.email || '-'}</p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-700">Telefone</label>
+              <p className="mt-1 p-2 border rounded-lg bg-gray-50">{profileData?.phone || '-'}</p>
+            </div>
           </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700">Email</label>
-            <p className="mt-1 p-2 border rounded-lg bg-gray-50">{profileData?.email || '-'}</p>
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700">Telefone</label>
-            <p className="mt-1 p-2 border rounded-lg bg-gray-50">{profileData?.phone || '-'}</p>
-          </div>
+
+          {/* Botão Trocar Senha */}
+          <Button 
+            onClick={() => setChangePasswordModal({ 
+              show: true, 
+              currentPassword: '', 
+              newPassword: '', 
+              confirmPassword: '',
+              showCurrentPassword: false,
+              showNewPassword: false,
+              showConfirmPassword: false
+            })}
+            className="w-full"
+            variant="outline"
+          >
+            <Key className="h-4 w-4 mr-2" />
+            Alterar Senha
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Coluna 2: Dados Profissionais */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Dados Profissionais</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
           <div>
             <label className="text-sm font-medium text-gray-700">Cidade</label>
             <p className="mt-1 p-2 border rounded-lg bg-gray-50">{profileData?.city || '-'}</p>
@@ -350,24 +404,86 @@ export const ProfileTab = ({ profileData, user }) => (
             <label className="text-sm font-medium text-gray-700">Número do Alvará</label>
             <p className="mt-1 p-2 border rounded-lg bg-gray-50">{profileData?.license_number || '-'}</p>
           </div>
-        </div>
 
-        <div className="pt-4 border-t">
-          <h4 className="font-semibold mb-3">Estatísticas do Perfil</h4>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="text-center p-4 border rounded-lg">
-              <div className="text-2xl font-bold text-blue-600 mb-1">24h</div>
-              <p className="text-sm text-gray-600">Tempo de Estudo</p>
-            </div>
-            <div className="text-center p-4 border rounded-lg">
-              <div className="text-2xl font-bold text-green-600 mb-1">75%</div>
-              <p className="text-sm text-gray-600">Progresso Total</p>
-            </div>
-            <div className="text-center p-4 border rounded-lg">
-              <div className="text-2xl font-bold text-purple-600 mb-1">8.5</div>
-              <p className="text-sm text-gray-600">Média Geral</p>
+          {/* Estatísticas do Perfil */}
+          <div className="pt-4 border-t">
+            <h4 className="font-semibold mb-3">Estatísticas de Desempenho</h4>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center p-3 border rounded-lg">
+                <span className="text-sm text-gray-600">Tempo de Estudo</span>
+                <span className="font-bold text-blue-600">24h</span>
+              </div>
+              <div className="flex justify-between items-center p-3 border rounded-lg">
+                <span className="text-sm text-gray-600">Progresso Total</span>
+                <span className="font-bold text-green-600">75%</span>
+              </div>
+              <div className="flex justify-between items-center p-3 border rounded-lg">
+                <span className="text-sm text-gray-600">Média Geral</span>
+                <span className="font-bold text-purple-600">8.5</span>
+              </div>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Coluna 3: Histórico de Atividades */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Histórico de Atividades</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {activityHistory.map((activity) => (
+              <div key={activity.id} className="border-l-4 border-blue-500 pl-3 py-2">
+                <p className="font-medium text-sm">{activity.action}</p>
+                <div className="flex justify-between items-center text-xs text-gray-500 mt-1">
+                  <span>{activity.module}</span>
+                  <span>{activity.date}</span>
+                </div>
+                {activity.score && (
+                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded mt-1 inline-block">
+                    Nota: {activity.score}%
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+
+    {/* Histórico de Acessos */}
+    <Card>
+      <CardHeader>
+        <CardTitle>Histórico de Acessos</CardTitle>
+        <CardDescription>Registro dos últimos acessos ao portal</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="border-b">
+              <tr>
+                <th className="text-left py-2">Ação</th>
+                <th className="text-left py-2">Data/Hora</th>
+                <th className="text-left py-2">IP</th>
+                <th className="text-left py-2">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {accessHistory.map((access) => (
+                <tr key={access.id} className="border-b">
+                  <td className="py-2">{access.action}</td>
+                  <td className="py-2">{access.date}</td>
+                  <td className="py-2">{access.ip}</td>
+                  <td className="py-2">
+                    <Badge variant="default" className="bg-green-600">
+                      ✅ Sucesso
+                    </Badge>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </CardContent>
     </Card>
