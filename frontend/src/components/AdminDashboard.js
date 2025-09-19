@@ -54,6 +54,15 @@ const AdminDashboard = () => {
   const [deleteModal, setDeleteModal] = useState({ show: false, user: null });
   const [regionStats, setRegionStats] = useState({});
   const [paymentChartData, setPaymentChartData] = useState([]);
+  const [cityStats, setCityStats] = useState([]);
+  const [cityFilter, setCityFilter] = useState('all');
+  
+  // Estados para gestão de cursos
+  const [courses, setCourses] = useState([]);
+  const [courseModal, setCourseModal] = useState({ 
+    show: false, 
+    course: { name: '', description: '', price: 0, duration_hours: 0, category: 'obrigatorio' } 
+  });
 
   // Novos estados para funcionalidades administrativas
   const [discountModal, setDiscountModal] = useState({ show: false, userId: null, discount: 0 });
