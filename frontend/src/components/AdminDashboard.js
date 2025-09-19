@@ -2237,6 +2237,184 @@ const AdminDashboard = () => {
             </Card>
           </div>
         )}
+
+        {/* Modal de Novo Módulo */}
+        {moduleModal.show && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md">
+              <h3 className="text-lg font-semibold mb-4">Novo Módulo</h3>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="module-name">Nome do Módulo</Label>
+                  <Input
+                    id="module-name"
+                    value={moduleModal.module.name}
+                    onChange={(e) => setModuleModal(prev => ({
+                      ...prev,
+                      module: { ...prev.module, name: e.target.value }
+                    }))}
+                    placeholder="Ex: Mecânica Básica"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="module-description">Descrição</Label>
+                  <Input
+                    id="module-description"
+                    value={moduleModal.module.description}
+                    onChange={(e) => setModuleModal(prev => ({
+                      ...prev,
+                      module: { ...prev.module, description: e.target.value }
+                    }))}
+                    placeholder="Descrição do módulo"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="module-hours">Duração (horas)</Label>
+                  <Input
+                    id="module-hours"
+                    type="number"
+                    value={moduleModal.module.duration_hours}
+                    onChange={(e) => setModuleModal(prev => ({
+                      ...prev,
+                      module: { ...prev.module, duration_hours: parseFloat(e.target.value) || 0 }
+                    }))}
+                    placeholder="4"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="module-color">Cor</Label>
+                  <Input
+                    id="module-color"
+                    type="color"
+                    value={moduleModal.module.color}
+                    onChange={(e) => setModuleModal(prev => ({
+                      ...prev,
+                      module: { ...prev.module, color: e.target.value }
+                    }))}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 mt-6">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setModuleModal({ show: false, module: { name: '', description: '', duration_hours: 0, color: '#3b82f6' } })}
+                >
+                  Cancelar
+                </Button>
+                <Button onClick={handleCreateModule}>
+                  Criar Módulo
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal de Novo Vídeo */}
+        {videoModal.show && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-lg">
+              <h3 className="text-lg font-semibold mb-4">Novo Vídeo</h3>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="video-title">Título do Vídeo *</Label>
+                  <Input
+                    id="video-title"
+                    value={videoModal.video.title}
+                    onChange={(e) => setVideoModal(prev => ({
+                      ...prev,
+                      video: { ...prev.video, title: e.target.value }
+                    }))}
+                    placeholder="Ex: Fundamentos da Mecânica"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="video-description">Descrição</Label>
+                  <Input
+                    id="video-description"
+                    value={videoModal.video.description}
+                    onChange={(e) => setVideoModal(prev => ({
+                      ...prev,
+                      video: { ...prev.video, description: e.target.value }
+                    }))}
+                    placeholder="Descrição do vídeo"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="video-url">URL do YouTube *</Label>
+                  <Input
+                    id="video-url"
+                    value={videoModal.video.youtube_url}
+                    onChange={(e) => setVideoModal(prev => ({
+                      ...prev,
+                      video: { ...prev.video, youtube_url: e.target.value }
+                    }))}
+                    placeholder="https://www.youtube.com/watch?v=..."
+                  />
+                  {videoModal.video.youtube_url && (
+                    <p className="text-sm text-gray-500 mt-1">
+                      ID extraído: {extractYouTubeId(videoModal.video.youtube_url)}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="video-duration">Duração (minutos)</Label>
+                  <Input
+                    id="video-duration"
+                    type="number"
+                    value={videoModal.video.duration_minutes}
+                    onChange={(e) => setVideoModal(prev => ({
+                      ...prev,
+                      video: { ...prev.video, duration_minutes: parseInt(e.target.value) || 0 }
+                    }))}
+                    placeholder="15"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 mt-6">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setVideoModal({ 
+                    show: false, 
+                    video: { title: '', description: '', youtube_url: '', module_id: '', duration_minutes: 0 } 
+                  })}
+                >
+                  Cancelar
+                </Button>
+                <Button onClick={handleCreateVideo}>
+                  Adicionar Vídeo
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal de Confirmação de Exclusão de Vídeo */}
+        {deleteVideoModal.show && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md">
+              <h3 className="text-lg font-semibold mb-4 text-red-600">Confirmar Exclusão</h3>
+              <p className="mb-6">
+                Tem certeza que deseja excluir o vídeo "{deleteVideoModal.videoTitle}"? 
+                Esta ação não pode ser desfeita.
+              </p>
+              <div className="flex justify-end gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setDeleteVideoModal({ show: false, videoId: null, videoTitle: '' })}
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  onClick={handleDeleteVideo}
+                >
+                  Excluir Vídeo
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );
