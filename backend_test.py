@@ -5035,7 +5035,9 @@ def test_student_authentication_system():
         )
         
         if subscription_response.status_code != 200:
+            error_text = subscription_response.text
             print_error(f"Failed to create test student: {subscription_response.status_code}")
+            print_error(f"Error details: {error_text}")
             return False
         
         subscription_data = subscription_response.json()
