@@ -4837,7 +4837,8 @@ def test_videos_by_module(modules):
             response = requests.get(f"{BACKEND_URL}/modules/{module_id}/videos", timeout=10)
             
             if response.status_code == 200:
-                videos = response.json()
+                data = response.json()
+                videos = data.get('videos', []) if isinstance(data, dict) else data
                 print_success(f"✅ Module {i} videos retrieved successfully")
                 print_info(f"  Found {len(videos)} videos")
                 
