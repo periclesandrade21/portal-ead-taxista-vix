@@ -79,6 +79,21 @@ const AdminDashboard = () => {
   const [adminUserModal, setAdminUserModal] = useState({ show: false, user: null, isEdit: false });
   const [adminPasswordModal, setAdminPasswordModal] = useState({ show: false, userId: null, username: '', newPassword: '', showPassword: false });
 
+  // Estados para gestão de vídeos e módulos
+  const [modules, setModules] = useState([]);
+  const [videos, setVideos] = useState([]);
+  const [selectedModule, setSelectedModule] = useState('');
+  const [videoModal, setVideoModal] = useState({ 
+    show: false, 
+    video: { title: '', description: '', youtube_url: '', module_id: '', duration_minutes: 0 } 
+  });
+  const [moduleModal, setModuleModal] = useState({ 
+    show: false, 
+    module: { name: '', description: '', duration_hours: 0, color: '#3b82f6' } 
+  });
+  const [deleteVideoModal, setDeleteVideoModal] = useState({ show: false, videoId: null, videoTitle: '' });
+  const [videoLoadingStates, setVideoLoadingStates] = useState({});
+
   useEffect(() => {
     if (isAuthenticated) {
       fetchAdminData();
