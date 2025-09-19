@@ -1907,6 +1907,135 @@ def test_real_asaas_webhook_production_data():
         print_error(f"Real webhook test failed with error: {str(e)}")
         return False
 
+def test_webhook_investigation():
+    """Investigate which user was updated by the webhook and get their current status"""
+    print_test_header("🔍 WEBHOOK INVESTIGATION - Finding Updated Users")
+    
+    try:
+        # Get all subscriptions to investigate
+        print_info("Step 1: Fetching all subscriptions to investigate webhook updates...")
+        response = requests.get(f"{BACKEND_URL}/subscriptions", timeout=10)
+        
+        if response.status_code != 200:
+            print_error(f"Failed to fetch subscriptions: {response.status_code}")
+            return False
+        
+        subscriptions = response.json()
+        print_success(f"Found {len(subscriptions)} total subscriptions")
+        
+        # 1. Look for users with status "paid" that were recently updated
+        print_info("\nStep 2: Looking for users with status 'paid' that were recently updated...")
+        paid_users = []
+        for sub in subscriptions:
+            if sub.get('status') == 'paid':
+                paid_users.append(sub)
+        
+        print_success(f"Found {len(paid_users)} users with 'paid' status")
+        
+        # 2. Look for users with specific asaas_customer_id "cus_000130254085"
+        print_info("\nStep 3: Looking for users with asaas_customer_id 'cus_000130254085'...")
+        target_customer_id = "cus_000130254085"
+        customer_id_matches = []
+        for sub in subscriptions:
+            if sub.get('asaas_customer_id') == target_customer_id:
+                customer_id_matches.append(sub)
+        
+        if customer_id_matches:
+            print_success(f"Found {len(customer_id_matches)} user(s) with customer ID '{target_customer_id}'")
+            for user in customer_id_matches:
+                print_info(f"  - User: {user.get('name')} ({user.get('email')})")
+                print_info(f"    Status: {user.get('status')}")
+                print_info(f"    Course Access: {user.get('course_access')}")
+                print_info(f"    Payment ID: {user.get('payment_id')}")
+                print_info(f"    Payment Value: {user.get('payment_value')}")
+                print_info(f"    Payment Confirmed At: {user.get('payment_confirmed_at')}")
+        else:
+            print_warning(f"No users found with customer ID '{target_customer_id}'")
+        
+        # 3. Look for users with specific payment_id "pay_2zg8sti32jdr0v04"
+        print_info("\nStep 4: Looking for users with payment_id 'pay_2zg8sti32jdr0v04'...")
+        target_payment_id = "pay_2zg8sti32jdr0v04"
+        payment_id_matches = []
+        for sub in subscriptions:
+            if sub.get('payment_id') == target_payment_id:
+                payment_id_matches.append(sub)
+        
+        if payment_id_matches:
+            print_success(f"Found {len(payment_id_matches)} user(s) with payment ID '{target_payment_id}'")
+            for user in payment_id_matches:
+                print_info(f"  - User: {user.get('name')} ({user.get('email')})")
+                print_info(f"    Status: {user.get('status')}")
+                print_info(f"    Course Access: {user.get('course_access')}")
+                print_info(f"    Customer ID: {user.get('asaas_customer_id')}")
+                print_info(f"    Payment Value: {user.get('payment_value')}")
+                print_info(f"    Payment Confirmed At: {user.get('payment_confirmed_at')}")
+        else:
+            print_warning(f"No users found with payment ID '{target_payment_id}'")
+        
+        # 4. Look for users with recent payment_confirmed_at timestamps
+        print_info("\nStep 5: Looking for users with recent payment_confirmed_at timestamps...")
+        recent_payments = []
+        for sub in subscriptions:
+            if sub.get('payment_confirmed_at'):
+                recent_payments.append(sub)
+        
+        if recent_payments:
+            print_success(f"Found {len(recent_payments)} user(s) with payment_confirmed_at timestamps")
+            # Sort by payment_confirmed_at (most recent first)
+            recent_payments.sort(key=lambda x: x.get('payment_confirmed_at', ''), reverse=True)
+            
+            print_info("Most recent payment confirmations:")
+            for i, user in enumerate(recent_payments[:5]):  # Show top 5 most recent
+                print_info(f"  {i+1}. User: {user.get('name')} ({user.get('email')})")
+                print_info(f"     Status: {user.get('status')}")
+                print_info(f"     Course Access: {user.get('course_access')}")
+                print_info(f"     Customer ID: {user.get('asaas_customer_id')}")
+                print_info(f"     Payment ID: {user.get('payment_id')}")
+                print_info(f"     Payment Value: {user.get('payment_value')}")
+                print_info(f"     Payment Confirmed At: {user.get('payment_confirmed_at')}")
+                print_info("")
+        else:
+            print_warning("No users found with payment_confirmed_at timestamps")
+        
+        # 5. Summary of findings
+        print_info("\nStep 6: Summary of webhook investigation findings...")
+        
+        findings = []
+        if customer_id_matches:
+            findings.append(f"✅ Found user(s) with target customer ID: {len(customer_id_matches)}")
+        if payment_id_matches:
+            findings.append(f"✅ Found user(s) with target payment ID: {len(payment_id_matches)}")
+        if recent_payments:
+            findings.append(f"✅ Found user(s) with recent payment confirmations: {len(recent_payments)}")
+        
+        if findings:
+            print_success("WEBHOOK INVESTIGATION RESULTS:")
+            for finding in findings:
+                print_success(f"  {finding}")
+            
+            # Show the most likely candidate for webhook update
+            if customer_id_matches or payment_id_matches:
+                target_user = customer_id_matches[0] if customer_id_matches else payment_id_matches[0]
+                print_success("\n🎯 MOST LIKELY WEBHOOK-UPDATED USER:")
+                print_success(f"  Name: {target_user.get('name')}")
+                print_success(f"  Email: {target_user.get('email')}")
+                print_success(f"  Status: {target_user.get('status')}")
+                print_success(f"  Course Access: {target_user.get('course_access')}")
+                print_success(f"  Customer ID: {target_user.get('asaas_customer_id')}")
+                print_success(f"  Payment ID: {target_user.get('payment_id')}")
+                print_success(f"  Payment Value: R$ {target_user.get('payment_value')}")
+                print_success(f"  Payment Confirmed At: {target_user.get('payment_confirmed_at')}")
+            
+            return True
+        else:
+            print_warning("No specific webhook-updated users found with the target identifiers")
+            print_info("This might indicate the webhook data hasn't been processed yet or the identifiers are different")
+            return True  # Still consider successful as we got data
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Webhook investigation failed: {str(e)}")
+        return False
+
 def run_all_tests():
     """Run all tests and provide summary"""
     print(f"{Colors.BOLD}EAD TAXISTA ES - COMPLETE SYSTEM TESTING{Colors.ENDC}")
