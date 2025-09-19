@@ -285,6 +285,10 @@ const Home = () => {
       errors.customCity = "Por favor, informe sua cidade";
     }
     
+    if (!lgpdConsent) {
+      errors.lgpdConsent = "É necessário aceitar os termos de privacidade e proteção de dados (LGPD)";
+    }
+    
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
