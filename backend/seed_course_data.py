@@ -16,38 +16,46 @@ db_name = os.environ.get('DB_NAME', 'test_database')
 MODULES_DATA = [
     {
         "id": str(uuid.uuid4()),
-        "name": "Mecânica Básica",
+        "title": "Mecânica Básica",
         "description": "Curso Básico de Mecânica Automotiva - Fundamentos essenciais para taxistas",
         "order": 1,
-        "duration_hours": 4.0,
+        "duration_hours": 4,
         "color": "#ef4444",
+        "content": "Conteúdo completo sobre mecânica básica automotiva, incluindo funcionamento do motor, sistemas de arrefecimento, lubrificação e manutenção preventiva.",
+        "is_mandatory": True,
         "created_at": datetime.now(timezone.utc)
     },
     {
         "id": str(uuid.uuid4()),
-        "name": "Legislação de Trânsito",
+        "title": "Legislação de Trânsito",
         "description": "Curso Legislação 2025 - Atualizações e normas vigentes",
         "order": 2,
-        "duration_hours": 8.0,
+        "duration_hours": 8,
         "color": "#3b82f6",
+        "content": "Estudo completo da legislação de trânsito brasileira, incluindo CTB, infrações, penalidades e direção defensiva.",
+        "is_mandatory": True,
         "created_at": datetime.now(timezone.utc)
     },
     {
         "id": str(uuid.uuid4()),
-        "name": "Primeiros Socorros",
+        "title": "Primeiros Socorros",
         "description": "Definindo Primeiros Socorros - Técnicas essenciais de atendimento de emergência",
         "order": 3,
-        "duration_hours": 2.0,
+        "duration_hours": 2,
         "color": "#10b981",
+        "content": "Técnicas fundamentais de primeiros socorros, RCP, controle de hemorragias e atendimento a vítimas de acidentes.",
+        "is_mandatory": True,
         "created_at": datetime.now(timezone.utc)
     },
     {
         "id": str(uuid.uuid4()),
-        "name": "Relações Humanas",
+        "title": "Relações Humanas",
         "description": "Atendimento ao cliente e relacionamento interpessoal no transporte",
         "order": 4,
-        "duration_hours": 14.0,
+        "duration_hours": 14,
         "color": "#8b5cf6",
+        "content": "Desenvolvimento de habilidades interpessoais, atendimento ao cliente, comunicação eficaz e ética profissional no transporte de passageiros.",
+        "is_mandatory": True,
         "created_at": datetime.now(timezone.utc)
     }
 ]
