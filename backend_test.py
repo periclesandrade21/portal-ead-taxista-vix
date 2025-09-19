@@ -1146,6 +1146,16 @@ def run_all_tests():
     test_results['health_check'] = test_health_check()
     test_results['existing_endpoints'] = test_existing_endpoints()
     
+    # Run CRITICAL FIX TESTS FIRST (as requested in review)
+    print(f"\n{Colors.BOLD}{Colors.YELLOW}{'='*60}{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.YELLOW}🔧 CRITICAL FIX TESTS - PASSWORD & NOTIFICATIONS{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.YELLOW}{'='*60}{Colors.ENDC}")
+    
+    test_results['improved_password'], password_data, password_email = test_improved_password_generation()
+    test_results['email_transparency'], email_data = test_email_transparency()
+    test_results['whatsapp_honesty'], whatsapp_data = test_whatsapp_honesty()
+    test_results['complete_endpoint_fixes'], complete_data, complete_email = test_complete_endpoint_with_fixes()
+    
     # Run chat bot tests
     test_results['chat_normal'], session_id = test_chat_normal_message()
     test_results['chat_values'] = test_chat_value_question()
