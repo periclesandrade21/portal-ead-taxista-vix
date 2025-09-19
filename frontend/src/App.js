@@ -434,6 +434,67 @@ const Home = () => {
 
   return (
     <>
+      {/* Popup de Duplicatas */}
+      {duplicatePopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-8 max-w-md mx-4 shadow-2xl">
+            <div className="text-center">
+              {/* Ícone de aviso */}
+              <div className="bg-red-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <AlertCircle className="h-12 w-12 text-red-600" />
+              </div>
+              
+              {/* Título */}
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                ⚠️ Dados Duplicados Encontrados!
+              </h3>
+              
+              {/* Lista de duplicatas */}
+              <div className="bg-red-50 p-4 rounded-lg mb-6 text-left">
+                <h4 className="font-semibold mb-3 text-red-800">📋 Informações já cadastradas:</h4>
+                <div className="space-y-2 text-sm">
+                  {Object.entries(duplicatePopup).map(([field, info]) => (
+                    <div key={field} className="flex items-start">
+                      <span className="text-red-600 mr-2">•</span>
+                      <div>
+                        <strong>{info.field}:</strong> {info.value}
+                        <br />
+                        <span className="text-gray-600">Já cadastrado para: {info.existing_user}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Instruções */}
+              <p className="text-sm text-gray-600 mb-6">
+                Os dados destacados já estão cadastrados no sistema. Verifique suas informações ou entre em contato conosco se houver algum erro.
+              </p>
+              
+              {/* Botões */}
+              <div className="flex gap-3">
+                <Button
+                  onClick={() => setDuplicatePopup(null)}
+                  className="flex-1 py-3 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-xl"
+                >
+                  📝 Corrigir Dados
+                </Button>
+                <Button
+                  onClick={() => {
+                    setDuplicatePopup(null);
+                    // Scroll para seção de contato ou abrir WhatsApp
+                    window.open('mailto:suporte@sindtaxi-es.org', '_blank');
+                  }}
+                  className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl"
+                >
+                  📞 Contatar Suporte
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Popup de Senha Enviada */}
       {showPasswordPopup && passwordSentInfo && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
