@@ -1267,114 +1267,146 @@ async def asaas_webhook(request: dict):
         if event in ['PAYMENT_CONFIRMED', 'PAYMENT_RECEIVED']:
             # Extrair informações do pagamento
             customer_info = payment_data.get('customer', {})
+            payment_id = payment_data.get('id')
+            value = payment_data.get('value')
             
-            # Tentar extrair email (formato antigo) ou customer ID (formato novo)
+            logging.info(f"Webhook recebido: Event={event}, Payment={payment_id}, Value=R${value}")
+            
+            # Tentar extrair email do customer (formato antigo vs novo)
             customer_email = None
             customer_id = None
             
             if isinstance(customer_info, dict):
-                # Formato antigo: customer: { email: "..." }
                 customer_email = customer_info.get('email')
+                logging.info(f"Customer email extraído: {customer_email}")
             elif isinstance(customer_info, str):
-                # Formato novo: customer: "cus_000130254085"
                 customer_id = customer_info
-            else:
-                # Fallback: tentar como string direta
-                customer_id = str(customer_info) if customer_info else None
+                logging.info(f"Customer ID extraído: {customer_id}")
             
-            payment_id = payment_data.get('id')
-            value = payment_data.get('value')
-            
-            logging.info(f"Pagamento {event} via Asaas: {payment_id} - Email: {customer_email} - Customer ID: {customer_id} - R$ {value}")
-            
-            # Buscar inscrição por email ou customer ID
+            # Buscar usuário para atualizar
+            updated_user = None
             subscription_filter = None
+            
+            # 1. Primeiro tentar por email se disponível
             if customer_email:
                 subscription_filter = {"email": customer_email}
-                logging.info(f"Buscando por email: {customer_email}")
+                logging.info(f"Buscando usuário por email: {customer_email}")
+            
+            # 2. Se não tem email, tentar por customer_id já existente
             elif customer_id:
-                # Primeiro tentar buscar por asaas_customer_id ou payment_id
-                subscription_filter = {"$or": [
-                    {"asaas_customer_id": customer_id},
-                    {"payment_id": payment_id}
-                ]}
-                logging.info(f"Buscando por customer_id ou payment_id: {customer_id}, {payment_id}")
-                
-                # Se não encontrar, buscar qualquer inscrição pendente como fallback
-                existing_subscription = await db.subscriptions.find_one(subscription_filter)
-                if not existing_subscription:
-                    # Buscar qualquer inscrição pendente
-                    pending_subscriptions = await db.subscriptions.find({"status": "pending"}).to_list(100)
-                    if pending_subscriptions:
-                        # Usar a primeira inscrição pendente como fallback
-                        subscription_filter = {"id": pending_subscriptions[0]["id"]}  # Use id field, not _id
-                        logging.info(f"Usando inscrição pendente como fallback: {pending_subscriptions[0]['id']}")
+                subscription_filter = {"asaas_customer_id": customer_id}
+                existing_user = await db.subscriptions.find_one(subscription_filter)
+                if existing_user:
+                    logging.info(f"Usuário encontrado por customer_id: {customer_id}")
+                else:
+                    # 3. Como fallback, pegar qualquer usuário pendente
+                    logging.info(f"Customer ID {customer_id} não encontrado, usando fallback para usuário pendente")
+                    pending_users = await db.subscriptions.find({"status": "pending"}).to_list(10)
+                    if pending_users:
+                        # Usar o primeiro usuário pendente
+                        subscription_filter = {"id": pending_users[0]["id"]}
+                        logging.info(f"Usando usuário pendente como fallback: {pending_users[0].get('email', 'N/A')}")
                     else:
-                        logging.warning(f"Nenhuma inscrição pendente encontrada para Customer ID {customer_id}")
-                        subscription_filter = None
+                        logging.warning("Nenhum usuário pendente encontrado para fallback")
+                        return {"message": "Nenhum usuário pendente para processar pagamento", "status": "warning"}
             
             if subscription_filter:
                 # Preparar dados de atualização
+                update_timestamp = datetime.now(timezone.utc).isoformat()
                 update_data = {
                     "status": "paid",
                     "payment_id": payment_id,
-                    "payment_value": value,
-                    "payment_confirmed_at": datetime.now(timezone.utc).isoformat(),
+                    "payment_value": float(value) if value else 0.0,
+                    "payment_confirmed_at": update_timestamp,
                     "course_access": "granted"
                 }
                 
-                # Adicionar customer_id se disponível
                 if customer_id:
                     update_data["asaas_customer_id"] = customer_id
                 
-                logging.info(f"Tentando atualizar com filtro: {subscription_filter}")
-                logging.info(f"Dados de atualização: {update_data}")
+                logging.info(f"Dados de atualização preparados: {update_data}")
                 
-                # Executar atualização
+                # Executar atualização com upsert para criar campos se necessário
                 try:
                     result = await db.subscriptions.update_one(
                         subscription_filter,
-                        {"$set": update_data}
+                        {"$set": update_data},
+                        upsert=False  # Não criar novo documento, apenas atualizar existente
                     )
                     
-                    logging.info(f"Resultado da atualização: matched_count={result.matched_count}, modified_count={result.modified_count}")
+                    logging.info(f"MongoDB result: matched={result.matched_count}, modified={result.modified_count}")
                     
                     if result.matched_count > 0:
-                        # Buscar o usuário atualizado para verificar e log
+                        # Verificar se a atualização funcionou
                         updated_user = await db.subscriptions.find_one(subscription_filter)
                         if updated_user:
-                            user_email = updated_user.get('email', 'N/A')
                             user_name = updated_user.get('name', 'N/A')
-                            stored_payment_id = updated_user.get('payment_id', 'N/A')
-                            stored_customer_id = updated_user.get('asaas_customer_id', 'N/A')
-                            stored_value = updated_user.get('payment_value', 'N/A')
+                            user_email = updated_user.get('email', 'N/A')
                             
-                            logging.info(f"Curso liberado para: {user_name} ({user_email})")
-                            logging.info(f"Dados armazenados - Customer: {stored_customer_id}, Payment: {stored_payment_id}, Valor: R$ {stored_value}")
+                            # Verificar se os campos foram realmente atualizados
+                            stored_payment_id = updated_user.get('payment_id')
+                            stored_customer_id = updated_user.get('asaas_customer_id')
+                            stored_value = updated_user.get('payment_value')
+                            stored_status = updated_user.get('status')
+                            stored_access = updated_user.get('course_access')
                             
-                            return {
-                                "message": "Pagamento processado e curso liberado", 
-                                "status": "success", 
-                                "email": user_email,
-                                "user_name": user_name,
-                                "payment_id": payment_id,
-                                "customer_id": customer_id,
-                                "value": value
-                            }
+                            logging.info(f"Verificação pós-atualização:")
+                            logging.info(f"  Status: {stored_status}")
+                            logging.info(f"  Payment ID: {stored_payment_id}")
+                            logging.info(f"  Customer ID: {stored_customer_id}")
+                            logging.info(f"  Value: {stored_value}")
+                            logging.info(f"  Course Access: {stored_access}")
+                            
+                            if stored_status == "paid" and stored_payment_id == payment_id:
+                                logging.info(f"✅ Pagamento processado com sucesso para: {user_name} ({user_email})")
+                                
+                                return {
+                                    "message": "Pagamento processado e curso liberado",
+                                    "status": "success",
+                                    "user_name": user_name,
+                                    "email": user_email,
+                                    "payment_id": payment_id,
+                                    "customer_id": customer_id,
+                                    "value": value,
+                                    "updated_fields": {
+                                        "status": stored_status,
+                                        "payment_id": stored_payment_id,
+                                        "asaas_customer_id": stored_customer_id,
+                                        "payment_value": stored_value,
+                                        "course_access": stored_access
+                                    }
+                                }
+                            else:
+                                logging.error(f"❌ Atualização não persistiu corretamente")
+                                logging.error(f"Esperado status=paid, payment_id={payment_id}")
+                                logging.error(f"Recebido status={stored_status}, payment_id={stored_payment_id}")
+                                
+                                return {
+                                    "message": "Webhook processado mas dados não persistiram",
+                                    "status": "error",
+                                    "expected": {"status": "paid", "payment_id": payment_id},
+                                    "actual": {"status": stored_status, "payment_id": stored_payment_id}
+                                }
                         else:
                             logging.error("Usuário não encontrado após atualização")
-                            return {"message": "Erro após atualização", "status": "error"}
+                            return {"message": "Usuário não encontrado após atualização", "status": "error"}
                     else:
-                        logging.warning(f"Nenhuma inscrição corresponde ao filtro: {subscription_filter}")
-                        return {"message": "Inscrição não encontrada para atualização", "status": "warning"}
+                        logging.warning(f"Nenhum documento corresponde ao filtro: {subscription_filter}")
+                        return {"message": "Nenhum usuário encontrado para atualizar", "status": "warning"}
                         
-                except Exception as e:
-                    logging.error(f"Erro na operação de atualização MongoDB: {str(e)}")
-                    return {"message": f"Erro na atualização: {str(e)}", "status": "error"}
-                    
+                except Exception as mongo_error:
+                    logging.error(f"Erro na operação MongoDB: {str(mongo_error)}")
+                    return {"message": f"Erro na atualização do banco: {str(mongo_error)}", "status": "error"}
             else:
-                logging.warning(f"Filtro de busca inválido. Dados do webhook: Event={event}, Customer={customer_id}, Email={customer_email}")
-                return {"message": "Dados insuficientes para processar pagamento", "status": "warning"}
+                logging.warning("Filtro de busca não pôde ser criado")
+                return {"message": "Dados insuficientes para identificar usuário", "status": "warning"}
+        
+        logging.info(f"Evento {event} recebido mas não processado")
+        return {"message": f"Evento {event} recebido", "status": "received"}
+        
+    except Exception as e:
+        logging.error(f"Erro geral no webhook: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Erro no webhook: {str(e)}")
         
         return {"message": "Webhook recebido", "status": "received"}
         
