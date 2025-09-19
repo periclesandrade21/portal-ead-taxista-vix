@@ -285,6 +285,38 @@ const Home = () => {
     return Object.keys(errors).length === 0;
   };
 
+  // Verificar duplicatas em tempo real
+  const checkDuplicates = async () => {
+    if (!name.trim() && !email.trim() && !cpf.trim() && !phone.trim() && !carPlate.trim() && !licenseNumber.trim()) {
+      return;
+    }
+
+    setIsCheckingDuplicates(true);
+    
+    try {
+      const finalCity = city === "Outra" ? customCity : city;
+      
+      const response = await axios.post(`${API}/check-duplicates`, {
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        cpf: cpf.trim(),
+        carPlate: carPlate.trim(),
+        licenseNumber: licenseNumber.trim(),
+        city: finalCity
+      });
+      
+      if (response.data.has_duplicates) {
+        setDuplicatePopup(response.data.duplicates);
+      }
+      
+    } catch (error) {
+      console.error("Erro ao verificar duplicatas:", error);
+    } finally {
+      setIsCheckingDuplicates(false);
+    }
+  };
+
   // Array de imagens para o carrossel
   const carouselImages = [
     {
