@@ -455,6 +455,54 @@ test_plan:
         agent: "testing"
         comment: "✅ ABA CURSOS TOTALMENTE FUNCIONAL - Testes abrangentes executados com sucesso em todos os cenários solicitados: 1) NAVEGAÇÃO: Aba 'Cursos' acessível e carregando corretamente com título 'Gestão de Cursos' ✅. 2) VALOR R$ 150,00: Preço do curso exibido corretamente em múltiplos locais (Valor do Curso: R$ 150,00) ✅. 3) DETALHES DO CURSO: Seção completa mostrando - Valor do Curso: R$ 150,00, Carga Horária: 28h, Inscritos: 8, Concluídos: 8 ✅. 4) ESTATÍSTICAS FINANCEIRAS: Seção funcionando perfeitamente - Receita Total: R$ 1.200 (8 pagos × R$ 150), Receita Potencial: R$ 1.200, Receita Pendente: R$ 0 ✅. 5) BOTÃO 'NOVO CURSO': Modal abre corretamente com todos os campos de formulário (Nome do Curso, Descrição, Preço R$, Carga Horária) ✅. 6) MODAL FUNCIONAL: Campos preenchíveis, valores padrão corretos (150 para preço, 28 para horas), botões 'Criar' e 'Cancelar' funcionais ✅. 7) MÓDULOS DO CURSO: Lista completa exibida (Relações Humanas 14h, Direção Defensiva 8h, Primeiros Socorros 2h, Mecânica Básica 4h) ✅. Sistema de cursos do portal administrativo completamente operacional com todas as funcionalidades solicitadas."
 
+  - task: "Botões de volta nos logins - Portal do Aluno e Admin"
+    implemented: true
+    working: true
+    file: "StudentPortal.js + AdminDashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ BACK BUTTONS FULLY IMPLEMENTED - Both Portal do Aluno and Portal Admin have 'Voltar ao Portal' buttons with ChevronLeft arrow icons. Both buttons correctly redirect to main landing page when clicked. Implementation is complete and working perfectly."
+
+  - task: "PaymentFlow melhorado - Botões PIX e verificação"
+    implemented: false
+    working: false
+    file: "PaymentFlow.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ IMPROVED PAYMENT FLOW NOT IMPLEMENTED - Testing revealed that the improved payment flow is NOT implemented. Missing: 1) 'Ir para Pagamento PIX' button not found, 2) 'Já Paguei - Verificar Status' button not found, 3) Instructions about opening in new tab not found. The payment page does not redirect automatically (which is good), but the new buttons and instructions are missing. This feature needs to be implemented."
+
+  - task: "Student Login Error Popups - Email e Senha"
+    implemented: false
+    working: false
+    file: "StudentPortal.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ LOGIN ERROR POPUPS NOT WORKING - Testing revealed that error popups are NOT appearing correctly. 1) Non-existent email test: 'Email Não Encontrado' popup does NOT appear, 2) Wrong password test: 'Senha Incorreta' popup does NOT appear. Console shows 401 errors are being received from backend, but the frontend error modal system is not displaying the popups. The errorModal state management may have issues."
+
+  - task: "Password Sending Status - Email e WhatsApp honestos"
+    implemented: false
+    working: false
+    file: "App.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ PASSWORD SENDING STATUS NOT IMPLEMENTED - Testing revealed that the honest password sending status is NOT implemented. After registration, the password popup does NOT appear with the expected status information. Missing: 1) Email status section not found, 2) WhatsApp status section not found, 3) Temporary password not displayed in popup. The registration completes but the improved popup with honest status reporting is not showing."
+
 agent_communication:
   - agent: "main"
     message: "Iniciando implementação do bot IA. Prioridades: 1) Bot IA funcional, 2) Ajustes no formulário, 3) Autoplay video, 4) Preparar estrutura para fluxo cadastro+pagamento"
