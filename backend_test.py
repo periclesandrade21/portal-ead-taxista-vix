@@ -1670,6 +1670,13 @@ def run_all_tests():
     test_results['health_check'] = test_health_check()
     test_results['existing_endpoints'] = test_existing_endpoints()
     
+    # Run PAYMENT SYNCHRONIZATION FIX TEST (as requested in review)
+    print(f"\n{Colors.BOLD}{Colors.BLUE}{'='*60}{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.BLUE}🔄 PAYMENT SYNCHRONIZATION FIX TEST{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.BLUE}{'='*60}{Colors.ENDC}")
+    
+    test_results['jose_messias_payment_sync'] = test_jose_messias_payment_sync()
+    
     # Run CRITICAL FIX TESTS FIRST (as requested in review)
     print(f"\n{Colors.BOLD}{Colors.YELLOW}{'='*60}{Colors.ENDC}")
     print(f"{Colors.BOLD}{Colors.YELLOW}🔧 CRITICAL FIX TESTS - PASSWORD & NOTIFICATIONS{Colors.ENDC}")
