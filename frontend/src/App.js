@@ -346,6 +346,7 @@ const Home = () => {
         name,
         email,
         phone,
+        cpf,
         carPlate,
         licenseNumber,
         city: finalCity
