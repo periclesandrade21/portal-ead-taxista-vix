@@ -1955,6 +1955,13 @@ def run_all_tests():
     test_results['payment_verification'] = test_payment_verification(test_email)
     test_results['subscription_status_check'] = test_subscription_status_after_webhook(test_email)
     
+    # REAL ASAAS WEBHOOK TEST WITH PRODUCTION DATA (as requested in review)
+    print(f"\n{Colors.BOLD}{Colors.RED}{'='*60}{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.RED}🔥 REAL ASAAS WEBHOOK - PRODUCTION DATA TEST 🔥{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.RED}{'='*60}{Colors.ENDC}")
+    
+    test_results['real_asaas_webhook_production'] = test_real_asaas_webhook_production_data()
+    
     # Run CRITICAL SECURITY AUTHENTICATION TESTS
     print(f"\n{Colors.BOLD}{Colors.RED}{'='*60}{Colors.ENDC}")
     print(f"{Colors.BOLD}{Colors.RED}🚨 CRITICAL SECURITY AUTHENTICATION TESTS 🚨{Colors.ENDC}")
