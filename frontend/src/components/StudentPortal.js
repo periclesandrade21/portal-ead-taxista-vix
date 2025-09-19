@@ -97,105 +97,154 @@ const StudentPortal = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoginError('');
-    setErrorModal({ show: false, type: '', message: '', title: '' }); // Limpar modal de erro
-    setIsLoading(true);
-    
+    setLoading(true);
+
     try {
-      // Validar com o backend
-      const response = await axios.post(`${API}/api/auth/login`, {
-        email: loginData.email.toLowerCase().trim(),
-        password: loginData.password
-      });
+      const response = await axios.post(`${API}/auth/login`, loginData);
       
       if (response.data.success) {
-        setUserInfo(response.data.user);
-        setIsLoggedIn(true);
-        console.log('Login realizado com sucesso:', response.data.user.name);
+        setIsAuthenticated(true);
+        setUser(response.data.user);
+        setProfileData({
+          name: response.data.user.name || '',
+          email: response.data.user.email || '',
+          phone: response.data.user.phone || '',
+          city: response.data.user.city || '',
+          car_plate: response.data.user.car_plate || '',
+          license_number: response.data.user.license_number || ''
+        });
+        await loadStudentData(response.data.user.id);
       } else {
-        setLoginError('Email ou senha incorretos');
+        alert('Credenciais inválidas. Verifique email e senha.');
       }
-      
     } catch (error) {
       console.error('Erro no login:', error);
-      
-      if (error.response) {
-        // Erro do servidor
-        if (error.response.status === 401) {
-          const errorMessage = error.response.data?.detail || 'Credenciais inválidas';
-          
-          if (errorMessage.includes('Email não encontrado')) {
-            setErrorModal({
-              show: true,
-              type: 'email_not_found',
-              title: '❌ Email Não Encontrado',
-              message: 'Este email não está cadastrado em nosso sistema. Verifique se você já realizou seu cadastro ou entre em contato conosco.'
-            });
-          } else if (errorMessage.includes('Senha incorreta')) {
-            setErrorModal({
-              show: true,
-              type: 'wrong_password',
-              title: '🔑 Senha Incorreta',
-              message: 'A senha informada está incorreta. Verifique a senha enviada por email ou WhatsApp após seu cadastro.'
-            });
-          } else {
-            setErrorModal({
-              show: true,
-              type: 'login_error',
-              title: '❌ Erro de Login',
-              message: errorMessage
-            });
-          }
-        } else if (error.response.status === 403) {
-          setErrorModal({
-            show: true,
-            type: 'payment_pending',
-            title: '⏳ Pagamento Pendente',
-            message: 'Seu acesso será liberado após a confirmação do pagamento. Finalize seu pagamento via PIX e tente novamente em alguns minutos.'
-          });
-        } else {
-          setErrorModal({
-            show: true,
-            type: 'server_error',
-            title: '🔧 Erro no Servidor',
-            message: 'Erro no servidor. Tente novamente em alguns instantes.'
-          });
-        }
+      if (error.response?.status === 402) {
+        alert('⏳ Seu pagamento ainda não foi confirmado. Por favor, aguarde a confirmação ou entre em contato conosco.');
       } else {
-        // Erro de conexão
-        setLoginError('Erro de conexão. Verifique sua internet.');
+        alert('Erro ao fazer login. Tente novamente.');
       }
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const handlePasswordReset = async () => {
-    if (!resetEmail) {
-      alert('Por favor, informe seu email');
-      return;
-    }
-
-    setResetLoading(true);
-    
+  const loadStudentData = async (userId) => {
     try {
-      const response = await axios.post(`${API}/api/auth/reset-password`, {
-        email: resetEmail
-      });
+      // Carregar módulos
+      const modulesResponse = await axios.get(`${API}/modules`);
+      setModules(modulesResponse.data.modules || []);
+
+      // Carregar progresso do usuário
+      const progressResponse = await axios.get(`${API}/progress/${userId}`);
+      const progressData = progressResponse.data.progress || [];
       
-      if (response.status === 200) {
-        setResetSuccess(true);
-        alert('✅ Nova senha enviada! Verifique seu email.');
-      }
+      const progressMap = {};
+      progressData.forEach(p => {
+        progressMap[p.module_id] = p;
+      });
+      setUserProgress(progressMap);
+
+      // Carregar notificações (mock)
+      setNotifications([
+        { id: 1, type: 'success', message: 'Bem-vindo ao Portal EAD!', time: '2 min atrás' },
+        { id: 2, type: 'info', message: 'Novo módulo disponível: Mecânica Básica', time: '1 hora atrás' },
+        { id: 3, type: 'warning', message: 'Lembre-se de completar o quiz do módulo anterior', time: '2 horas atrás' }
+      ]);
+
     } catch (error) {
-      if (error.response?.status === 404) {
-        alert('❌ Email não encontrado no sistema. Verifique se você está cadastrado.');
-      } else {
-        alert('❌ Erro ao solicitar reset de senha. Tente novamente.');
-      }
-    } finally {
-      setResetLoading(false);
+      console.error('Erro ao carregar dados do estudante:', error);
     }
+  };
+
+  const loadModuleVideos = async (moduleId) => {
+    try {
+      const response = await axios.get(`${API}/modules/${moduleId}/videos`);
+      setModuleVideos(response.data.videos || []);
+    } catch (error) {
+      console.error('Erro ao carregar vídeos:', error);
+    }
+  };
+
+  const handleModuleSelect = (module) => {
+    setSelectedModule(module);
+    setActiveTab('content');
+    loadModuleVideos(module.id);
+  };
+
+  const handleVideoSelect = (video) => {
+    setCurrentVideo(video);
+    setActiveTab('video-player');
+  };
+
+  const calculateModuleProgress = (moduleId) => {
+    const progress = userProgress[moduleId];
+    if (!progress) return 0;
+    
+    const module = modules.find(m => m.id === moduleId);
+    if (!module) return 0;
+    
+    const totalVideos = moduleVideos.length || 1;
+    const watchedVideos = progress.videos_watched?.length || 0;
+    
+    return Math.round((watchedVideos / totalVideos) * 100);
+  };
+
+  const formatDuration = (minutes) => {
+    if (!minutes) return '';
+    if (minutes < 60) return `${minutes}min`;
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}min` : `${hours}h`;
+  };
+
+  const handleResetPassword = async () => {
+    try {
+      setLoading(true);
+      await axios.post(`${API}/auth/reset-password`, { email: resetEmail });
+      alert('📧 Instruções de redefinição de senha enviadas para seu email!');
+      setShowResetModal(false);
+      setResetEmail('');
+    } catch (error) {
+      console.error('Erro ao solicitar reset:', error);
+      alert('Erro ao solicitar redefinição de senha. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setUser(null);
+    setActiveTab('dashboard');
+    setSelectedModule(null);
+    setCurrentVideo(null);
+  };
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim()) return;
+    
+    // Simular envio de mensagem
+    const message = {
+      id: Date.now(),
+      text: newMessage,
+      sender: 'student',
+      timestamp: new Date().toLocaleTimeString()
+    };
+    
+    setChatMessages(prev => [...prev, message]);
+    setNewMessage('');
+    
+    // Simular resposta automática
+    setTimeout(() => {
+      const response = {
+        id: Date.now() + 1,
+        text: 'Obrigado pela sua mensagem! Nossa equipe responderá em breve.',
+        sender: 'support',
+        timestamp: new Date().toLocaleTimeString()
+      };
+      setChatMessages(prev => [...prev, response]);
+    }, 1000);
   };
 
   if (!isLoggedIn) {
