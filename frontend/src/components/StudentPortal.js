@@ -202,7 +202,9 @@ const StudentPortal = () => {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">Portal do Aluno</h1>
-                <p className="text-sm text-gray-600">Bem-vindo, José Silva</p>
+                <p className="text-sm text-gray-600">
+                  Bem-vindo, {userInfo?.name || 'Aluno'}
+                </p>
               </div>
             </div>
             <Button 
