@@ -740,8 +740,9 @@ def get_bot_context():
     - IMPORTANTE: WhatsApp temporariamente indisponível, sempre direcionar para EMAIL
     
     IMPORTANTE SOBRE VALORES:
-    - Quando perguntado sobre preços/valores/custos: SEMPRE responda "Os valores do treinamento serão divulgados em breve"
-    - Não invente valores nem dê estimativas
+    - Quando perguntado sobre preços/valores/custos: busque o preço atual e informe o valor correto
+    - Mostre os módulos incluídos no curso e formas de pagamento
+    - Destaque que o acesso é liberado após confirmação do pagamento
     
     SOBRE RESET DE SENHA:
     - Se alguém solicitar reset de senha, ofereça ajuda para resetar via email
