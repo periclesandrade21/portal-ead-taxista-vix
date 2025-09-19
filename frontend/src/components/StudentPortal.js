@@ -249,103 +249,88 @@ const StudentPortal = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <div className="flex justify-between items-center mb-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => window.location.href = '/'}
-                className="flex items-center gap-2"
-              >
-                <ChevronLeft className="h-4 w-4" />
-                Voltar ao Portal
-              </Button>
-              <div></div> {/* Spacer para centralizar o ícone */}
-            </div>
+      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 flex items-center justify-center p-4">
+        <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 w-full max-w-md border border-white/20">
+          <div className="text-center mb-8">
             <div className="bg-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <User className="h-8 w-8 text-white" />
+              <GraduationCap className="h-8 w-8 text-white" />
             </div>
-            <CardTitle>Portal do Aluno</CardTitle>
-            <CardDescription>
-              Acesse sua área de estudos do EAD Taxista ES
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <Label htmlFor="email">Email</Label>
+            <h1 className="text-2xl font-bold text-white mb-2">Portal do Aluno</h1>
+            <p className="text-blue-200">EAD Taxista ES</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <Label htmlFor="email" className="text-white mb-2 block">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={loginData.email}
+                onChange={(e) => setLoginData(prev => ({ ...prev, email: e.target.value }))}
+                className="bg-white/10 border-white/30 text-white placeholder:text-white/60"
+                placeholder="seu@email.com"
+                required
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="password" className="text-white mb-2 block">Senha</Label>
+              <div className="relative">
                 <Input
-                  id="email"
-                  type="email"
-                  value={loginData.email}
-                  onChange={(e) => {
-                    setLoginData({...loginData, email: e.target.value});
-                    setLoginError(''); // Limpar erro ao digitar
-                    setErrorModal({ show: false, type: '', message: '', title: '' }); // Limpar modal de erro
-                  }}
-                  placeholder="seu@email.com"
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={loginData.password}
+                  onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
+                  className="bg-white/10 border-white/30 text-white placeholder:text-white/60 pr-10"
+                  placeholder="Sua senha"
                   required
-                  className={loginError ? 'border-red-500' : ''}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
-              
-              <div>
-                <Label htmlFor="password">Senha</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    value={loginData.password}
-                    onChange={(e) => {
-                      setLoginData({...loginData, password: e.target.value});
-                      setLoginError(''); // Limpar erro ao digitar
-                      setErrorModal({ show: false, type: '', message: '', title: '' }); // Limpar modal de erro
-                    }}
-                    placeholder="Sua senha temporária"
-                    required
-                    className={loginError ? 'border-red-500 pr-10' : 'pr-10'}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-gray-400 hover:text-gray-600" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-gray-400 hover:text-gray-600" />
-                    )}
-                  </Button>
+            </div>
+
+            <Button 
+              type="submit" 
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3"
+              disabled={loading}
+            >
+              {loading ? (
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Entrando...
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  Use a senha enviada por email após seu cadastro
-                </p>
-              </div>
-              
-              {loginError && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                  <p className="text-red-700 text-sm">{loginError}</p>
-                </div>
+              ) : (
+                'Entrar'
               )}
-              
-              <Button 
-                type="submit" 
-                className="w-full bg-blue-600 hover:bg-blue-700"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Verificando...
-                  </div>
-                ) : (
-                  'Entrar'
-                )}
-              </Button>
+            </Button>
+          </form>
+
+          <div className="mt-6 text-center space-y-3">
+            <Button
+              variant="ghost"
+              onClick={() => setShowResetModal(true)}
+              className="text-blue-200 hover:text-white hover:bg-white/10"
+            >
+              <Key className="h-4 w-4 mr-2" />
+              Esqueci minha senha
+            </Button>
+            
+            <Button
+              variant="ghost"
+              onClick={() => window.history.back()}
+              className="text-blue-200 hover:text-white hover:bg-white/10"
+            >
+              <ChevronLeft className="h-4 w-4 mr-2" />
+              Voltar ao Portal
+            </Button>
+          </div>
+        </div>
 
               {/* Botão de Reset de Senha */}
               <Button
