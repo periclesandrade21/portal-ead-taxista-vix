@@ -75,7 +75,7 @@ def create_unique_test_subscription():
     valid_cpf = generate_valid_cpf()
     
     test_data = {
-        "name": f"Admin Reset Test User {unique_suffix}",
+        "name": f"João Silva Santos",
         "email": f"admin.reset.test.{timestamp}@email.com",
         "phone": f"2799{unique_suffix}",
         "cpf": valid_cpf,
