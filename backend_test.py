@@ -572,6 +572,297 @@ def test_subscription_status_after_webhook(test_email):
         print_error(f"Subscription status check failed: {str(e)}")
         return False
 
+def create_test_user_for_auth():
+    """Create a test user for authentication testing"""
+    print_test_header("Creating Test User for Authentication")
+    
+    # Create test user with known credentials
+    test_data = {
+        "name": "Teste Segurança Silva",
+        "email": "teste.seguranca@email.com",
+        "phone": "27999888777",
+        "cpf": "12345678901",
+        "carPlate": "TST-1234",
+        "licenseNumber": "TA-54321",
+        "city": "Vitória"
+    }
+    
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/subscribe",
+            json=test_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_success("Test user created successfully")
+            print_info(f"Email: {test_data['email']}")
+            print_info(f"Temporary Password: {data.get('temporary_password')}")
+            print_info(f"Status: {data.get('status', 'pending')}")
+            
+            return {
+                "email": test_data["email"],
+                "password": data.get("temporary_password"),
+                "status": "pending"
+            }
+        else:
+            # User might already exist, try to get existing user info
+            print_warning("User creation failed, might already exist")
+            return {
+                "email": test_data["email"],
+                "password": "TesteSeg123",  # Default test password
+                "status": "pending"
+            }
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Test user creation failed: {str(e)}")
+        return None
+
+def test_auth_invalid_email():
+    """Test authentication with non-existent email"""
+    print_test_header("🔒 SECURITY TEST - Invalid Email Authentication")
+    
+    login_data = {
+        "email": "naoexiste@email.com",
+        "password": "qualquersenha123"
+    }
+    
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/auth/login",
+            json=login_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code == 401:
+            data = response.json()
+            expected_message = "Email não encontrado"
+            
+            if expected_message in data.get('detail', ''):
+                print_success("✅ SECURITY PASS: Invalid email correctly rejected with 401")
+                print_info(f"Response: {data.get('detail')}")
+                return True
+            else:
+                print_error(f"❌ SECURITY FAIL: Wrong error message. Expected '{expected_message}', got '{data.get('detail')}'")
+                return False
+        else:
+            print_error(f"❌ CRITICAL SECURITY FLAW: Invalid email returned status {response.status_code} instead of 401")
+            print_error(f"Response: {response.text}")
+            return False
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Authentication test failed: {str(e)}")
+        return False
+
+def test_auth_incorrect_password(test_user):
+    """Test authentication with incorrect password"""
+    print_test_header("🔒 SECURITY TEST - Incorrect Password Authentication")
+    
+    if not test_user:
+        print_warning("No test user available, skipping incorrect password test")
+        return False
+    
+    login_data = {
+        "email": test_user["email"],
+        "password": "senhaerrada123"
+    }
+    
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/auth/login",
+            json=login_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code == 401:
+            data = response.json()
+            expected_message = "Senha incorreta"
+            
+            if expected_message in data.get('detail', ''):
+                print_success("✅ SECURITY PASS: Incorrect password correctly rejected with 401")
+                print_info(f"Response: {data.get('detail')}")
+                return True
+            else:
+                print_error(f"❌ SECURITY FAIL: Wrong error message. Expected '{expected_message}', got '{data.get('detail')}'")
+                return False
+        else:
+            print_error(f"❌ CRITICAL SECURITY FLAW: Incorrect password returned status {response.status_code} instead of 401")
+            print_error(f"Response: {response.text}")
+            return False
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Authentication test failed: {str(e)}")
+        return False
+
+def test_auth_pending_payment(test_user):
+    """Test authentication with valid credentials but pending payment"""
+    print_test_header("🔒 SECURITY TEST - Pending Payment Access Control")
+    
+    if not test_user:
+        print_warning("No test user available, skipping pending payment test")
+        return False
+    
+    login_data = {
+        "email": test_user["email"],
+        "password": test_user["password"]
+    }
+    
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/auth/login",
+            json=login_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code == 403:
+            data = response.json()
+            expected_message = "Acesso liberado apenas após confirmação do pagamento"
+            
+            if expected_message in data.get('detail', ''):
+                print_success("✅ SECURITY PASS: Pending payment correctly blocked with 403")
+                print_info(f"Response: {data.get('detail')}")
+                return True
+            else:
+                print_error(f"❌ SECURITY FAIL: Wrong error message. Expected '{expected_message}', got '{data.get('detail')}'")
+                return False
+        else:
+            print_error(f"❌ CRITICAL SECURITY FLAW: Pending payment returned status {response.status_code} instead of 403")
+            print_error(f"Response: {response.text}")
+            return False
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Authentication test failed: {str(e)}")
+        return False
+
+def update_test_user_to_paid(test_user):
+    """Update test user status to paid for final authentication test"""
+    print_test_header("Updating Test User to Paid Status")
+    
+    if not test_user:
+        print_warning("No test user available, skipping status update")
+        return False
+    
+    # Simulate webhook to update user to paid status
+    webhook_data = {
+        "event": "PAYMENT_CONFIRMED",
+        "payment": {
+            "id": "pay_security_test",
+            "value": 150.00,
+            "customer": {
+                "email": test_user["email"]
+            }
+        }
+    }
+    
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/webhook/asaas-payment",
+            json=webhook_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            print_success("Test user status updated to paid")
+            test_user["status"] = "paid"
+            return True
+        else:
+            print_error(f"Failed to update test user status: {response.status_code}")
+            return False
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Status update failed: {str(e)}")
+        return False
+
+def test_auth_valid_paid_user(test_user):
+    """Test authentication with valid credentials and paid status"""
+    print_test_header("🔒 SECURITY TEST - Valid Paid User Authentication")
+    
+    if not test_user:
+        print_warning("No test user available, skipping valid user test")
+        return False
+    
+    login_data = {
+        "email": test_user["email"],
+        "password": test_user["password"]
+    }
+    
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/auth/login",
+            json=login_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            data = response.json()
+            
+            # Check response structure
+            if data.get('success') and data.get('user'):
+                user_data = data.get('user')
+                print_success("✅ SECURITY PASS: Valid paid user successfully authenticated")
+                print_info(f"User ID: {user_data.get('id')}")
+                print_info(f"Name: {user_data.get('name')}")
+                print_info(f"Email: {user_data.get('email')}")
+                print_info(f"Status: {user_data.get('status')}")
+                print_info(f"Course Access: {user_data.get('course_access')}")
+                
+                # Verify user data doesn't contain sensitive information
+                if 'temporary_password' not in user_data and 'password' not in user_data:
+                    print_success("✅ SECURITY PASS: No sensitive data in response")
+                    return True
+                else:
+                    print_error("❌ SECURITY FAIL: Sensitive data exposed in response")
+                    return False
+            else:
+                print_error("❌ SECURITY FAIL: Invalid response structure")
+                print_info(f"Response: {data}")
+                return False
+        else:
+            print_error(f"❌ SECURITY FAIL: Valid paid user returned status {response.status_code} instead of 200")
+            print_error(f"Response: {response.text}")
+            return False
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Authentication test failed: {str(e)}")
+        return False
+
+def test_auth_endpoint_exists():
+    """Test that the /api/auth/login endpoint exists and responds correctly"""
+    print_test_header("🔒 SECURITY TEST - Login Endpoint Availability")
+    
+    # Test with empty payload to check if endpoint exists
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/auth/login",
+            json={},
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        # Should return 422 (validation error) not 404 (not found)
+        if response.status_code == 422:
+            print_success("✅ SECURITY PASS: Login endpoint exists and validates input")
+            print_info("Endpoint correctly validates required fields")
+            return True
+        elif response.status_code == 404:
+            print_error("❌ CRITICAL SECURITY FLAW: Login endpoint does not exist!")
+            return False
+        else:
+            print_success("✅ SECURITY PASS: Login endpoint exists")
+            print_info(f"Endpoint responded with status {response.status_code}")
+            return True
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Login endpoint test failed: {str(e)}")
+        return False
+
 def run_all_tests():
     """Run all tests and provide summary"""
     print(f"{Colors.BOLD}EAD TAXISTA ES - COMPLETE SYSTEM TESTING{Colors.ENDC}")
