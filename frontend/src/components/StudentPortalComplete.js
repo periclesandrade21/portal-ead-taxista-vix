@@ -59,8 +59,19 @@ const StudentPortalComplete = () => {
 
   // Estados de perfil
   const [profileData, setProfileData] = useState({
-    name: '', email: '', phone: '', city: '', car_plate: '', license_number: ''
+    name: '', email: '', phone: '', city: '', car_plate: '', license_number: '', photo: null
   });
+  const [changePasswordModal, setChangePasswordModal] = useState({ 
+    show: false, 
+    currentPassword: '', 
+    newPassword: '', 
+    confirmPassword: '',
+    showCurrentPassword: false,
+    showNewPassword: false,
+    showConfirmPassword: false
+  });
+  const [accessHistory, setAccessHistory] = useState([]);
+  const [activityHistory, setActivityHistory] = useState([]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
