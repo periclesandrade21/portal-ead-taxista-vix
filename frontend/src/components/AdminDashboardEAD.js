@@ -267,28 +267,28 @@ const AdminDashboardEAD = () => {
   };
 
   const loadMockData = async () => {
-      // Carregar dados dos motoristas (mock)
-      const mockDrivers = [
-        {
-          id: '1', name: 'José Silva Santos', cpf: '123.456.789-00', cnh: '1234567890',
-          license_number: 'TAX001', city: 'Vitória', phone: '(27) 99999-0001',
-          email: 'jose@email.com', status: 'certified', course_progress: 100,
-          documents_status: 'approved', last_access: '2024-09-19', photo: null
-        },
-        {
-          id: '2', name: 'Maria Oliveira', cpf: '987.654.321-00', cnh: '0987654321',
-          license_number: 'TAX002', city: 'Vila Velha', phone: '(27) 99999-0002',
-          email: 'maria@email.com', status: 'in_progress', course_progress: 75,
-          documents_status: 'pending', last_access: '2024-09-18', photo: null
-        },
-        {
-          id: '3', name: 'Carlos Eduardo', cpf: '456.789.123-00', cnh: '4567891230',
-          license_number: 'TAX003', city: 'Serra', phone: '(27) 99999-0003',
-          email: 'carlos@email.com', status: 'pending', course_progress: 25,
-          documents_status: 'rejected', last_access: '2024-09-17', photo: null
-        }
-      ];
-      setDrivers(mockDrivers);
+    // Carregar dados dos motoristas (mock)
+    const mockDrivers = [
+      {
+        id: '1', name: 'José Silva Santos', cpf: '123.456.789-00', cnh: '1234567890',
+        license_number: 'TAX001', city: 'Vitória', phone: '(27) 99999-0001',
+        email: 'jose@email.com', status: 'certified', course_progress: 100,
+        documents_status: 'approved', last_access: '2024-09-19', photo: null
+      },
+      {
+        id: '2', name: 'Maria Oliveira', cpf: '987.654.321-00', cnh: '0987654321',
+        license_number: 'TAX002', city: 'Vila Velha', phone: '(27) 99999-0002',
+        email: 'maria@email.com', status: 'in_progress', course_progress: 75,
+        documents_status: 'pending', last_access: '2024-09-18', photo: null
+      },
+      {
+        id: '3', name: 'Carlos Eduardo', cpf: '456.789.123-00', cnh: '4567891230',
+        license_number: 'TAX003', city: 'Serra', phone: '(27) 99999-0003',
+        email: 'carlos@email.com', status: 'pending', course_progress: 25,
+        documents_status: 'rejected', last_access: '2024-09-17', photo: null
+      }
+    ];
+    setDrivers(mockDrivers);
 
       // Carregar inscrições (mock para manter compatibilidade)
       const mockSubscriptions = mockDrivers.map(driver => ({
