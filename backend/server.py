@@ -1928,13 +1928,119 @@ async def get_admin_stats():
         "conversion_rate": round((total_users / total_subscriptions * 100) if total_subscriptions > 0 else 0, 2)
     }
 
+# Moodle Integration Endpoints
+@api_router.get("/moodle/status")
+async def moodle_status():
+    """Check Moodle integration status"""
+    if not moodle_service:
+        return {
+            "enabled": False,
+            "message": "Moodle integration not configured"
+        }
+    
+    try:
+        test_result = await moodle_service.test_moodle_integration()
+        return {
+            "enabled": True,
+            "status": "connected" if test_result["success"] else "error",
+            "details": test_result
+        }
+    except Exception as e:
+        return {
+            "enabled": True,
+            "status": "error",
+            "error": str(e)
+        }
+
+@api_router.post("/moodle/sync-user/{user_id}")
+async def sync_user_to_moodle(user_id: str):
+    """Sync user to Moodle LMS"""
+    if not moodle_service:
+        raise HTTPException(status_code=503, detail="Moodle integration not available")
+    
+    try:
+        result = await moodle_service.sync_user_to_moodle(user_id)
+        if result["success"]:
+            return {
+                "message": "User synced successfully",
+                "moodle_user_id": result.get("moodle_user_id"),
+                "action": result.get("action")
+            }
+        else:
+            raise HTTPException(status_code=400, detail=result["error"])
+    except Exception as e:
+        logging.error(f"Error syncing user to Moodle: {e}")
+        raise HTTPException(status_code=500, detail="Failed to sync user to Moodle")
+
+@api_router.post("/moodle/enroll/{user_id}")
+async def enroll_user_in_moodle(user_id: str):
+    """Enroll user in Moodle course"""
+    if not moodle_service:
+        raise HTTPException(status_code=503, detail="Moodle integration not available")
+    
+    try:
+        result = await moodle_service.enroll_user_in_course(user_id)
+        if result["success"]:
+            return {
+                "message": "User enrolled successfully",
+                "moodle_user_id": result.get("moodle_user_id"),
+                "moodle_course_id": result.get("moodle_course_id")
+            }
+        else:
+            raise HTTPException(status_code=400, detail=result["error"])
+    except Exception as e:
+        logging.error(f"Error enrolling user in Moodle: {e}")
+        raise HTTPException(status_code=500, detail="Failed to enroll user in Moodle")
+
+@api_router.get("/moodle/user/{user_id}/progress")
+async def get_user_moodle_progress(user_id: str):
+    """Get user's course progress from Moodle"""
+    if not moodle_service:
+        raise HTTPException(status_code=503, detail="Moodle integration not available")
+    
+    try:
+        result = await moodle_service.get_user_course_progress(user_id)
+        if result["success"]:
+            return result
+        else:
+            raise HTTPException(status_code=404, detail=result["error"])
+    except Exception as e:
+        logging.error(f"Error getting user progress: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get user progress")
+
+@api_router.post("/moodle/payment-webhook")
+async def moodle_payment_webhook(user_id: str, payment_status: str):
+    """Handle payment status changes for Moodle enrollment"""
+    if not moodle_service:
+        raise HTTPException(status_code=503, detail="Moodle integration not available")
+    
+    try:
+        result = await moodle_service.manage_course_access_by_payment(user_id, payment_status)
+        return {
+            "message": "Payment status processed",
+            "action": result.get("action"),
+            "success": result["success"]
+        }
+    except Exception as e:
+        logging.error(f"Error processing payment webhook: {e}")
+        raise HTTPException(status_code=500, detail="Failed to process payment webhook")
+
 # Health check
 @api_router.get("/health")
 async def health_check():
+    moodle_status = "disabled"
+    if moodle_service:
+        try:
+            test_result = await moodle_service.test_moodle_integration()
+            moodle_status = "connected" if test_result["success"] else "error"
+        except:
+            moodle_status = "error"
+    
     return {
         "status": "healthy",
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "service": "EAD Taxista ES API"
+        "service": "EAD Taxista ES API",
+        "moodle_integration": moodle_status
     }
 
 # Include the router in the main app
