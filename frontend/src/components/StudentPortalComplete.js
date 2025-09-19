@@ -128,6 +128,21 @@ const StudentPortalComplete = () => {
         { id: 3, type: 'warning', message: 'Lembre-se de completar o quiz do módulo anterior', time: '2 horas atrás' }
       ]);
 
+      // Carregar histórico de acessos (mock)
+      setAccessHistory([
+        { id: 1, action: 'Login realizado', date: new Date().toLocaleString(), ip: '192.168.1.100' },
+        { id: 2, action: 'Login realizado', date: new Date(Date.now() - 86400000).toLocaleString(), ip: '192.168.1.100' },
+        { id: 3, action: 'Login realizado', date: new Date(Date.now() - 172800000).toLocaleString(), ip: '192.168.1.105' }
+      ]);
+
+      // Carregar histórico de atividades (mock)
+      setActivityHistory([
+        { id: 1, action: 'Vídeo assistido: Fundamentos da Mecânica', module: 'Mecânica Básica', date: new Date().toLocaleString() },
+        { id: 2, action: 'Quiz realizado: Legislação de Trânsito', module: 'Legislação', score: 85, date: new Date(Date.now() - 3600000).toLocaleString() },
+        { id: 3, action: 'Vídeo assistido: RCP e Primeiros Socorros', module: 'Primeiros Socorros', date: new Date(Date.now() - 7200000).toLocaleString() },
+        { id: 4, action: 'Login no portal', module: 'Sistema', date: new Date(Date.now() - 10800000).toLocaleString() }
+      ]);
+
     } catch (error) {
       console.error('Erro ao carregar dados do estudante:', error);
     }
