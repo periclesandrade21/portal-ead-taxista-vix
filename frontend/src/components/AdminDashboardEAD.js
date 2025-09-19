@@ -1025,7 +1025,7 @@ const AdminDashboardEAD = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           {/* Navigation */}
-          <TabsList className="grid w-full grid-cols-11">
+          <TabsList className="grid w-full grid-cols-12">
             <TabsTrigger value="dashboard">
               <Home className="h-4 w-4 mr-1" />
               <span className="hidden sm:inline">Dashboard</span>
@@ -1033,6 +1033,10 @@ const AdminDashboardEAD = () => {
             <TabsTrigger value="subscriptions">
               <Users className="h-4 w-4 mr-1" />
               <span className="hidden sm:inline">Inscrições</span>
+            </TabsTrigger>
+            <TabsTrigger value="documents">
+              <FileCheck className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">Documentos</span>
             </TabsTrigger>
             <TabsTrigger value="payments">
               <CreditCard className="h-4 w-4 mr-1" />
