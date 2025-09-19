@@ -45,7 +45,7 @@ def test_critical_fixes():
         "name": "Ana Silva Santos",
         "email": f"ana.silva.{timestamp}@email.com",
         "phone": f"2799{timestamp[-7:]}",  # Unique phone
-        "cpf": "12345678909",  # Different valid CPF
+        "cpf": "52998224725",  # Fresh valid CPF
         "carPlate": f"ASS-{timestamp[-4:]}-T",
         "licenseNumber": f"TA-{timestamp[-5:]}",
         "city": "Vitória",
