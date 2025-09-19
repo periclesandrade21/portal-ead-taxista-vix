@@ -7,7 +7,7 @@ import requests
 import json
 
 # Get backend URL from frontend .env
-BACKEND_URL = "https://taxicourse.preview.emergentagent.com/api"
+BACKEND_URL = "https://driveracad.preview.emergentagent.com/api"
 
 def investigate_webhook_users():
     """Investigate which user was updated by the webhook and get their current status"""

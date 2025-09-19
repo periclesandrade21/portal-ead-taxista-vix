@@ -6,7 +6,7 @@ Debug webhook database update issue
 import requests
 import json
 
-BACKEND_URL = "https://taxicourse.preview.emergentagent.com/api"
+BACKEND_URL = "https://driveracad.preview.emergentagent.com/api"
 
 # Test webhook with debug data
 webhook_data = {

@@ -11,7 +11,7 @@ import time
 from datetime import datetime
 
 # Get backend URL from frontend .env
-BACKEND_URL = "https://taxicourse.preview.emergentagent.com/api"
+BACKEND_URL = "https://driveracad.preview.emergentagent.com/api"
 
 class Colors:
     GREEN = '\033[92m'
