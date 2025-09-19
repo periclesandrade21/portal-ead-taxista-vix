@@ -28,6 +28,10 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
+# Initialize Moodle integration
+moodle_client = create_moodle_client()
+moodle_service = MoodleIntegrationService(moodle_client, db) if moodle_client else None
+
 # Create the main app without a prefix
 app = FastAPI(title="EAD Taxista ES API", description="API para plataforma EAD dos Taxistas do Espírito Santo")
 
