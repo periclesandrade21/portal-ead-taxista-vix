@@ -1350,6 +1350,77 @@ const AdminDashboard = () => {
             </Card>
           </div>
         )}
+
+        {/* Modal de Novo Curso */}
+        {courseModal.show && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <Card className="w-96 max-h-96 overflow-y-auto">
+              <CardHeader>
+                <CardTitle>Novo Curso</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label>Nome do Curso</Label>
+                  <Input
+                    value={courseModal.course?.name || ''}
+                    onChange={(e) => setCourseModal({
+                      ...courseModal, 
+                      course: {...courseModal.course, name: e.target.value}
+                    })}
+                    placeholder="Ex: Atualização EAD Taxista"
+                  />
+                </div>
+                
+                <div>
+                  <Label>Descrição</Label>
+                  <Input
+                    value={courseModal.course?.description || ''}
+                    onChange={(e) => setCourseModal({
+                      ...courseModal, 
+                      course: {...courseModal.course, description: e.target.value}
+                    })}
+                    placeholder="Descrição do curso"
+                  />
+                </div>
+                
+                <div>
+                  <Label>Preço (R$)</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={courseModal.course?.price || 150}
+                    onChange={(e) => setCourseModal({
+                      ...courseModal, 
+                      course: {...courseModal.course, price: parseFloat(e.target.value) || 0}
+                    })}
+                  />
+                </div>
+                
+                <div>
+                  <Label>Carga Horária</Label>
+                  <Input
+                    type="number"
+                    value={courseModal.course?.duration_hours || 28}
+                    onChange={(e) => setCourseModal({
+                      ...courseModal, 
+                      course: {...courseModal.course, duration_hours: parseInt(e.target.value) || 0}
+                    })}
+                  />
+                </div>
+                
+                <div className="flex gap-2">
+                  <Button onClick={handleCreateCourse}>Criar</Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setCourseModal({ show: false, course: null })}
+                  >
+                    Cancelar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );
