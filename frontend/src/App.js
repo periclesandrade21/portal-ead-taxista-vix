@@ -1402,6 +1402,66 @@ const Home = () => {
                   </div>
                 </div>
 
+                {/* Seção LGPD - Consentimento */}
+                <div className="bg-blue-50 p-6 rounded-xl border-l-4 border-blue-500 mb-6">
+                  <h4 className="text-lg font-semibold text-blue-800 mb-4 flex items-center">
+                    🔒 Proteção de Dados Pessoais - LGPD
+                  </h4>
+                  
+                  <div className="space-y-4 text-sm text-gray-700">
+                    <p>
+                      <strong>Finalidade:</strong> Seus dados serão utilizados exclusivamente para processamento da inscrição, 
+                      emissão de certificado e comunicações relacionadas ao curso EAD para taxistas.
+                    </p>
+                    
+                    <p>
+                      <strong>Base Legal:</strong> Consentimento (Art. 7º, I da LGPD) e cumprimento de obrigação legal.
+                    </p>
+                    
+                    <p>
+                      <strong>Seus Direitos:</strong> Acesso, correção, exclusão, portabilidade e revogação do consentimento. 
+                      Entre em contato: <a href="mailto:privacidade@sindtaxi-es.org" className="text-blue-600 underline">privacidade@sindtaxi-es.org</a>
+                    </p>
+                  </div>
+
+                  <div className="mt-4 space-y-3">
+                    <div className="flex items-start">
+                      <input
+                        type="checkbox"
+                        id="lgpdConsent"
+                        checked={lgpdConsent}
+                        onChange={(e) => {
+                          setLgpdConsent(e.target.checked);
+                          if (validationErrors.lgpdConsent) {
+                            setValidationErrors(prev => ({...prev, lgpdConsent: ''}));
+                          }
+                        }}
+                        className={`mt-1 mr-3 h-4 w-4 text-blue-600 ${validationErrors.lgpdConsent ? 'border-red-500' : ''}`}
+                        required
+                      />
+                      <label htmlFor="lgpdConsent" className="text-sm font-medium text-gray-800">
+                        ✅ Eu concordo com o tratamento dos meus dados pessoais conforme descrito e autorizo o 
+                        SINDTAXI-ES a processar minhas informações para as finalidades mencionadas.
+                      </label>
+                    </div>
+                    
+                    {validationErrors.lgpdConsent && (
+                      <p className="text-red-500 text-xs">{validationErrors.lgpdConsent}</p>
+                    )}
+                    
+                    <div className="flex justify-center">
+                      <Button
+                        type="button"
+                        onClick={() => setPrivacyPolicyModal(true)}
+                        variant="outline"
+                        className="text-sm text-blue-600 border-blue-300 hover:bg-blue-50"
+                      >
+                        📋 Ler Política de Privacidade Completa
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Botão de cadastro */}
                 <div className="text-center pt-4">
                   <Button 
