@@ -275,25 +275,49 @@ const StudentPortal = () => {
           </Card>
         </div>
 
-        {/* Aviso de Pagamento */}
-        <Card className="mb-8 border-yellow-200 bg-yellow-50">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
-              <Lock className="h-8 w-8 text-yellow-600" />
-              <div>
-                <h3 className="font-semibold text-yellow-800">Acesso Pendente</h3>
-                <p className="text-yellow-700">
-                  Seu pagamento está sendo processado. O acesso aos módulos será liberado em até 5 minutos após a confirmação.
-                </p>
-                <div className="mt-2">
-                  <Badge className="bg-yellow-100 text-yellow-800">
-                    Status: Aguardando Confirmação PIX
-                  </Badge>
+        {/* Aviso de Pagamento - Mostrar apenas se status for pending */}
+        {userInfo?.status === 'pending' && (
+          <Card className="mb-8 border-yellow-200 bg-yellow-50">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <Lock className="h-8 w-8 text-yellow-600" />
+                <div>
+                  <h3 className="font-semibold text-yellow-800">Acesso Pendente</h3>
+                  <p className="text-yellow-700">
+                    Seu pagamento está sendo processado. O acesso aos módulos será liberado em até 5 minutos após a confirmação.
+                  </p>
+                  <div className="mt-2">
+                    <Badge className="bg-yellow-100 text-yellow-800">
+                      Status: Aguardando Confirmação PIX
+                    </Badge>
+                  </div>
                 </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Mensagem de Acesso Liberado - Mostrar se status for paid ou active */}
+        {(userInfo?.status === 'paid' || userInfo?.status === 'active') && (
+          <Card className="mb-8 border-green-200 bg-green-50">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <CheckCircle className="h-8 w-8 text-green-600" />
+                <div>
+                  <h3 className="font-semibold text-green-800">Acesso Liberado!</h3>
+                  <p className="text-green-700">
+                    Seu pagamento foi confirmado. Você já pode acessar todos os módulos do curso.
+                  </p>
+                  <div className="mt-2">
+                    <Badge className="bg-green-100 text-green-800">
+                      Status: Pagamento Confirmado ✅
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Módulos do Curso */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
