@@ -84,6 +84,7 @@ const StudentPortal = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoginError('');
+    setErrorModal({ show: false, type: '', message: '', title: '' }); // Limpar modal de erro
     setIsLoading(true);
     
     try {
