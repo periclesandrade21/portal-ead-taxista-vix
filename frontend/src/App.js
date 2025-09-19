@@ -880,11 +880,23 @@ const Home = () => {
                         id="email"
                         type="email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="seu@email.com"
+                        onChange={(e) => {
+                          setEmail(e.target.value.toLowerCase());
+                          // Limpar erro quando usuário digita
+                          if (validationErrors.email) {
+                            setValidationErrors(prev => ({...prev, email: ''}));
+                          }
+                        }}
+                        placeholder="exemplo@gmail.com"
                         required
-                        className="mt-2 h-12 text-lg"
+                        className={`mt-2 h-12 text-lg ${validationErrors.email ? 'border-red-500' : ''}`}
                       />
+                      {validationErrors.email && (
+                        <p className="text-red-500 text-xs mt-1">{validationErrors.email}</p>
+                      )}
+                      <p className="text-xs text-gray-500 mt-1">
+                        📧 Será usado para envio da senha e comunicações importantes
+                      </p>
                     </div>
                     
                     <div className="md:col-span-2">
