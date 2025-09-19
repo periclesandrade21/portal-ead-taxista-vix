@@ -23,6 +23,12 @@ import {
 const StudentPortal = () => {
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
+  const [loginError, setLoginError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // URL do backend
+  const API = process.env.REACT_APP_BACKEND_URL;
 
   const modules = [
     {
