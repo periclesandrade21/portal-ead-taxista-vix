@@ -14,6 +14,7 @@ import StudentPortalComplete from "./components/StudentPortalComplete";
 import ChatBot from "./components/ChatBot";
 import PaymentFlow from "./components/PaymentFlow";
 import ProgressSteps from "./components/ProgressSteps";
+import MultiStepRegistration from "./components/MultiStepRegistration";
 import { 
   Car, 
   GraduationCap, 
