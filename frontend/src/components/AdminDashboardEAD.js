@@ -720,7 +720,7 @@ const AdminDashboardEAD = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           {/* Navigation */}
-          <TabsList className="grid w-full grid-cols-12">
+          <TabsList className="grid w-full grid-cols-11">
             <TabsTrigger value="dashboard">
               <Home className="h-4 w-4 mr-1" />
               <span className="hidden sm:inline">Dashboard</span>
@@ -728,10 +728,6 @@ const AdminDashboardEAD = () => {
             <TabsTrigger value="subscriptions">
               <Users className="h-4 w-4 mr-1" />
               <span className="hidden sm:inline">Inscrições</span>
-            </TabsTrigger>
-            <TabsTrigger value="drivers">
-              <Car className="h-4 w-4 mr-1" />
-              <span className="hidden sm:inline">Motoristas</span>
             </TabsTrigger>
             <TabsTrigger value="payments">
               <CreditCard className="h-4 w-4 mr-1" />
@@ -757,13 +753,13 @@ const AdminDashboardEAD = () => {
               <Award className="h-4 w-4 mr-1" />
               <span className="hidden sm:inline">Certificados</span>
             </TabsTrigger>
+            <TabsTrigger value="reports">
+              <FileText className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">Relatórios</span>
+            </TabsTrigger>
             <TabsTrigger value="admin-users">
               <UserCheck className="h-4 w-4 mr-1" />
               <span className="hidden sm:inline">Admin</span>
-            </TabsTrigger>
-            <TabsTrigger value="communication">
-              <MessageCircle className="h-4 w-4 mr-1" />
-              <span className="hidden sm:inline">Comunicação</span>
             </TabsTrigger>
             <TabsTrigger value="settings">
               <Settings className="h-4 w-4 mr-1" />
