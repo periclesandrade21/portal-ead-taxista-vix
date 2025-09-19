@@ -4883,17 +4883,30 @@ def test_questions_by_module_difficulty(modules):
             response = requests.get(f"{BACKEND_URL}/questions/{module_id}", timeout=10)
             
             if response.status_code == 200:
-                questions = response.json()
-                print_success(f"✅ Module {i} questions retrieved successfully")
-                print_info(f"  Found {len(questions)} questions")
+                data = response.json()
+                questions_data = data.get('questions', {}) if isinstance(data, dict) else data
                 
-                # Check if questions are organized by difficulty
+                # Count total questions
+                total_questions = 0
                 difficulties = {}
-                for question in questions:
-                    difficulty = question.get('difficulty', 'unknown')
-                    if difficulty not in difficulties:
-                        difficulties[difficulty] = 0
-                    difficulties[difficulty] += 1
+                
+                if isinstance(questions_data, dict):
+                    # Questions organized by difficulty
+                    for difficulty, question_list in questions_data.items():
+                        count = len(question_list)
+                        difficulties[difficulty] = count
+                        total_questions += count
+                else:
+                    # Questions as flat list
+                    total_questions = len(questions_data)
+                    for question in questions_data:
+                        difficulty = question.get('difficulty', 'unknown')
+                        if difficulty not in difficulties:
+                            difficulties[difficulty] = 0
+                        difficulties[difficulty] += 1
+                
+                print_success(f"✅ Module {i} questions retrieved successfully")
+                print_info(f"  Found {total_questions} questions")
                 
                 print_info(f"  Questions by difficulty:")
                 for difficulty, count in difficulties.items():
@@ -4901,7 +4914,7 @@ def test_questions_by_module_difficulty(modules):
                 
                 # Check if we have the expected difficulty levels
                 expected_difficulties = ['facil', 'media', 'dificil']
-                found_difficulties = [d for d in expected_difficulties if d in difficulties]
+                found_difficulties = [d for d in expected_difficulties if d in difficulties and difficulties[d] > 0]
                 
                 if len(found_difficulties) >= 2:
                     print_success(f"✅ Questions organized by difficulty levels: {', '.join(found_difficulties)}")
