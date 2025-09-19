@@ -343,6 +343,18 @@ test_plan:
         agent: "testing"
         comment: "🔧 CRITICAL FIXES FULLY VERIFIED - All user reported issues have been resolved successfully: 1) PASSWORD IMPROVEMENTS: ✅ Password generation upgraded from 8 to 10 characters with full complexity (uppercase, lowercase, numbers, symbols @#$%*), avoids confusing characters (0, O, 1, l, I). Generated example: 'FY6Kpsnf@4' meets all security requirements. 2) EMAIL TRANSPARENCY: ✅ Development mode shows detailed formatted email logs in backend console with complete email content, recipient info, and clear 'EMAIL SIMULADO - MODO DESENVOLVIMENTO' headers. Returns TRUE status honestly. 3) WHATSAPP HONESTY: ✅ WhatsApp function now returns FALSE instead of lying about sending messages. Shows transparent logs 'WhatsApp API não configurado - mensagem apenas simulada' and detailed message content for development. 4) COMPLETE ENDPOINT: ✅ PasswordSentResponse structure working correctly with password_sent_email: true (simulated), password_sent_whatsapp: false (honest), and improved 10-character temporary password. All critical fixes verified through comprehensive testing with user 'Ana Silva Santos' (ana.silva.1758246042@email.com). User reported issues about weak passwords, failed emails, and lying WhatsApp status have been completely resolved."
 
+  - task: "Sistema de reset de senha por administrador"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "🔑 ADMIN PASSWORD RESET FUNCTIONALITY FULLY OPERATIONAL - Comprehensive testing completed successfully with all 5/5 tests passed: 1) VALID USER RESET: PUT /api/users/{user_id}/reset-password endpoint working correctly with JSON body containing newPassword field, successfully updates temporary_password in subscriptions collection ✅. 2) PASSWORD VERIFICATION: Password correctly updated in database and verified through subscriptions endpoint, new password 'NewSecure1758247822' properly stored ✅. 3) STUDENT LOGIN SUCCESS: Student can successfully login with new password after admin reset, authentication working with updated credentials ✅. 4) OLD PASSWORD INVALIDATION: Old password correctly rejected with 401 'Senha incorreta' after reset, ensuring security ✅. 5) ERROR HANDLING: Non-existent user IDs properly rejected with 404 'Usuário não encontrado', malformed requests rejected with 422 validation error ✅. Complete admin password reset flow tested: admin resets password → password updated in subscriptions collection → student can login with new password → old password invalidated. System ready for production use."
+
 agent_communication:
   - agent: "main"
     message: "Iniciando implementação do bot IA. Prioridades: 1) Bot IA funcional, 2) Ajustes no formulário, 3) Autoplay video, 4) Preparar estrutura para fluxo cadastro+pagamento"
