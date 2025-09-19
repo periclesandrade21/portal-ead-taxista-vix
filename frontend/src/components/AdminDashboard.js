@@ -258,6 +258,39 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleDeleteCourse = async (courseId) => {
+    try {
+      const response = await axios.delete(`${API}/courses/${courseId}`);
+      if (response.status === 200) {
+        setCourses(courses.filter(course => course.id !== courseId));
+        setDeleteConfirmModal({ show: false, courseId: null, courseName: '' });
+        alert('✅ Curso excluído com sucesso!');
+      }
+    } catch (error) {
+      console.error('Erro ao excluir curso:', error);
+      alert('❌ Erro ao excluir curso. Tente novamente.');
+    }
+  };
+
+  const handleUpdateCoursePrice = async () => {
+    try {
+      const response = await axios.post(`${API}/courses/default/set-price`, {
+        price: parseFloat(coursePrice)
+      });
+      
+      if (response.status === 200) {
+        setEditPriceModal({ show: false });
+        alert(`✅ Valor do curso atualizado para R$ ${coursePrice.toFixed(2)}`);
+        
+        // Recarregar dados para refletir mudanças
+        fetchAdminData();
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar preço:', error);
+      alert('❌ Erro ao atualizar preço. Tente novamente.');
+    }
+  };
+
   // Filtros para cidade
   const getFilteredCityStats = () => {
     // Calcular estatísticas reais baseadas nas inscrições
