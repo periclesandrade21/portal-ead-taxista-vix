@@ -406,3 +406,257 @@ const StudentPortalComplete = () => {
       </div>
     );
   }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-4">
+              <div className="bg-blue-600 p-2 rounded-lg">
+                <GraduationCap className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-semibold text-gray-900">Portal EAD</h1>
+                <p className="text-sm text-gray-500">Taxista ES</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <Button variant="ghost" size="sm" className="relative">
+                <Bell className="h-5 w-5" />
+                {notifications.length > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {notifications.length}
+                  </span>
+                )}
+              </Button>
+              
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                  <span className="text-white text-sm font-medium">
+                    {user?.name?.charAt(0)?.toUpperCase() || 'A'}
+                  </span>
+                </div>
+                <span className="text-sm font-medium text-gray-700">
+                  {user?.name || 'Aluno'}
+                </span>
+              </div>
+              
+              <Button variant="outline" size="sm" onClick={handleLogout}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Sair
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          {/* Navigation */}
+          <TabsList className="grid w-full grid-cols-8">
+            <TabsTrigger value="dashboard">
+              <Home className="h-4 w-4 mr-2" />
+              Dashboard
+            </TabsTrigger>
+            <TabsTrigger value="modules">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Disciplinas
+            </TabsTrigger>
+            <TabsTrigger value="content">
+              <Play className="h-4 w-4 mr-2" />
+              Conteúdo
+            </TabsTrigger>
+            <TabsTrigger value="grades">
+              <Trophy className="h-4 w-4 mr-2" />
+              Notas
+            </TabsTrigger>
+            <TabsTrigger value="calendar">
+              <Calendar className="h-4 w-4 mr-2" />
+              Calendário
+            </TabsTrigger>
+            <TabsTrigger value="support">
+              <MessageCircle className="h-4 w-4 mr-2" />
+              Suporte
+            </TabsTrigger>
+            <TabsTrigger value="financial">
+              <CreditCard className="h-4 w-4 mr-2" />
+              Financeiro
+            </TabsTrigger>
+            <TabsTrigger value="profile">
+              <User className="h-4 w-4 mr-2" />
+              Perfil
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Dashboard */}
+          <TabsContent value="dashboard" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Módulos Concluídos</CardTitle>
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">2/4</div>
+                  <p className="text-xs text-muted-foreground">
+                    50% do curso completo
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Média Geral</CardTitle>
+                  <Trophy className="h-4 w-4 text-yellow-600" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">8.5</div>
+                  <p className="text-xs text-muted-foreground">
+                    Excelente desempenho
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Horas Estudadas</CardTitle>
+                  <Clock className="h-4 w-4 text-blue-600" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">24h</div>
+                  <p className="text-xs text-muted-foreground">
+                    Este mês
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Certificado</CardTitle>
+                  <Award className="h-4 w-4 text-purple-600" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">50%</div>
+                  <p className="text-xs text-muted-foreground">
+                    Para liberação
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Progresso dos Módulos */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Progresso dos Módulos</CardTitle>
+                <CardDescription>Acompanhe seu desempenho em cada disciplina</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {modules.map((module) => {
+                  const progress = calculateModuleProgress(module.id);
+                  return (
+                    <div key={module.id} className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">{module.name}</span>
+                        <span className="text-sm text-gray-500">{progress}%</span>
+                      </div>
+                      <Progress value={progress} className="h-2" />
+                    </div>
+                  );
+                })}
+              </CardContent>
+            </Card>
+
+            {/* Notificações */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Notificações Recentes</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {notifications.map((notification) => (
+                  <div key={notification.id} className="flex items-start space-x-3">
+                    <div className={`p-2 rounded-full ${
+                      notification.type === 'success' ? 'bg-green-100' :
+                      notification.type === 'warning' ? 'bg-yellow-100' : 'bg-blue-100'
+                    }`}>
+                      {notification.type === 'success' ? <CheckCircle className="h-4 w-4 text-green-600" /> :
+                       notification.type === 'warning' ? <AlertCircle className="h-4 w-4 text-yellow-600" /> :
+                       <Bell className="h-4 w-4 text-blue-600" />}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm">{notification.message}</p>
+                      <p className="text-xs text-gray-500">{notification.time}</p>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Disciplinas/Módulos */}
+          <TabsContent value="modules" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Disciplinas do Curso</CardTitle>
+                <CardDescription>Selecione uma disciplina para acessar o conteúdo</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {modules.map((module) => {
+                    const progress = calculateModuleProgress(module.id);
+                    const moduleProgress = userProgress[module.id];
+                    
+                    return (
+                      <Card key={module.id} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => handleModuleSelect(module)}>
+                        <CardContent className="p-6">
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: module.color }}></div>
+                              <div>
+                                <h3 className="font-semibold text-lg">{module.name}</h3>
+                                <p className="text-sm text-gray-600">{module.duration_hours}h de conteúdo</p>
+                              </div>
+                            </div>
+                            <Badge variant={progress >= 100 ? "default" : progress > 0 ? "secondary" : "outline"}>
+                              {progress >= 100 ? "Concluído" : progress > 0 ? "Em Progresso" : "Não Iniciado"}
+                            </Badge>
+                          </div>
+                          
+                          <p className="text-sm text-gray-600 mb-4">{module.description}</p>
+                          
+                          <div className="space-y-2">
+                            <div className="flex justify-between text-sm">
+                              <span>Progresso</span>
+                              <span>{progress}%</span>
+                            </div>
+                            <Progress value={progress} className="h-2" />
+                          </div>
+                          
+                          <div className="flex justify-between items-center mt-4">
+                            <div className="flex items-center space-x-4 text-sm text-gray-500">
+                              <span>📹 {module.video_count || 0} vídeos</span>
+                              <span>📝 Quiz disponível</span>
+                            </div>
+                            {moduleProgress?.quiz_passed && (
+                              <Badge variant="default" className="bg-green-600">
+                                ✓ Aprovado ({moduleProgress.quiz_score}%)
+                              </Badge>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+};
+
+export default StudentPortalComplete;
