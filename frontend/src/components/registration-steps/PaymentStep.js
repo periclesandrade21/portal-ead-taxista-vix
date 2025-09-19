@@ -2,330 +2,182 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
-import { Progress } from '../ui/progress';
-import { CreditCard, CheckCircle, Clock, Smartphone, QrCode, ExternalLink, RefreshCw, AlertCircle } from 'lucide-react';
+import { CheckCircle, ExternalLink, ArrowRight, CreditCard, Smartphone, QrCode } from 'lucide-react';
 
-const PaymentStep = ({ data, updateData, onNext, goToStep }) => {
-  const [paymentStatus, setPaymentStatus] = useState('pending'); // pending, processing, completed, failed
-  const [paymentMethod, setPaymentMethod] = useState('pix');
-  const [paymentId, setPaymentId] = useState(null);
-  const [timeRemaining, setTimeRemaining] = useState(15 * 60); // 15 minutes in seconds
+const PaymentStep = ({ data, updateData, onComplete }) => {
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
-  useEffect(() => {
-    // Simulate payment creation
-    if (!paymentId) {
-      const newPaymentId = `PAY_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      setPaymentId(newPaymentId);
-      updateData({ 
-        paymentId: newPaymentId,
-        paymentStatus: 'pending',
-        paymentCreatedAt: new Date().toISOString()
-      });
-    }
-  }, []);
-
-  useEffect(() => {
-    // Countdown timer
-    if (timeRemaining > 0 && paymentStatus === 'pending') {
-      const timer = setTimeout(() => {
-        setTimeRemaining(timeRemaining - 1);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [timeRemaining, paymentStatus]);
-
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  const handleCompleteRegistration = () => {
+    setIsRedirecting(true);
+    
+    // Simulate registration completion
+    setTimeout(() => {
+      alert(`🎉 Cadastro concluído com sucesso!\n\n` +
+            `Nome: ${data.fullName}\n` +
+            `Email: ${data.email}\n` +
+            `Telefone: ${data.cellPhone}\n\n` +
+            `✅ Todos os dados foram salvos\n` +
+            `📧 Senha de acesso enviada por email\n` +
+            `📱 Senha também enviada por WhatsApp\n\n` +
+            `🔄 Redirecionando para pagamento...`);
+      
+      // Complete the registration process
+      if (onComplete) {
+        onComplete(data);
+      }
+    }, 2000);
   };
 
   const coursePrice = 150.00;
-  const discountAmount = 0;
-  const finalPrice = coursePrice - discountAmount;
-
-  const handlePaymentRedirect = () => {
-    // Simulate payment redirect
-    setPaymentStatus('processing');
-    updateData({ paymentStatus: 'processing' });
-    
-    // Open payment in new window (simulation)
-    const paymentWindow = window.open(
-      'https://sandbox.asaas.com/i/bsnw3pmz2yiacw1w',
-      '_blank',
-      'width=600,height=700,scrollbars=yes,resizable=yes'
-    );
-
-    // Simulate payment completion after some time
-    setTimeout(() => {
-      setPaymentStatus('completed');
-      updateData({ 
-        paymentStatus: 'completed',
-        paymentCompletedAt: new Date().toISOString()
-      });
-    }, 5000);
-  };
-
-  const handlePaymentVerification = async () => {
-    try {
-      setPaymentStatus('processing');
-      
-      // Simulate API call to verify payment
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Simulate successful payment verification
-      const isPaymentConfirmed = Math.random() > 0.3; // 70% chance of success
-      
-      if (isPaymentConfirmed) {
-        setPaymentStatus('completed');
-        updateData({ 
-          paymentStatus: 'completed',
-          paymentCompletedAt: new Date().toISOString()
-        });
-        
-        // Auto advance to next step after payment confirmation
-        setTimeout(() => {
-          onNext();
-        }, 2000);
-      } else {
-        setPaymentStatus('pending');
-        alert('Pagamento ainda não confirmado. Tente novamente em alguns minutos.');
-      }
-    } catch (error) {
-      setPaymentStatus('failed');
-      console.error('Payment verification error:', error);
-    }
-  };
-
-  if (paymentStatus === 'completed') {
-    return (
-      <Card className="max-w-4xl mx-auto">
-        <CardContent className="text-center py-12">
-          <div className="mb-6">
-            <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-green-800 mb-2">
-              🎉 Pagamento Confirmado!
-            </h2>
-            <p className="text-lg text-gray-600">
-              Seu pagamento foi processado com sucesso
-            </p>
-          </div>
-
-          <div className="bg-green-50 p-6 rounded-lg border border-green-200 mb-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div>
-                <p><span className="font-medium">ID do Pagamento:</span> {paymentId}</p>
-                <p><span className="font-medium">Valor Pago:</span> R$ {finalPrice.toFixed(2)}</p>
-              </div>
-              <div>
-                <p><span className="font-medium">Método:</span> PIX</p>
-                <p><span className="font-medium">Status:</span> <Badge className="bg-green-600">Confirmado</Badge></p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-blue-50 p-4 rounded-lg mb-6">
-            <h4 className="font-semibold text-blue-900 mb-2">📋 Próximos Passos:</h4>
-            <ul className="text-sm text-blue-800 text-left space-y-1">
-              <li>• Seus documentos serão validados automaticamente por IA</li>
-              <li>• Você receberá um email com o resultado da validação</li>
-              <li>• Após aprovação, o acesso ao curso será liberado</li>
-              <li>• O processo de validação leva até 24 horas úteis</li>
-            </ul>
-          </div>
-
-          <Button 
-            onClick={onNext}
-            className="px-8 py-3 text-lg bg-green-600 hover:bg-green-700"
-          >
-            Continuar para Validação
-            <CheckCircle className="ml-2 h-5 w-5" />
-          </Button>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
     <Card className="max-w-4xl mx-auto">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <CreditCard className="h-6 w-6 text-blue-600" />
-          Pagamento do Curso
+          <CheckCircle className="h-6 w-6 text-green-600" />
+          Finalizar Inscrição
         </CardTitle>
         <CardDescription>
-          Finalize o pagamento para concluir sua inscrição no curso EAD Taxista ES.
+          Seu cadastro está completo! Finalize sua inscrição para prosseguir com o pagamento.
         </CardDescription>
       </CardHeader>
       
       <CardContent className="space-y-6">
-        {/* Resumo do Pedido */}
-        <div className="bg-slate-50 p-6 rounded-lg border-l-4 border-blue-500">
-          <h4 className="text-lg font-semibold text-gray-800 mb-4">
-            🛒 Resumo do Pedido
+        {/* Resumo do Cadastro */}
+        <div className="bg-green-50 p-6 rounded-lg border-l-4 border-green-500">
+          <h4 className="text-lg font-semibold text-green-800 mb-4">
+            ✅ Resumo da Inscrição
           </h4>
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <span>Curso EAD Taxista - Completo (28h)</span>
-              <span>R$ {coursePrice.toFixed(2)}</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div>
+              <p><span className="font-medium">Nome:</span> {data.fullName}</p>
+              <p><span className="font-medium">CPF:</span> {data.cpf}</p>
+              <p><span className="font-medium">Email:</span> {data.email}</p>
+              <p><span className="font-medium">Telefone:</span> {data.cellPhone}</p>
             </div>
-            {discountAmount > 0 && (
-              <div className="flex justify-between items-center text-green-600">
-                <span>Desconto aplicado</span>
-                <span>-R$ {discountAmount.toFixed(2)}</span>
-              </div>
-            )}
-            <hr />
-            <div className="flex justify-between items-center font-bold text-lg">
-              <span>Total a pagar</span>
-              <span className="text-blue-600">R$ {finalPrice.toFixed(2)}</span>
+            <div>
+              <p><span className="font-medium">Cidade:</span> {data.city}</p>
+              <p><span className="font-medium">CNH:</span> {data.cnhNumber}</p>
+              <p><span className="font-medium">Categoria:</span> {data.cnhCategory}</p>
+              <p><span className="font-medium">Tipo:</span> {data.isAutonomous ? 'Autônomo' : 'Cooperativa'}</p>
             </div>
           </div>
         </div>
 
-        {/* Método de Pagamento */}
-        <div className="bg-green-50 p-6 rounded-lg border-l-4 border-green-500">
-          <h4 className="text-lg font-semibold text-gray-800 mb-4">
-            💳 Método de Pagamento
+        {/* Informações do Curso */}
+        <div className="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500">
+          <h4 className="text-lg font-semibold text-blue-800 mb-4">
+            📚 Detalhes do Curso
+          </h4>
+          <div className="space-y-2 text-sm text-blue-700">
+            <p><strong>Curso:</strong> EAD Taxista ES - Completo</p>
+            <p><strong>Módulos:</strong> Relações Humanas, Direção Defensiva, Primeiros Socorros, Mecânica Básica</p>
+            <p><strong>Carga Horária:</strong> 28 horas</p>
+            <p><strong>Certificado:</strong> Válido nacionalmente</p>
+            <p><strong>Valor:</strong> <span className="text-xl font-bold">R$ {coursePrice.toFixed(2)}</span></p>
+          </div>
+        </div>
+
+        {/* Documentos Enviados */}
+        <div className="bg-purple-50 p-6 rounded-lg border-l-4 border-purple-500">
+          <h4 className="text-lg font-semibold text-purple-800 mb-4">
+            📄 Documentos Enviados
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {Object.entries(data.documents).map(([docType, docInfo]) => {
+              if (!docInfo) return null;
+              
+              const docNames = {
+                cnh: '🚗 CNH',
+                residenceProof: '🏠 Comprovante de Residência',
+                photo: '📷 Foto/Selfie',
+                crlv: '📋 CRLV',
+                taxiLicense: '🚖 Alvará do Táxi',
+                cooperativeProof: '🏢 Comprovante de Vínculo'
+              };
+              
+              return (
+                <div key={docType} className="bg-white p-3 rounded border">
+                  <p className="font-medium text-sm text-purple-800">{docNames[docType]}</p>
+                  <p className="text-xs text-gray-600">{docInfo.name}</p>
+                  <Badge className="bg-green-100 text-green-800 text-xs mt-1">
+                    ✅ Enviado
+                  </Badge>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Próximos Passos */}
+        <div className="bg-yellow-50 p-6 rounded-lg border-l-4 border-yellow-500">
+          <h4 className="text-lg font-semibold text-yellow-800 mb-4">
+            🔄 Próximos Passos
+          </h4>
+          <ol className="text-sm text-yellow-700 space-y-2">
+            <li>1. ✅ <strong>Cadastro completo</strong> - Todos os dados foram salvos</li>
+            <li>2. 📧 <strong>Senha enviada</strong> - Verifique seu email e WhatsApp</li>
+            <li>3. 💳 <strong>Pagamento PIX</strong> - R$ {coursePrice.toFixed(2)} via PIX instantâneo</li>
+            <li>4. 📚 <strong>Acesso ao curso</strong> - Liberado após confirmação do pagamento</li>
+            <li>5. 📋 <strong>Validação de documentos</strong> - Feita pelo admin após pagamento</li>
+          </ol>
+        </div>
+
+        {/* Opções de Pagamento */}
+        <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg border">
+          <h4 className="text-lg font-semibold text-gray-800 mb-4 text-center">
+            💳 Finalizar Inscrição e Prosseguir para Pagamento
           </h4>
           
-          <div className="space-y-3">
-            <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer bg-white hover:bg-gray-50">
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="pix"
-                checked={paymentMethod === 'pix'}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-                className="w-4 h-4 text-green-600"
-              />
-              <div className="flex items-center gap-2">
-                <QrCode className="h-5 w-5 text-green-600" />
-                <div>
-                  <p className="font-medium">PIX (Recomendado)</p>
-                  <p className="text-sm text-gray-600">Pagamento instantâneo - Aprovação em minutos</p>
-                </div>
-              </div>
-              <Badge className="ml-auto bg-green-600">Mais Rápido</Badge>
-            </label>
-
-            <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer bg-white hover:bg-gray-50 opacity-60">
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="boleto"
-                disabled
-                className="w-4 h-4 text-blue-600"
-              />
-              <div className="flex items-center gap-2">
-                <CreditCard className="h-5 w-5 text-blue-600" />
-                <div>
-                  <p className="font-medium">Boleto Bancário</p>
-                  <p className="text-sm text-gray-600">Aprovação em 1-2 dias úteis</p>
-                </div>
-              </div>
-              <Badge variant="outline" className="ml-auto">Em breve</Badge>
-            </label>
-          </div>
-        </div>
-
-        {/* Contador e Status */}
-        {paymentStatus === 'pending' && (
-          <div className="bg-yellow-50 p-6 rounded-lg border border-yellow-200">
-            <div className="flex items-center justify-between mb-4">
-              <h4 className="text-lg font-semibold text-yellow-800">
-                ⏰ Tempo para Pagamento
-              </h4>
-              <div className="text-2xl font-bold text-yellow-800">
-                {formatTime(timeRemaining)}
-              </div>
+          <div className="flex items-center justify-center space-x-4 mb-6">
+            <div className="flex items-center space-x-2">
+              <QrCode className="h-6 w-6 text-green-600" />
+              <span className="font-semibold">PIX Instantâneo</span>
             </div>
-            <Progress 
-              value={(15 * 60 - timeRemaining) / (15 * 60) * 100} 
-              className="h-2 mb-4" 
-            />
-            <p className="text-sm text-yellow-700">
-              ⚠️ Este pagamento expira em {formatTime(timeRemaining)}. Após este prazo, será necessário gerar um novo.
-            </p>
-          </div>
-        )}
-
-        {paymentStatus === 'processing' && (
-          <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              <h4 className="text-lg font-semibold text-blue-800">
-                🔄 Processando Pagamento...
-              </h4>
+            <div className="text-2xl">•</div>
+            <div className="flex items-center space-x-2">
+              <Smartphone className="h-6 w-6 text-blue-600" />
+              <span className="font-semibold">Aprovação Rápida</span>
             </div>
-            <p className="text-sm text-blue-700">
-              Aguarde enquanto confirmamos seu pagamento. Isso pode levar alguns minutos.
-            </p>
           </div>
-        )}
 
-        {/* Botões de Ação */}
-        <div className="space-y-4">
-          {paymentStatus === 'pending' && (
-            <>
-              <Button 
-                onClick={handlePaymentRedirect}
-                className="w-full py-4 text-lg bg-green-600 hover:bg-green-700"
-                size="lg"
-              >
-                <QrCode className="mr-2 h-6 w-6" />
-                Pagar com PIX - R$ {finalPrice.toFixed(2)}
-                <ExternalLink className="ml-2 h-5 w-5" />
-              </Button>
-              
-              <Button 
-                onClick={handlePaymentVerification}
-                variant="outline"
-                className="w-full py-3 text-lg"
-                size="lg"
-              >
-                <RefreshCw className="mr-2 h-5 w-5" />
-                Já Paguei - Verificar Status
-              </Button>
-            </>
-          )}
-
-          {paymentStatus === 'processing' && (
+          <div className="text-center space-y-4">
+            <div className="text-3xl font-bold text-green-600">
+              R$ {coursePrice.toFixed(2)}
+            </div>
+            
             <Button 
-              onClick={handlePaymentVerification}
-              variant="outline"
-              className="w-full py-3 text-lg"
+              onClick={handleCompleteRegistration}
+              disabled={isRedirecting}
+              className="w-full py-4 text-xl bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold rounded-lg shadow-lg transform transition hover:scale-105"
               size="lg"
             >
-              <RefreshCw className="mr-2 h-5 w-5" />
-              Verificar Pagamento
+              {isRedirecting ? (
+                <div className="flex items-center">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
+                  Finalizando Cadastro...
+                </div>
+              ) : (
+                <div className="flex items-center">
+                  <CheckCircle className="mr-3 h-6 w-6" />
+                  Fazer Inscrição Completa
+                  <ArrowRight className="ml-3 h-6 w-6" />
+                </div>
+              )}
             </Button>
-          )}
+          </div>
         </div>
 
-        {/* Informações de Segurança */}
-        <div className="bg-blue-50 p-4 rounded-lg">
-          <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
-            🔒 Pagamento Seguro
-          </h4>
-          <ul className="text-sm text-blue-800 space-y-1">
-            <li>• Processamento seguro via Asaas (certificado SSL)</li>
-            <li>• Seus dados bancários não são armazenados em nossos servidores</li>
-            <li>• PIX é instantâneo e confirmado automaticamente</li>
-            <li>• Em caso de problemas: suporte@sindtaxi-es.org</li>
-          </ul>
-        </div>
-
-        {/* Suporte */}
+        {/* Informações de Suporte */}
         <div className="text-center text-sm text-gray-500 pt-4 border-t">
           <p>
-            Problemas com o pagamento? 
-            <a href="mailto:suporte@sindtaxi-es.org" className="text-blue-600 hover:underline ml-1">
-              Entre em contato conosco
-            </a>
+            💡 Após finalizar, você será direcionado para o pagamento seguro via PIX
           </p>
-          <p className="mt-1">
-            📞 (27) 3333-3333 | 📱 WhatsApp: (27) 99999-9999
+          <p className="mt-2">
+            🆘 Dúvidas? Entre em contato: 
+            <a href="mailto:suporte@sindtaxi-es.org" className="text-blue-600 hover:underline ml-1">
+              suporte@sindtaxi-es.org
+            </a>
           </p>
         </div>
       </CardContent>
