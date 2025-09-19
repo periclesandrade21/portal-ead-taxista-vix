@@ -562,7 +562,6 @@ test_plan:
 
 test_plan:
   current_focus:
-    - "Integração Moodle com portal do aluno"
     - "Real Asaas webhook processing with production data"
   stuck_tasks: 
     - "Real Asaas webhook processing with production data"
