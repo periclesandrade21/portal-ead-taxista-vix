@@ -793,16 +793,24 @@ const Home = () => {
                 Sindicato dos Taxistas do Espírito Santo.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
+                <Button 
+                  onClick={() => setShowNewRegistration(true)}
+                  className="px-8 py-4 text-lg bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-semibold rounded-lg shadow-lg transform transition hover:scale-105"
+                >
+                  <Car className="mr-2 h-6 w-6" />
+                  🚀 Novo Cadastro Completo
+                </Button>
+                
                 <Link to="/student-portal">
-                  <Button className="px-8 py-4 text-lg bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700">
-                    <Users className="mr-2 h-5 w-5" />
+                  <Button variant="outline" className="px-8 py-4 text-lg border-2">
+                    <GraduationCap className="mr-2 h-5 w-5" />
                     Portal do Aluno
                   </Button>
                 </Link>
 
                 <Link to="/admin-ead">
-                  <Button className="px-8 py-4 text-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
-                    <Car className="mr-2 h-5 w-5" />
+                  <Button variant="outline" className="px-8 py-4 text-lg border-2">
+                    <Shield className="mr-2 h-5 w-5" />
                     Admin EAD
                   </Button>
                 </Link>
