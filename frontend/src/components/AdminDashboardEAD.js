@@ -146,12 +146,6 @@ const AdminDashboardEAD = () => {
   const [discounts, setDiscounts] = useState([]);
   const [discountModal, setDiscountModal] = useState({ show: false, discount: null });
   const [cityStatsData, setCityStatsData] = useState([]);
-  const [reportFilters, setReportFilters] = useState({
-    city: 'all',
-    course: 'all', 
-    period: 'month',
-    status: 'all'
-  });
 
   const handleLogin = async (e) => {
     e.preventDefault();
