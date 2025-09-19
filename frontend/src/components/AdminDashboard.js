@@ -103,15 +103,19 @@ const AdminDashboard = () => {
   const fetchAdminData = async () => {
     try {
       setLoading(true);
-      const [statsRes, subscriptionsRes, usersRes] = await Promise.all([
+      const [statsRes, subscriptionsRes, usersRes, cityStatsRes, coursesRes] = await Promise.all([
         axios.get(`${API}/admin/stats`),
         axios.get(`${API}/subscriptions`),
-        axios.get(`${API}/users`)
+        axios.get(`${API}/users`),
+        axios.get(`${API}/stats/cities`),
+        axios.get(`${API}/courses`)
       ]);
       
       setStats(statsRes.data);
       setSubscriptions(subscriptionsRes.data);
       setUsers(usersRes.data);
+      setCityStats(cityStatsRes.data || []);
+      setCourses(coursesRes.data || []);
       
       // Calcular estatísticas de pagamento
       calculatePaymentStats(subscriptionsRes.data);
