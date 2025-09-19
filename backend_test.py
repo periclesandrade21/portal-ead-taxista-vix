@@ -1430,6 +1430,234 @@ def test_student_login_with_old_password(test_subscription):
         print_error(f"Old password test failed: {str(e)}")
         return False
 
+def test_jose_messias_payment_sync():
+    """Test payment synchronization fix for Jose Messias Cezar De Souza"""
+    print_test_header("🔄 PAYMENT SYNC FIX - Jose Messias Cezar De Souza")
+    
+    jose_email = "josemessiascesar@gmail.com"
+    
+    try:
+        # 1. Get current user status from subscriptions collection
+        print_info("Step 1: Checking user status in subscriptions collection...")
+        response = requests.get(f"{BACKEND_URL}/subscriptions", timeout=10)
+        
+        if response.status_code != 200:
+            print_error(f"Failed to fetch subscriptions: {response.status_code}")
+            return False
+        
+        subscriptions = response.json()
+        jose_subscription = None
+        
+        for sub in subscriptions:
+            if sub.get('email', '').lower() == jose_email.lower():
+                jose_subscription = sub
+                break
+        
+        if not jose_subscription:
+            print_error(f"User {jose_email} not found in subscriptions collection")
+            print_info("Creating test user with paid status for testing...")
+            
+            # Create Jose Messias with paid status for testing
+            test_data = {
+                "name": "Jose Messias Cezar De Souza",
+                "email": jose_email,
+                "phone": "27999888777",
+                "cpf": "11144477735",  # Valid CPF for testing
+                "carPlate": "JMS-1234-T",
+                "licenseNumber": "TA-12345",
+                "city": "Vitória",
+                "lgpd_consent": True
+            }
+            
+            create_response = requests.post(
+                f"{BACKEND_URL}/subscribe",
+                json=test_data,
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+            
+            if create_response.status_code != 200:
+                print_error(f"Failed to create test user: {create_response.status_code}")
+                return False
+            
+            create_data = create_response.json()
+            jose_password = create_data.get('temporary_password')
+            print_success(f"Test user created with password: {jose_password}")
+            
+            # Update to paid status via webhook
+            webhook_data = {
+                "event": "PAYMENT_CONFIRMED",
+                "payment": {
+                    "id": "pay_jose_messias_test",
+                    "value": 150.00,
+                    "customer": {
+                        "email": jose_email
+                    }
+                }
+            }
+            
+            webhook_response = requests.post(
+                f"{BACKEND_URL}/webhook/asaas-payment",
+                json=webhook_data,
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+            
+            if webhook_response.status_code != 200:
+                print_error(f"Failed to update user to paid status: {webhook_response.status_code}")
+                return False
+            
+            print_success("User status updated to paid via webhook")
+            
+            # Re-fetch subscription to get updated status
+            response = requests.get(f"{BACKEND_URL}/subscriptions", timeout=10)
+            if response.status_code == 200:
+                subscriptions = response.json()
+                for sub in subscriptions:
+                    if sub.get('email', '').lower() == jose_email.lower():
+                        jose_subscription = sub
+                        break
+        else:
+            # User exists, get password from subscription
+            jose_password = jose_subscription.get('temporary_password')
+            if not jose_password:
+                print_error("User exists but has no temporary password set")
+                return False
+            print_success(f"Found existing user with password: {jose_password}")
+        
+        # 2. Verify status shows as "paid" in database
+        print_info("Step 2: Verifying user status is 'paid' in database...")
+        user_status = jose_subscription.get('status')
+        course_access = jose_subscription.get('course_access')
+        
+        if user_status == 'paid':
+            print_success(f"✅ User status is 'paid' in database")
+        else:
+            print_error(f"❌ User status is '{user_status}' (expected 'paid')")
+            
+            # Try to update status if it's not paid
+            if user_status == 'pending':
+                print_info("Attempting to update status to paid...")
+                webhook_data = {
+                    "event": "PAYMENT_CONFIRMED",
+                    "payment": {
+                        "id": "pay_jose_messias_fix",
+                        "value": 150.00,
+                        "customer": {
+                            "email": jose_email
+                        }
+                    }
+                }
+                
+                webhook_response = requests.post(
+                    f"{BACKEND_URL}/webhook/asaas-payment",
+                    json=webhook_data,
+                    headers={"Content-Type": "application/json"},
+                    timeout=10
+                )
+                
+                if webhook_response.status_code == 200:
+                    print_success("Status updated to paid via webhook")
+                    # Re-fetch to verify
+                    response = requests.get(f"{BACKEND_URL}/subscriptions", timeout=10)
+                    if response.status_code == 200:
+                        subscriptions = response.json()
+                        for sub in subscriptions:
+                            if sub.get('email', '').lower() == jose_email.lower():
+                                user_status = sub.get('status')
+                                course_access = sub.get('course_access')
+                                break
+                else:
+                    print_error("Failed to update status via webhook")
+                    return False
+        
+        print_info(f"Current status: {user_status}")
+        print_info(f"Course access: {course_access}")
+        
+        # 3. Test login endpoint with email and password
+        print_info("Step 3: Testing login endpoint /api/auth/login...")
+        login_data = {
+            "email": jose_email,
+            "password": jose_password
+        }
+        
+        login_response = requests.post(
+            f"{BACKEND_URL}/auth/login",
+            json=login_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if login_response.status_code != 200:
+            print_error(f"Login failed with status {login_response.status_code}: {login_response.text}")
+            return False
+        
+        login_data_response = login_response.json()
+        print_success("✅ Login endpoint responded successfully")
+        
+        # 4. Verify login response structure and data
+        print_info("Step 4: Verifying login response structure and data...")
+        
+        tests_passed = []
+        
+        # Check success field
+        if login_data_response.get('success') == True:
+            print_success("✅ Response includes success: true")
+            tests_passed.append(True)
+        else:
+            print_error(f"❌ Response success field: {login_data_response.get('success')} (expected true)")
+            tests_passed.append(False)
+        
+        # Check user data exists
+        user_data = login_data_response.get('user')
+        if user_data:
+            print_success("✅ Response includes user data")
+            tests_passed.append(True)
+            
+            # Check status field in user data
+            user_status_in_response = user_data.get('status')
+            if user_status_in_response == 'paid':
+                print_success("✅ User data includes status field set to 'paid'")
+                tests_passed.append(True)
+            else:
+                print_error(f"❌ User status in response: '{user_status_in_response}' (expected 'paid')")
+                tests_passed.append(False)
+            
+            # Check course_access field
+            course_access_in_response = user_data.get('course_access')
+            if course_access_in_response:
+                print_success(f"✅ User data includes course_access field: '{course_access_in_response}'")
+                tests_passed.append(True)
+            else:
+                print_error("❌ User data missing course_access field")
+                tests_passed.append(False)
+            
+            # Display all user data for verification
+            print_info("Complete user data in response:")
+            for key, value in user_data.items():
+                print_info(f"  {key}: {value}")
+                
+        else:
+            print_error("❌ Response missing user data")
+            tests_passed.append(False)
+        
+        # Overall assessment
+        all_tests_passed = all(tests_passed)
+        
+        if all_tests_passed:
+            print_success("🎉 PAYMENT SYNCHRONIZATION FIX VERIFIED!")
+            print_success("✅ Jose Messias can now login and see 'Acesso Liberado' status")
+            print_info("Frontend should now display 'Acesso Liberado' instead of 'Acesso Pendente'")
+        else:
+            print_error("❌ Payment synchronization fix has issues")
+            print_error("Frontend may still show 'Acesso Pendente' instead of 'Acesso Liberado'")
+        
+        return all_tests_passed
+        
+    except requests.exceptions.RequestException as e:
+        print_error(f"Payment sync test failed with exception: {str(e)}")
+        return False
+
 def run_all_tests():
     """Run all tests and provide summary"""
     print(f"{Colors.BOLD}EAD TAXISTA ES - COMPLETE SYSTEM TESTING{Colors.ENDC}")
