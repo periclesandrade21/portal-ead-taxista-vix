@@ -854,11 +854,24 @@ const Home = () => {
                         id="name"
                         type="text"
                         value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Seu nome completo"
+                        onChange={(e) => {
+                          setName(e.target.value);
+                          // Limpar erro quando usuário digita
+                          if (validationErrors.name) {
+                            setValidationErrors(prev => ({...prev, name: ''}));
+                          }
+                        }}
+                        placeholder="Ex: João Silva Santos"
                         required
-                        className="mt-2 h-12 text-lg"
+                        className={`mt-2 h-12 text-lg ${validationErrors.name ? 'border-red-500' : ''}`}
+                        maxLength="60"
                       />
+                      {validationErrors.name && (
+                        <p className="text-red-500 text-xs mt-1">{validationErrors.name}</p>
+                      )}
+                      <p className="text-xs text-gray-500 mt-1">
+                        👤 Use seu nome real completo (mínimo: nome + sobrenome)
+                      </p>
                     </div>
                     
                     <div>
