@@ -55,6 +55,7 @@ const Home = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [duplicatePopup, setDuplicatePopup] = useState(null);
   const [isCheckingDuplicates, setIsCheckingDuplicates] = useState(false);
+  const [coursePrice, setCoursePrice] = useState(150); // Preço dinâmico do curso
   
   // Estados para LGPD
   const [lgpdConsent, setLgpdConsent] = useState(false);
