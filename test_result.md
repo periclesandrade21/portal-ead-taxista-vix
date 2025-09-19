@@ -391,6 +391,18 @@ test_plan:
         agent: "testing"
         comment: "🔑 ADMIN PASSWORD RESET FUNCTIONALITY FULLY OPERATIONAL - Comprehensive testing completed successfully with all 5/5 tests passed: 1) VALID USER RESET: PUT /api/users/{user_id}/reset-password endpoint working correctly with JSON body containing newPassword field, successfully updates temporary_password in subscriptions collection ✅. 2) PASSWORD VERIFICATION: Password correctly updated in database and verified through subscriptions endpoint, new password 'NewSecure1758247822' properly stored ✅. 3) STUDENT LOGIN SUCCESS: Student can successfully login with new password after admin reset, authentication working with updated credentials ✅. 4) OLD PASSWORD INVALIDATION: Old password correctly rejected with 401 'Senha incorreta' after reset, ensuring security ✅. 5) ERROR HANDLING: Non-existent user IDs properly rejected with 404 'Usuário não encontrado', malformed requests rejected with 422 validation error ✅. Complete admin password reset flow tested: admin resets password → password updated in subscriptions collection → student can login with new password → old password invalidated. System ready for production use."
 
+  - task: "Webhook Investigation - Real Asaas Data Analysis"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "🔍 WEBHOOK INVESTIGATION COMPLETED SUCCESSFULLY - Comprehensive analysis of real Asaas webhook data executed with detailed findings: 1) WEBHOOK PROCESSING: Real webhook data (customer_id: cus_000130254085, payment_id: pay_2zg8sti32jdr0v04, value: R$60.72) successfully processed by backend with 200 response ✅. 2) USER IDENTIFICATION: Webhook found and updated user 'João Silva Santos' (joao.normalizado@gmail.com) - status changed to 'paid' and course access granted ✅. 3) DATA STORAGE ISSUE IDENTIFIED: Webhook data (customer_id, payment_id, payment_value, payment_confirmed_at) not being stored in database due to logic flaw in webhook code - when customer is string format, code looks for existing customer_id matches but falls back to pending users, however all users are already 'paid' ❌. 4) WEBHOOK FUNCTIONALITY: Core webhook processing works correctly - finds users, updates status, grants course access, but metadata storage needs fix ⚠️. 5) INVESTIGATION RESULTS: 8 total users analyzed, all with 'paid' status, 1 user (Ana Lgpd Silva) matches test pattern, no users have webhook metadata fields populated. The webhook system is functional for payment processing but needs code fix to properly store Asaas metadata for audit trail and debugging purposes."
+
 agent_communication:
   - agent: "main"
     message: "Iniciando implementação do bot IA. Prioridades: 1) Bot IA funcional, 2) Ajustes no formulário, 3) Autoplay video, 4) Preparar estrutura para fluxo cadastro+pagamento"
