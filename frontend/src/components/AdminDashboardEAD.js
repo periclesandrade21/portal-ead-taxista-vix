@@ -25,6 +25,15 @@ import {
   CommunicationTab, 
   SettingsTab 
 } from './AdminEADTabs';
+import {
+  SubscriptionsTab,
+  PaymentsTab,
+  ChartsTab,
+  CitiesTab,
+  CoursesWithPricesTab,
+  VideosTab,
+  AdminUsersTab
+} from './AdminEADCompleteabs';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
