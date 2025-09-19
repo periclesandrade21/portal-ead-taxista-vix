@@ -17,8 +17,7 @@ from emergentintegrations.llm.chat import LlmChat, UserMessage
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from moodle_client import create_moodle_client
-from moodle_service import MoodleIntegrationService
+# Removed Moodle imports - replaced with video management utilities
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -28,9 +27,38 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-# Initialize Moodle integration
-moodle_client = create_moodle_client()
-moodle_service = MoodleIntegrationService(moodle_client, db) if moodle_client else None
+# Utility Functions for Video Management
+def extract_youtube_id(url: str) -> str:
+    """Extract YouTube video ID from URL"""
+    import re
+    patterns = [
+        r'(?:https?://)?(?:www\.)?youtube\.com/watch\?v=([^&\n]+)',
+        r'(?:https?://)?(?:www\.)?youtube\.com/embed/([^&\n]+)',
+        r'(?:https?://)?(?:www\.)?youtu\.be/([^&\n]+)',
+        r'(?:https?://)?(?:www\.)?youtube\.com/v/([^&\n]+)'
+    ]
+    
+    for pattern in patterns:
+        match = re.search(pattern, url)
+        if match:
+            return match.group(1)
+    
+    return ""
+
+def get_youtube_thumbnail(video_id: str) -> str:
+    """Get YouTube thumbnail URL"""
+    return f"https://img.youtube.com/vi/{video_id}/maxresdefault.jpg"
+
+def format_duration(minutes: int) -> str:
+    """Format duration in minutes to hours and minutes"""
+    if minutes < 60:
+        return f"{minutes}min"
+    hours = minutes // 60
+    remaining_minutes = minutes % 60
+    return f"{hours}h {remaining_minutes}min" if remaining_minutes > 0 else f"{hours}h"
+
+# Moodle service disabled - replaced with video management
+moodle_service = None
 
 # Create the main app without a prefix
 app = FastAPI(title="EAD Taxista ES API", description="API para plataforma EAD dos Taxistas do Espírito Santo")
