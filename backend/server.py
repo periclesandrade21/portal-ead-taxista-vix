@@ -2069,6 +2069,176 @@ async def get_admin_stats():
         "conversion_rate": round((total_users / total_subscriptions * 100) if total_subscriptions > 0 else 0, 2)
     }
 
+# Video Management Endpoints
+@api_router.get("/modules")
+async def get_course_modules():
+    """Get all course modules"""
+    try:
+        modules = await db.course_modules.find().sort("order", 1).to_list(None)
+        # Convert ObjectId to string and add video count
+        for module in modules:
+            module["_id"] = str(module["_id"])
+            video_count = await db.course_videos.count_documents({"module_id": module["id"]})
+            module["video_count"] = video_count
+        return {"modules": modules}
+    except Exception as e:
+        logging.error(f"Error getting modules: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get modules")
+
+@api_router.post("/modules") 
+async def create_course_module(module: CourseModuleCreate):
+    """Create a new course module"""
+    try:
+        # Get next order number
+        last_module = await db.course_modules.find().sort("order", -1).limit(1).to_list(1)
+        next_order = (last_module[0]["order"] + 1) if last_module else 1
+        
+        new_module = CourseModule(
+            name=module.name,
+            description=module.description,
+            duration_hours=module.duration_hours,
+            color=module.color,
+            order=next_order
+        )
+        
+        result = await db.course_modules.insert_one(new_module.dict())
+        new_module.id = str(result.inserted_id)
+        
+        return {"message": "Module created successfully", "module": new_module.dict()}
+    except Exception as e:
+        logging.error(f"Error creating module: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create module")
+
+@api_router.get("/modules/{module_id}/videos")
+async def get_module_videos(module_id: str):
+    """Get all videos for a specific module"""
+    try:
+        videos = await db.course_videos.find({"module_id": module_id}).sort("order", 1).to_list(None)
+        # Convert ObjectId to string
+        for video in videos:
+            video["_id"] = str(video["_id"])
+        return {"videos": videos}
+    except Exception as e:
+        logging.error(f"Error getting module videos: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get videos")
+
+@api_router.post("/videos")
+async def create_course_video(video: CourseVideoCreate):
+    """Create a new course video"""
+    try:
+        # Extract YouTube ID from URL
+        youtube_id = extract_youtube_id(video.youtube_url)
+        if not youtube_id:
+            raise HTTPException(status_code=400, detail="Invalid YouTube URL")
+        
+        # Get next order number for this module
+        last_video = await db.course_videos.find({"module_id": video.module_id}).sort("order", -1).limit(1).to_list(1)
+        next_order = (last_video[0]["order"] + 1) if last_video else 1
+        
+        # Generate thumbnail URL
+        thumbnail_url = get_youtube_thumbnail(youtube_id)
+        
+        new_video = CourseVideo(
+            title=video.title,
+            description=video.description,
+            youtube_url=video.youtube_url,
+            youtube_id=youtube_id,
+            module_id=video.module_id,
+            order=next_order,
+            duration_minutes=video.duration_minutes,
+            thumbnail_url=thumbnail_url,
+            created_by="admin"  # TODO: Get from auth context
+        )
+        
+        result = await db.course_videos.insert_one(new_video.dict())
+        new_video.id = str(result.inserted_id)
+        
+        return {"message": "Video created successfully", "video": new_video.dict()}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error creating video: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create video")
+
+@api_router.delete("/videos/{video_id}")
+async def delete_course_video(video_id: str):
+    """Delete a course video"""
+    try:
+        result = await db.course_videos.delete_one({"id": video_id})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Video not found")
+        
+        return {"message": "Video deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error deleting video: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete video")
+
+@api_router.get("/questions/{module_id}")
+async def get_module_questions(module_id: str):
+    """Get all questions for a specific module"""
+    try:
+        questions = await db.questions.find({"module_id": module_id}).to_list(None)
+        # Convert ObjectId to string and organize by difficulty
+        organized_questions = {"facil": [], "media": [], "dificil": []}
+        
+        for question in questions:
+            question["_id"] = str(question["_id"])
+            difficulty = question.get("difficulty", "facil")
+            if difficulty in organized_questions:
+                organized_questions[difficulty].append(question)
+        
+        return {"questions": organized_questions}
+    except Exception as e:
+        logging.error(f"Error getting module questions: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get questions")
+
+@api_router.post("/questions")
+async def create_question(question: QuestionCreate):
+    """Create a new question"""
+    try:
+        if len(question.options) != 4:
+            raise HTTPException(status_code=400, detail="Question must have exactly 4 options")
+        
+        if question.correct_answer < 0 or question.correct_answer > 3:
+            raise HTTPException(status_code=400, detail="Correct answer must be between 0 and 3")
+        
+        if question.difficulty not in ["facil", "media", "dificil"]:
+            raise HTTPException(status_code=400, detail="Difficulty must be 'facil', 'media', or 'dificil'")
+        
+        new_question = Question(
+            module_id=question.module_id,
+            question=question.question,
+            options=question.options,
+            correct_answer=question.correct_answer,
+            difficulty=question.difficulty,
+            explanation=question.explanation
+        )
+        
+        result = await db.questions.insert_one(new_question.dict())
+        new_question.id = str(result.inserted_id)
+        
+        return {"message": "Question created successfully", "question": new_question.dict()}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error creating question: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create question")
+
+@api_router.get("/progress/{user_id}")
+async def get_user_progress(user_id: str):
+    """Get user progress across all modules"""
+    try:
+        progress = await db.user_progress.find({"user_id": user_id}).to_list(None)
+        # Convert ObjectId to string
+        for item in progress:
+            item["_id"] = str(item["_id"])
+        return {"progress": progress}
+    except Exception as e:
+        logging.error(f"Error getting user progress: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get user progress")
+
 # Moodle Integration Endpoints
 @api_router.get("/moodle/status")
 async def moodle_status():
