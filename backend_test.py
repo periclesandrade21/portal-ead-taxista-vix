@@ -1623,6 +1623,21 @@ def run_all_tests():
             print_error(f"   - {failed_test.replace('_', ' ').title()}")
         print_error("⚠️  IMMEDIATE ATTENTION REQUIRED!")
     
+    # Admin password reset assessment
+    if admin_password_passed == len(admin_password_tests):
+        print_success("🔑 ADMIN PASSWORD RESET ASSESSMENT: ALL TESTS PASSED!")
+        print_success("✅ Admin password reset functionality working correctly")
+        print_success("✅ Password updates in subscriptions collection")
+        print_success("✅ Students can login with new passwords")
+        print_success("✅ Old passwords are properly invalidated")
+        print_success("✅ Error handling for invalid user IDs working")
+    else:
+        print_error("🚨 ADMIN PASSWORD RESET ISSUES DETECTED!")
+        print_error(f"❌ {len(admin_password_failed)} admin password reset tests failed:")
+        for failed_test in admin_password_failed:
+            print_error(f"   - {failed_test.replace('_', ' ').title()}")
+        print_error("⚠️  ADMIN PASSWORD RESET FUNCTIONALITY NEEDS ATTENTION!")
+    
     if total_passed == total_tests:
         print_success("All tests passed! Complete system is working correctly.")
         return True
