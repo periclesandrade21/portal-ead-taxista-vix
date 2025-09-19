@@ -392,9 +392,9 @@ def test_subscription_creation():
     """Test subscription creation endpoint"""
     print_test_header("Asaas Payment Flow - Subscription Creation")
     
-    # Test data as specified in the review request - now including CPF
+    # Test data with valid CPF and realistic name
     test_data = {
-        "name": "João Silva Teste",
+        "name": "João Silva Santos",
         "email": "joao.teste@email.com",
         "phone": "27999999999",
         "cpf": "11144477735",  # Valid CPF for testing
