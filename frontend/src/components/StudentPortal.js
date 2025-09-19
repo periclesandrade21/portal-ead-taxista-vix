@@ -262,6 +262,35 @@ const StudentPortal = () => {
             </form>
           </CardContent>
         </Card>
+
+        {/* Error Modal */}
+        {errorModal.show && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg max-w-md w-full p-6">
+              <div className="text-center">
+                <h3 className="text-lg font-semibold mb-3">{errorModal.title}</h3>
+                <p className="text-gray-600 mb-6">{errorModal.message}</p>
+                <div className="flex gap-3">
+                  <Button 
+                    onClick={() => setErrorModal({ show: false, type: '', message: '', title: '' })}
+                    className="flex-1"
+                  >
+                    Tentar Novamente
+                  </Button>
+                  {errorModal.type === 'email_not_found' && (
+                    <Button 
+                      variant="outline"
+                      onClick={() => window.location.href = '/'}
+                      className="flex-1"
+                    >
+                      Fazer Cadastro
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
