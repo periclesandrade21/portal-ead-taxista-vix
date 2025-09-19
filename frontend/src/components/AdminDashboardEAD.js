@@ -20,7 +20,6 @@ import {
   CoursesTab, 
   ClassesTab, 
   CertificatesTab, 
-  ReportsTab, 
   SettingsTab 
 } from './AdminEADTabs';
 import {
