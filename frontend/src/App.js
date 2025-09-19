@@ -259,6 +259,12 @@ const Home = () => {
       errors.phone = "Telefone é obrigatório";
     }
     
+    if (!cpf.trim()) {
+      errors.cpf = "CPF é obrigatório";
+    } else if (!validateCPF(cpf)) {
+      errors.cpf = "CPF inválido";
+    }
+    
     if (carPlate && !validateTaxiPlate(carPlate)) {
       errors.carPlate = "Formato inválido. Use: ABC-1234-T, ABC1D23 ou ABC1234";
     }
