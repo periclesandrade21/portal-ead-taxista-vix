@@ -113,13 +113,14 @@ const AdminDashboard = () => {
   const fetchAdminData = async () => {
     try {
       setLoading(true);
-      const [statsRes, subscriptionsRes, usersRes, cityStatsRes, coursesRes, coursePriceRes] = await Promise.all([
+      const [statsRes, subscriptionsRes, usersRes, cityStatsRes, coursesRes, coursePriceRes, adminUsersRes] = await Promise.all([
         axios.get(`${API}/admin/stats`),
         axios.get(`${API}/subscriptions`),
         axios.get(`${API}/users`),
         axios.get(`${API}/stats/cities`),
         axios.get(`${API}/courses`),
-        axios.get(`${API}/courses/default/price`)
+        axios.get(`${API}/courses/default/price`),
+        axios.get(`${API}/admin/users`)
       ]);
       
       setStats(statsRes.data);
