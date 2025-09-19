@@ -32,13 +32,25 @@ const StudentPortal = () => {
   // URL do backend
   const API = process.env.REACT_APP_BACKEND_URL;
 
+  // Função para determinar o status dos módulos baseado no status do usuário
+  const getModuleStatus = (moduleId) => {
+    if (!userInfo) return 'locked';
+    
+    // Se usuário tem status paid ou active, liberar acesso aos módulos
+    if (userInfo.status === 'paid' || userInfo.status === 'active') {
+      return 'available'; // ou 'active' se preferir
+    }
+    
+    return 'locked';
+  };
+
   const modules = [
     {
       id: 1,
       title: 'Relações Humanas',
       duration: '14h',
       progress: 0,
-      status: 'locked',
+      status: getModuleStatus(1),
       description: 'Imagem do taxista na sociedade, condições físicas e emocionais'
     },
     {
@@ -46,7 +58,7 @@ const StudentPortal = () => {
       title: 'Direção Defensiva',
       duration: '8h',
       progress: 0,
-      status: 'locked',
+      status: getModuleStatus(2),
       description: 'Conceitos de direção defensiva e prevenção de acidentes'
     },
     {
@@ -54,7 +66,7 @@ const StudentPortal = () => {
       title: 'Primeiros Socorros',
       duration: '2h',
       progress: 0,
-      status: 'locked',
+      status: getModuleStatus(3),
       description: 'Procedimentos de emergência e cuidados básicos'
     },
     {
@@ -62,7 +74,7 @@ const StudentPortal = () => {
       title: 'Mecânica Básica',
       duration: '4h',
       progress: 0,
-      status: 'locked',
+      status: getModuleStatus(4),
       description: 'Funcionamento do motor e manutenção preventiva'
     }
   ];
