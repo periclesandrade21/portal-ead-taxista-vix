@@ -414,6 +414,20 @@ const StudentPortalComplete = () => {
             <p className="text-blue-200">EAD Taxista ES</p>
           </div>
 
+          {/* Informações sobre como obter a senha */}
+          <div className="bg-blue-800/30 border border-blue-400/30 rounded-lg p-4 mb-6">
+            <h3 className="text-white font-semibold mb-2 flex items-center">
+              <Key className="h-4 w-4 mr-2" />
+              🔐 Como obter sua senha?
+            </h3>
+            <ul className="text-blue-100 text-sm space-y-1">
+              <li>• 📧 Senha enviada por <strong>email</strong> após cadastro</li>
+              <li>• 📱 Também enviada por <strong>WhatsApp</strong> (se informado)</li>
+              <li>• 🔄 Use "Esqueci minha senha" para nova senha</li>
+              <li>• 💡 Verifique spam/lixo eletrônico</li>
+            </ul>
+          </div>
+
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
               <Label htmlFor="email" className="text-white mb-2 block">Email</Label>
