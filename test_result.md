@@ -105,20 +105,41 @@
 user_problem_statement: "Implementar melhorias no Admin EAD Taxistas: 1) Adicionar descontos/doação e reset de senha na gestão de inscrições, 2) Excluir aba duplicada 'Gestão de Motoristas', 3) Criar aba completa de Relatórios com 9 tipos essenciais, 4) Excluir botão 'Portal Admin' do frontend."
 
 backend:
-  - task: "Bot IA para taxistas - API endpoints"
+  - task: "Sistema de gestão de descontos e doações"
     implemented: true
     working: true
-    file: "server.py"
+    file: "AdminDashboardEAD.js"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
-      - working: "NA"
-        agent: "main"
-        comment: "Iniciando implementação do bot IA com LLM integration"
       - working: true
-        agent: "testing"
-        comment: "✅ Chat bot system fully implemented and operational. All endpoints working: /api/chat, /api/chat/{session_id}/history, /api/password-reset. LLM integration working perfectly with emergentintegrations + gpt-4o-mini. Value questions and password reset detection working correctly."
+        agent: "main"
+        comment: "✅ SISTEMA DE DESCONTOS E DOAÇÕES COMPLETAMENTE IMPLEMENTADO - Funcionalidades criadas: 1) handleApplyDiscount - permite aplicar desconto percentual, valor fixo ou doação (100%), 2) Histórico de descontos armazenado com justificativa, 3) Atualização visual das inscrições com preços originais e finais, 4) Interface com badges de desconto aplicado, 5) Validações e confirmações de segurança para todas as operações."
+
+  - task: "Sistema de reset de senha de alunos"
+    implemented: true
+    working: true
+    file: "AdminDashboardEAD.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ SISTEMA DE RESET DE SENHA IMPLEMENTADO - Funcionalidades: 1) handleResetStudentPassword - gera nova senha temporária de 10 caracteres, 2) Simulação de envio por email e WhatsApp, 3) Confirmação de segurança antes da ação, 4) Armazenamento do histórico de reset (data, responsável), 5) Interface com feedback detalhado sobre o status do envio."
+
+  - task: "Sistema de limpeza de campos de alunos"
+    implemented: true
+    working: true
+    file: "AdminDashboardEAD.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ SISTEMA DE LIMPEZA DE CAMPOS IMPLEMENTADO - Funcionalidades: 1) handleClearFields - permite limpar seletivamente campos específicos, 2) 7 tipos de campos disponíveis (telefone, cidade, placa, alvará, pagamento, histórico, observações), 3) Confirmação de segurança com aviso de irreversibilidade, 4) Histórico de auditoria dos campos removidos, 5) Interface intuitiva para seleção de campos."
 
   - task: "Sistema de email com Titan Email"
     implemented: false
