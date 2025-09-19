@@ -287,6 +287,16 @@ const StudentPortal = () => {
                   'Entrar'
                 )}
               </Button>
+
+              {/* Botão de Reset de Senha */}
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setShowResetModal(true)}
+                className="w-full text-sm text-gray-600 hover:text-gray-800"
+              >
+                🔑 Esqueci minha senha
+              </Button>
               
               <div className="text-center text-sm text-gray-600">
                 <p>Problemas para acessar?</p>
