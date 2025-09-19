@@ -577,7 +577,7 @@ def create_test_user_for_auth():
         "name": "Teste Segurança Silva",
         "email": f"teste.seguranca.{timestamp}@email.com",
         "phone": "27999888777",
-        "cpf": "12345678901",
+        "cpf": "11144477735",  # Valid CPF for testing
         "carPlate": "TST-1234",
         "licenseNumber": "TA-54321",
         "city": "Vitória"
