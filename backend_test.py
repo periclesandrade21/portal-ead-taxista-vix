@@ -2815,6 +2815,750 @@ def test_dynamic_price_system_complete():
     
     return passed, failed
 
+def test_student_password_reset_valid_email():
+    """Test student password reset with valid email from existing subscriptions"""
+    print_test_header("🔑 STUDENT PASSWORD RESET - Valid Email Test")
+    
+    # First, get existing subscriptions to find a valid email
+    try:
+        response = requests.get(f"{BACKEND_URL}/subscriptions", timeout=10)
+        
+        if response.status_code != 200:
+            print_error(f"Failed to fetch subscriptions: {response.status_code}")
+            return False
+        
+        subscriptions = response.json()
+        if not subscriptions:
+            print_warning("No existing subscriptions found, creating test user...")
+            # Create a test user for password reset
+            import time
+            timestamp = str(int(time.time()))
+            
+            test_data = {
+                "name": "Reset Test User",
+                "email": f"reset.test.{timestamp}@email.com",
+                "phone": "27999888777",
+                "cpf": "11144477735",
+                "carPlate": f"RST-{timestamp[-4:]}-T",
+                "licenseNumber": f"TA-{timestamp[-5:]}",
+                "city": "Vitória",
+                "lgpd_consent": True
+            }
+            
+            create_response = requests.post(
+                f"{BACKEND_URL}/subscribe",
+                json=test_data,
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+            
+            if create_response.status_code != 200:
+                print_error(f"Failed to create test user: {create_response.status_code}")
+                return False
+            
+            test_email = test_data["email"]
+        else:
+            # Use the first subscription's email
+            test_email = subscriptions[0].get('email')
+        
+        print_info(f"Testing password reset for email: {test_email}")
+        
+        # Test password reset endpoint
+        reset_data = {
+            "email": test_email
+        }
+        
+        response = requests.post(
+            f"{BACKEND_URL}/auth/reset-password",
+            json=reset_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_success("✅ Password reset request successful")
+            print_info(f"Message: {data.get('message')}")
+            print_info(f"Email sent: {data.get('email_sent')}")
+            print_info(f"WhatsApp sent: {data.get('whatsapp_sent')}")
+            print_info(f"Email: {data.get('email')}")
+            
+            # Verify response structure
+            required_fields = ['message', 'email_sent', 'whatsapp_sent', 'email']
+            missing_fields = [field for field in required_fields if field not in data]
+            
+            if not missing_fields:
+                print_success("✅ Response includes all required fields")
+                return True
+            else:
+                print_error(f"❌ Missing fields in response: {missing_fields}")
+                return False
+        else:
+            print_error(f"❌ Password reset failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Password reset test failed: {str(e)}")
+        return False
+
+def test_student_password_reset_invalid_email():
+    """Test student password reset with invalid email"""
+    print_test_header("🔑 STUDENT PASSWORD RESET - Invalid Email Test")
+    
+    invalid_email = "nonexistent.email@invalid.com"
+    
+    reset_data = {
+        "email": invalid_email
+    }
+    
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/auth/reset-password",
+            json=reset_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code == 404:
+            data = response.json()
+            expected_message = "Email não encontrado no sistema"
+            
+            if expected_message in data.get('detail', ''):
+                print_success("✅ Invalid email correctly rejected with 404")
+                print_info(f"Response: {data.get('detail')}")
+                return True
+            else:
+                print_error(f"❌ Wrong error message. Expected '{expected_message}', got '{data.get('detail')}'")
+                return False
+        else:
+            print_error(f"❌ Invalid email returned status {response.status_code} instead of 404")
+            print_error(f"Response: {response.text}")
+            return False
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Invalid email test failed: {str(e)}")
+        return False
+
+def test_student_password_reset_database_update():
+    """Test that password reset updates temporary_password in database"""
+    print_test_header("🔑 STUDENT PASSWORD RESET - Database Update Verification")
+    
+    # Create a test user specifically for this test
+    import time
+    timestamp = str(int(time.time()))
+    
+    test_data = {
+        "name": "Database Update Test",
+        "email": f"db.update.test.{timestamp}@email.com",
+        "phone": "27999888777",
+        "cpf": "11144477735",
+        "carPlate": f"DBT-{timestamp[-4:]}-T",
+        "licenseNumber": f"TA-{timestamp[-5:]}",
+        "city": "Vitória",
+        "lgpd_consent": True
+    }
+    
+    try:
+        # Create user
+        create_response = requests.post(
+            f"{BACKEND_URL}/subscribe",
+            json=test_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if create_response.status_code != 200:
+            print_error(f"Failed to create test user: {create_response.status_code}")
+            return False
+        
+        original_password = create_response.json().get('temporary_password')
+        print_info(f"Original password: {original_password}")
+        
+        # Request password reset
+        reset_data = {
+            "email": test_data["email"]
+        }
+        
+        reset_response = requests.post(
+            f"{BACKEND_URL}/auth/reset-password",
+            json=reset_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if reset_response.status_code != 200:
+            print_error(f"Password reset failed: {reset_response.status_code}")
+            return False
+        
+        print_success("Password reset request successful")
+        
+        # Verify password was updated in database
+        subscriptions_response = requests.get(f"{BACKEND_URL}/subscriptions", timeout=10)
+        
+        if subscriptions_response.status_code != 200:
+            print_error("Failed to fetch subscriptions for verification")
+            return False
+        
+        subscriptions = subscriptions_response.json()
+        test_subscription = None
+        
+        for sub in subscriptions:
+            if sub.get('email') == test_data["email"]:
+                test_subscription = sub
+                break
+        
+        if not test_subscription:
+            print_error("Test subscription not found in database")
+            return False
+        
+        new_password = test_subscription.get('temporary_password')
+        print_info(f"New password in database: {new_password}")
+        
+        if new_password and new_password != original_password:
+            print_success("✅ Password successfully updated in database")
+            print_info(f"Password changed from '{original_password}' to '{new_password}'")
+            return True
+        else:
+            print_error("❌ Password was not updated in database")
+            return False
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Database update test failed: {str(e)}")
+        return False
+
+def test_admin_users_list():
+    """Test GET /api/admin/users to list administrative users"""
+    print_test_header("👥 ADMIN USER MANAGEMENT - List Admin Users")
+    
+    try:
+        response = requests.get(
+            f"{BACKEND_URL}/admin/users",
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_success("✅ Admin users list retrieved successfully")
+            print_info(f"Found {len(data)} admin users")
+            
+            # Verify response structure
+            if isinstance(data, list):
+                print_success("✅ Response is a list as expected")
+                
+                # Check if any users exist and verify structure
+                if data:
+                    first_user = data[0]
+                    expected_fields = ['id', 'username', 'full_name', 'role', 'created_at', 'active']
+                    
+                    # Verify password is not included in response
+                    if 'password' not in first_user:
+                        print_success("✅ Password field correctly excluded from response")
+                    else:
+                        print_error("❌ Password field exposed in response (security issue)")
+                        return False
+                    
+                    # Check for expected fields
+                    missing_fields = [field for field in expected_fields if field not in first_user]
+                    if not missing_fields:
+                        print_success("✅ Admin user structure includes all expected fields")
+                    else:
+                        print_warning(f"⚠️ Missing fields in admin user structure: {missing_fields}")
+                    
+                    print_info(f"Sample admin user: {first_user.get('username')} ({first_user.get('full_name')})")
+                else:
+                    print_info("No admin users found in system")
+                
+                return True
+            else:
+                print_error("❌ Response is not a list")
+                return False
+        else:
+            print_error(f"❌ Admin users list failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Admin users list test failed: {str(e)}")
+        return False
+
+def test_admin_user_create():
+    """Test POST /api/admin/users to create a new admin user"""
+    print_test_header("👥 ADMIN USER MANAGEMENT - Create Admin User")
+    
+    # Generate unique username to avoid conflicts
+    import time
+    timestamp = str(int(time.time()))
+    
+    admin_data = {
+        "username": "teste.admin",
+        "password": "senha123",
+        "full_name": "Admin Teste",
+        "role": "admin"
+    }
+    
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/admin/users",
+            json=admin_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_success("✅ Admin user created successfully")
+            print_info(f"Created user: {data.get('username')} ({data.get('full_name')})")
+            print_info(f"User ID: {data.get('id')}")
+            print_info(f"Role: {data.get('role')}")
+            
+            # Verify response structure
+            expected_fields = ['id', 'username', 'full_name', 'role', 'created_at', 'active']
+            missing_fields = [field for field in expected_fields if field not in data]
+            
+            if not missing_fields:
+                print_success("✅ Response includes all expected fields")
+            else:
+                print_warning(f"⚠️ Missing fields in response: {missing_fields}")
+            
+            # Verify password is not in response
+            if 'password' not in data:
+                print_success("✅ Password correctly excluded from response")
+            else:
+                print_error("❌ Password exposed in response (security issue)")
+                return False, None
+            
+            # Store user ID for cleanup
+            return True, data.get('id')
+        else:
+            print_error(f"❌ Admin user creation failed with status {response.status_code}: {response.text}")
+            return False, None
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Admin user creation test failed: {str(e)}")
+        return False, None
+
+def test_admin_user_create_duplicate():
+    """Test creating admin user with duplicate username (should fail)"""
+    print_test_header("👥 ADMIN USER MANAGEMENT - Duplicate Username Test")
+    
+    # Try to create user with same username as previous test
+    admin_data = {
+        "username": "teste.admin",
+        "password": "senha456",
+        "full_name": "Admin Teste Duplicate",
+        "role": "admin"
+    }
+    
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/admin/users",
+            json=admin_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code == 400:
+            data = response.json()
+            expected_message = "Nome de usuário já existe"
+            
+            if expected_message in data.get('detail', ''):
+                print_success("✅ Duplicate username correctly rejected with 400")
+                print_info(f"Response: {data.get('detail')}")
+                return True
+            else:
+                print_error(f"❌ Wrong error message. Expected '{expected_message}', got '{data.get('detail')}'")
+                return False
+        else:
+            print_error(f"❌ Duplicate username returned status {response.status_code} instead of 400")
+            print_error(f"Response: {response.text}")
+            return False
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Duplicate username test failed: {str(e)}")
+        return False
+
+def test_admin_user_reset_password(admin_user_id):
+    """Test PUT /api/admin/users/{user_id}/reset-password to reset admin password"""
+    print_test_header("👥 ADMIN USER MANAGEMENT - Reset Admin Password")
+    
+    if not admin_user_id:
+        print_warning("No admin user ID available, skipping password reset test")
+        return False
+    
+    new_password = "newSecurePassword123"
+    
+    reset_data = {
+        "username": "teste.admin",  # This might not be needed based on endpoint
+        "new_password": new_password
+    }
+    
+    try:
+        response = requests.put(
+            f"{BACKEND_URL}/admin/users/{admin_user_id}/reset-password",
+            json=reset_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_success("✅ Admin password reset successful")
+            print_info(f"Response: {data.get('message')}")
+            return True
+        else:
+            print_error(f"❌ Admin password reset failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Admin password reset test failed: {str(e)}")
+        return False
+
+def test_admin_user_reset_password_nonexistent():
+    """Test password reset for non-existent admin user (should fail)"""
+    print_test_header("👥 ADMIN USER MANAGEMENT - Reset Password Non-existent User")
+    
+    fake_user_id = "non-existent-admin-id-12345"
+    new_password = "testPassword123"
+    
+    reset_data = {
+        "username": "nonexistent",
+        "new_password": new_password
+    }
+    
+    try:
+        response = requests.put(
+            f"{BACKEND_URL}/admin/users/{fake_user_id}/reset-password",
+            json=reset_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code == 404:
+            data = response.json()
+            expected_message = "Usuário administrativo não encontrado"
+            
+            if expected_message in data.get('detail', ''):
+                print_success("✅ Non-existent admin user correctly rejected with 404")
+                print_info(f"Response: {data.get('detail')}")
+                return True
+            else:
+                print_error(f"❌ Wrong error message. Expected '{expected_message}', got '{data.get('detail')}'")
+                return False
+        else:
+            print_error(f"❌ Non-existent admin user returned status {response.status_code} instead of 404")
+            print_error(f"Response: {response.text}")
+            return False
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Non-existent admin user test failed: {str(e)}")
+        return False
+
+def test_admin_user_delete_main_admin():
+    """Test deleting the main 'admin' user (should be prevented)"""
+    print_test_header("👥 ADMIN USER MANAGEMENT - Delete Main Admin (Should Fail)")
+    
+    # First, try to find the main admin user
+    try:
+        # Get admin users list
+        response = requests.get(f"{BACKEND_URL}/admin/users", timeout=10)
+        
+        if response.status_code != 200:
+            print_error("Failed to get admin users list")
+            return False
+        
+        admin_users = response.json()
+        main_admin_id = None
+        
+        for user in admin_users:
+            if user.get('username') == 'admin':
+                main_admin_id = user.get('id')
+                break
+        
+        if not main_admin_id:
+            print_warning("Main 'admin' user not found, creating one for test...")
+            # Create main admin user for testing
+            admin_data = {
+                "username": "admin",
+                "password": "admin123",
+                "full_name": "Main Administrator",
+                "role": "admin"
+            }
+            
+            create_response = requests.post(
+                f"{BACKEND_URL}/admin/users",
+                json=admin_data,
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+            
+            if create_response.status_code == 200:
+                main_admin_id = create_response.json().get('id')
+                print_info(f"Created main admin user with ID: {main_admin_id}")
+            else:
+                print_error("Failed to create main admin user for test")
+                return False
+        
+        # Now try to delete the main admin user
+        delete_response = requests.delete(
+            f"{BACKEND_URL}/admin/users/{main_admin_id}",
+            timeout=10
+        )
+        
+        if delete_response.status_code == 400:
+            data = delete_response.json()
+            expected_message = "Não é possível excluir o usuário admin principal"
+            
+            if expected_message in data.get('detail', ''):
+                print_success("✅ Main admin user deletion correctly prevented with 400")
+                print_info(f"Response: {data.get('detail')}")
+                return True
+            else:
+                print_error(f"❌ Wrong error message. Expected '{expected_message}', got '{data.get('detail')}'")
+                return False
+        else:
+            print_error(f"❌ Main admin deletion returned status {delete_response.status_code} instead of 400")
+            print_error(f"Response: {delete_response.text}")
+            return False
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Main admin deletion test failed: {str(e)}")
+        return False
+
+def test_admin_user_delete(admin_user_id):
+    """Test DELETE /api/admin/users/{user_id} to delete the test admin user"""
+    print_test_header("👥 ADMIN USER MANAGEMENT - Delete Test Admin User")
+    
+    if not admin_user_id:
+        print_warning("No admin user ID available, skipping deletion test")
+        return False
+    
+    try:
+        response = requests.delete(
+            f"{BACKEND_URL}/admin/users/{admin_user_id}",
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_success("✅ Test admin user deleted successfully")
+            print_info(f"Response: {data.get('message')}")
+            return True
+        elif response.status_code == 404:
+            print_warning("⚠️ Admin user not found (may have been deleted already)")
+            return True  # Consider this acceptable
+        else:
+            print_error(f"❌ Admin user deletion failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Admin user deletion test failed: {str(e)}")
+        return False
+
+def test_database_integration_admin_users():
+    """Test that admin users are stored in admin_users collection"""
+    print_test_header("🗄️ DATABASE INTEGRATION - Admin Users Collection")
+    
+    # This test verifies that admin users are properly stored by creating and retrieving
+    import time
+    timestamp = str(int(time.time()))
+    
+    admin_data = {
+        "username": f"db.test.{timestamp}",
+        "password": "testPassword123",
+        "full_name": "Database Test Admin",
+        "role": "admin"
+    }
+    
+    try:
+        # Create admin user
+        create_response = requests.post(
+            f"{BACKEND_URL}/admin/users",
+            json=admin_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if create_response.status_code != 200:
+            print_error(f"Failed to create test admin user: {create_response.status_code}")
+            return False
+        
+        created_user = create_response.json()
+        user_id = created_user.get('id')
+        print_success("✅ Admin user created for database test")
+        
+        # Retrieve admin users list to verify storage
+        list_response = requests.get(f"{BACKEND_URL}/admin/users", timeout=10)
+        
+        if list_response.status_code != 200:
+            print_error("Failed to retrieve admin users list")
+            return False
+        
+        admin_users = list_response.json()
+        
+        # Find our test user in the list
+        test_user_found = False
+        for user in admin_users:
+            if user.get('id') == user_id:
+                test_user_found = True
+                print_success("✅ Admin user found in admin_users collection")
+                print_info(f"Username: {user.get('username')}")
+                print_info(f"Full Name: {user.get('full_name')}")
+                print_info(f"Role: {user.get('role')}")
+                break
+        
+        if not test_user_found:
+            print_error("❌ Created admin user not found in admin_users collection")
+            return False
+        
+        # Clean up - delete the test user
+        delete_response = requests.delete(f"{BACKEND_URL}/admin/users/{user_id}", timeout=10)
+        if delete_response.status_code == 200:
+            print_success("✅ Test admin user cleaned up successfully")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print_error(f"Database integration test failed: {str(e)}")
+        return False
+
+def test_database_integration_subscriptions():
+    """Test that student password resets update subscriptions collection"""
+    print_test_header("🗄️ DATABASE INTEGRATION - Subscriptions Collection")
+    
+    # Create a test subscription and verify password reset updates it
+    import time
+    timestamp = str(int(time.time()))
+    
+    test_data = {
+        "name": "Database Integration Test",
+        "email": f"db.integration.{timestamp}@email.com",
+        "phone": "27999888777",
+        "cpf": "11144477735",
+        "carPlate": f"DIT-{timestamp[-4:]}-T",
+        "licenseNumber": f"TA-{timestamp[-5:]}",
+        "city": "Vitória",
+        "lgpd_consent": True
+    }
+    
+    try:
+        # Create subscription
+        create_response = requests.post(
+            f"{BACKEND_URL}/subscribe",
+            json=test_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if create_response.status_code != 200:
+            print_error(f"Failed to create test subscription: {create_response.status_code}")
+            return False
+        
+        original_password = create_response.json().get('temporary_password')
+        print_success("✅ Test subscription created")
+        print_info(f"Original password: {original_password}")
+        
+        # Request password reset
+        reset_data = {
+            "email": test_data["email"]
+        }
+        
+        reset_response = requests.post(
+            f"{BACKEND_URL}/auth/reset-password",
+            json=reset_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if reset_response.status_code != 200:
+            print_error(f"Password reset failed: {reset_response.status_code}")
+            return False
+        
+        print_success("✅ Password reset request successful")
+        
+        # Verify update in subscriptions collection
+        subscriptions_response = requests.get(f"{BACKEND_URL}/subscriptions", timeout=10)
+        
+        if subscriptions_response.status_code != 200:
+            print_error("Failed to retrieve subscriptions")
+            return False
+        
+        subscriptions = subscriptions_response.json()
+        test_subscription = None
+        
+        for sub in subscriptions:
+            if sub.get('email') == test_data["email"]:
+                test_subscription = sub
+                break
+        
+        if not test_subscription:
+            print_error("❌ Test subscription not found in subscriptions collection")
+            return False
+        
+        new_password = test_subscription.get('temporary_password')
+        
+        if new_password and new_password != original_password:
+            print_success("✅ Password successfully updated in subscriptions collection")
+            print_info(f"Password changed from '{original_password}' to '{new_password}'")
+            return True
+        else:
+            print_error("❌ Password was not updated in subscriptions collection")
+            return False
+        
+    except requests.exceptions.RequestException as e:
+        print_error(f"Database integration test failed: {str(e)}")
+        return False
+
+def test_objectid_handling():
+    """Test that ObjectId fields are properly handled"""
+    print_test_header("🗄️ DATABASE INTEGRATION - ObjectId Handling")
+    
+    try:
+        # Test admin users endpoint (should not expose _id fields)
+        admin_response = requests.get(f"{BACKEND_URL}/admin/users", timeout=10)
+        
+        if admin_response.status_code == 200:
+            admin_users = admin_response.json()
+            
+            if admin_users:
+                first_user = admin_users[0]
+                
+                if '_id' not in first_user:
+                    print_success("✅ Admin users endpoint correctly excludes MongoDB _id field")
+                else:
+                    print_error("❌ Admin users endpoint exposes MongoDB _id field")
+                    return False
+            else:
+                print_info("No admin users found for ObjectId test")
+        
+        # Test subscriptions endpoint (should not expose _id fields)
+        subscriptions_response = requests.get(f"{BACKEND_URL}/subscriptions", timeout=10)
+        
+        if subscriptions_response.status_code == 200:
+            subscriptions = subscriptions_response.json()
+            
+            if subscriptions:
+                first_subscription = subscriptions[0]
+                
+                if '_id' not in first_subscription:
+                    print_success("✅ Subscriptions endpoint correctly excludes MongoDB _id field")
+                else:
+                    print_error("❌ Subscriptions endpoint exposes MongoDB _id field")
+                    return False
+                
+                # Check that UUID id field is present instead
+                if 'id' in first_subscription and isinstance(first_subscription['id'], str):
+                    print_success("✅ UUID id field properly used instead of ObjectId")
+                else:
+                    print_error("❌ UUID id field missing or invalid")
+                    return False
+            else:
+                print_info("No subscriptions found for ObjectId test")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print_error(f"ObjectId handling test failed: {str(e)}")
+        return False
+
 def test_password_sending_functionality():
     """Test password sending functionality as requested in review"""
     print_test_header("🔐 PASSWORD SENDING FUNCTIONALITY TEST")
