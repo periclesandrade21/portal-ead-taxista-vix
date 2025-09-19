@@ -162,7 +162,7 @@ const StudentPortal = () => {
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <Eye className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                      <EyeOff className="h-4 w-4 text-gray-400 hover:text-gray-600" />
                     ) : (
                       <Eye className="h-4 w-4 text-gray-400 hover:text-gray-600" />
                     )}
