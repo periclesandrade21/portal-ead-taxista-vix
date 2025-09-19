@@ -1152,12 +1152,12 @@ async def update_subscription_status(subscription_id: str, status: str, payment_
     return {"message": f"Status da inscrição atualizado para: {status}"}
 
 @api_router.put("/users/{user_id}/reset-password")
-async def reset_user_password(user_id: str, new_password: str):
+async def reset_user_password(user_id: str, request: ResetPasswordAdminRequest):
     """Reset user password (admin function)"""
     # Em produção, a senha seria hasheada
-    result = await db.users.update_one(
+    result = await db.subscriptions.update_one(
         {"id": user_id},
-        {"$set": {"password": new_password}}  # Em produção: hash(new_password)
+        {"$set": {"temporary_password": request.newPassword}}
     )
     
     if result.matched_count == 0:
