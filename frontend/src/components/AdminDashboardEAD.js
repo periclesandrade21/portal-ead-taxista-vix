@@ -1174,7 +1174,13 @@ const AdminDashboardEAD = () => {
 
           {/* Relatórios */}
           <ReportsTab 
+            subscriptions={subscriptions}
+            cities={cities}
+            discounts={discounts}
+            certificates={certificates}
             exportReport={exportReport}
+            reportFilters={reportFilters}
+            setReportFilters={setReportFilters}
           />
 
           {/* Usuários Administrativos */}
