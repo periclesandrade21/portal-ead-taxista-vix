@@ -1291,12 +1291,14 @@ async def asaas_webhook(request: dict):
             subscription_filter = None
             if customer_email:
                 subscription_filter = {"email": customer_email}
+                logging.info(f"Buscando por email: {customer_email}")
             elif customer_id:
                 # Primeiro tentar buscar por asaas_customer_id ou payment_id
                 subscription_filter = {"$or": [
                     {"asaas_customer_id": customer_id},
                     {"payment_id": payment_id}
                 ]}
+                logging.info(f"Buscando por customer_id ou payment_id: {customer_id}, {payment_id}")
                 
                 # Se não encontrar, buscar qualquer inscrição pendente como fallback
                 existing_subscription = await db.subscriptions.find_one(subscription_filter)
@@ -1305,52 +1307,73 @@ async def asaas_webhook(request: dict):
                     pending_subscriptions = await db.subscriptions.find({"status": "pending"}).to_list(100)
                     if pending_subscriptions:
                         # Usar a primeira inscrição pendente como fallback
-                        subscription_filter = {"_id": pending_subscriptions[0]["_id"]}
-                        logging.info(f"Usando inscrição pendente como fallback para Customer ID {customer_id}")
+                        subscription_filter = {"id": pending_subscriptions[0]["id"]}  # Use id field, not _id
+                        logging.info(f"Usando inscrição pendente como fallback: {pending_subscriptions[0]['id']}")
                     else:
                         logging.warning(f"Nenhuma inscrição pendente encontrada para Customer ID {customer_id}")
                         subscription_filter = None
             
             if subscription_filter:
-                # Atualizar a inscrição com todos os dados do webhook
+                # Preparar dados de atualização
                 update_data = {
-                    "$set": {
-                        "status": "paid",
-                        "payment_id": payment_id,
-                        "payment_value": value,
-                        "payment_confirmed_at": datetime.now(timezone.utc).isoformat(),
-                        "course_access": "granted"
-                    }
+                    "status": "paid",
+                    "payment_id": payment_id,
+                    "payment_value": value,
+                    "payment_confirmed_at": datetime.now(timezone.utc).isoformat(),
+                    "course_access": "granted"
                 }
                 
                 # Adicionar customer_id se disponível
                 if customer_id:
-                    update_data["$set"]["asaas_customer_id"] = customer_id
+                    update_data["asaas_customer_id"] = customer_id
                 
-                result = await db.subscriptions.update_one(subscription_filter, update_data)
+                logging.info(f"Tentando atualizar com filtro: {subscription_filter}")
+                logging.info(f"Dados de atualização: {update_data}")
                 
-                if result.matched_count > 0:
-                    # Buscar o usuário atualizado para log
-                    updated_user = await db.subscriptions.find_one(subscription_filter)
-                    user_email = updated_user.get('email', 'N/A') if updated_user else 'N/A'
-                    user_name = updated_user.get('name', 'N/A') if updated_user else 'N/A'
+                # Executar atualização
+                try:
+                    result = await db.subscriptions.update_one(
+                        subscription_filter,
+                        {"$set": update_data}
+                    )
                     
-                    logging.info(f"Curso liberado para: {user_name} ({user_email}) - Customer: {customer_id}, Payment: {payment_id}, Valor: R$ {value}")
+                    logging.info(f"Resultado da atualização: matched_count={result.matched_count}, modified_count={result.modified_count}")
                     
-                    return {
-                        "message": "Pagamento processado e curso liberado", 
-                        "status": "success", 
-                        "email": user_email,
-                        "user_name": user_name,
-                        "payment_id": payment_id,
-                        "customer_id": customer_id,
-                        "value": value
-                    }
-                else:
-                    logging.warning(f"Inscrição não encontrada para Customer: {customer_id} ou Email: {customer_email}")
-                    return {"message": "Inscrição não encontrada", "status": "warning"}
+                    if result.matched_count > 0:
+                        # Buscar o usuário atualizado para verificar e log
+                        updated_user = await db.subscriptions.find_one(subscription_filter)
+                        if updated_user:
+                            user_email = updated_user.get('email', 'N/A')
+                            user_name = updated_user.get('name', 'N/A')
+                            stored_payment_id = updated_user.get('payment_id', 'N/A')
+                            stored_customer_id = updated_user.get('asaas_customer_id', 'N/A')
+                            stored_value = updated_user.get('payment_value', 'N/A')
+                            
+                            logging.info(f"Curso liberado para: {user_name} ({user_email})")
+                            logging.info(f"Dados armazenados - Customer: {stored_customer_id}, Payment: {stored_payment_id}, Valor: R$ {stored_value}")
+                            
+                            return {
+                                "message": "Pagamento processado e curso liberado", 
+                                "status": "success", 
+                                "email": user_email,
+                                "user_name": user_name,
+                                "payment_id": payment_id,
+                                "customer_id": customer_id,
+                                "value": value
+                            }
+                        else:
+                            logging.error("Usuário não encontrado após atualização")
+                            return {"message": "Erro após atualização", "status": "error"}
+                    else:
+                        logging.warning(f"Nenhuma inscrição corresponde ao filtro: {subscription_filter}")
+                        return {"message": "Inscrição não encontrada para atualização", "status": "warning"}
+                        
+                except Exception as e:
+                    logging.error(f"Erro na operação de atualização MongoDB: {str(e)}")
+                    return {"message": f"Erro na atualização: {str(e)}", "status": "error"}
+                    
             else:
-                logging.warning(f"Dados insuficientes no webhook: {request}")
+                logging.warning(f"Filtro de busca inválido. Dados do webhook: Event={event}, Customer={customer_id}, Email={customer_email}")
                 return {"message": "Dados insuficientes para processar pagamento", "status": "warning"}
         
         return {"message": "Webhook recebido", "status": "received"}
