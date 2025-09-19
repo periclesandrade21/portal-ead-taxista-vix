@@ -1197,18 +1197,11 @@ const Home = () => {
             </Card>
           </div>
           
-          <Button 
-            onClick={() => setShowNewRegistration(true)}
-            className="px-12 py-4 text-xl bg-white text-blue-600 hover:bg-gray-100 font-bold rounded-lg shadow-lg transform transition hover:scale-105"
-          >
-            <Car className="mr-3 h-6 w-6" />
-            Iniciar Cadastro Completo
-            <ChevronRight className="ml-3 h-6 w-6" />
-          </Button>
-          
-          <p className="text-blue-200 text-sm mt-4">
-            💡 Processo 100% online • Certificado válido nacionalmente • Suporte 24h
-          </p>
+          <div className="text-center">
+            <p className="text-blue-200 text-sm mt-4">
+              💡 Processo 100% online • Certificado válido nacionalmente • Suporte 24h
+            </p>
+          </div>
         </div>
       </section>
 
