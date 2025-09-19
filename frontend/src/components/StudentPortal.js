@@ -247,7 +247,7 @@ const StudentPortal = () => {
     }, 1000);
   };
 
-  if (!isLoggedIn) {
+  if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
