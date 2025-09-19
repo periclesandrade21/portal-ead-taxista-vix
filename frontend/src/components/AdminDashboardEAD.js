@@ -101,6 +101,45 @@ const AdminDashboardEAD = () => {
     message: ''
   });
 
+  // Estados do AdminDashboard antigo integrados
+  const [subscriptions, setSubscriptions] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [adminStats, setAdminStats] = useState({});
+  const [cities, setCities] = useState([]);
+  const [paymentStats, setPaymentStats] = useState([]);
+  const [adminUsers, setAdminUsers] = useState([]);
+  const [adminUserModal, setAdminUserModal] = useState({ show: false, user: null, isEdit: false });
+  const [adminPasswordModal, setAdminPasswordModal] = useState({ 
+    show: false, userId: null, username: '', newPassword: '', showPassword: false 
+  });
+  const [deleteUserModal, setDeleteUserModal] = useState({ show: false, userId: null, username: '' });
+  
+  // Estados para gestão de vídeos (do painel antigo)
+  const [modules, setModules] = useState([]);
+  const [videos, setVideos] = useState([]);
+  const [selectedModule, setSelectedModule] = useState('');
+  const [videoModal, setVideoModal] = useState({ 
+    show: false, 
+    video: { title: '', description: '', youtube_url: '', module_id: '', duration_minutes: 0 } 
+  });
+  const [moduleModal, setModuleModal] = useState({ 
+    show: false, 
+    module: { name: '', description: '', duration_hours: 0, color: '#3b82f6' } 
+  });
+  const [deleteVideoModal, setDeleteVideoModal] = useState({ show: false, videoId: null, videoTitle: '' });
+  const [videoLoadingStates, setVideoLoadingStates] = useState({});
+
+  // Estados para cursos com preços
+  const [coursesWithPrices, setCoursesWithPrices] = useState([]);
+  const [courseModal, setCourseModal] = useState({ show: false, course: null });
+  const [editPriceModal, setEditPriceModal] = useState({ show: false, courseId: null, currentPrice: 0 });
+  const [deleteCourseModal, setDeleteCourseModal] = useState({ show: false, courseId: null, courseName: '' });
+
+  // Estados para descontos e relatórios
+  const [discounts, setDiscounts] = useState([]);
+  const [discountModal, setDiscountModal] = useState({ show: false, discount: null });
+  const [cityStatsData, setCityStatsData] = useState([]);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
