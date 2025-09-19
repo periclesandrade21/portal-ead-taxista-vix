@@ -1314,6 +1314,128 @@ const AdminDashboard = () => {
             </Card>
           </TabsContent>
 
+          {/* Aba Usuários Administrativos */}
+          <TabsContent value="admin-users" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle>👥 Usuários Administrativos</CardTitle>
+                    <CardDescription>
+                      Gerencie usuários com acesso ao painel administrativo
+                    </CardDescription>
+                  </div>
+                  <Button 
+                    onClick={() => setAdminUserModal({ 
+                      show: true, 
+                      user: { username: '', password: '', full_name: '', role: 'admin' },
+                      isEdit: false 
+                    })}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Novo Usuário Admin
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {adminUsers.length === 0 ? (
+                    <div className="text-center py-8">
+                      <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-500">Nenhum usuário administrativo encontrado</p>
+                      <p className="text-sm text-gray-400">Clique em "Novo Usuário Admin" para adicionar</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {adminUsers.map((user) => (
+                        <div key={user.id} className="border rounded-lg p-4 bg-gray-50">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="bg-blue-600 p-2 rounded-full">
+                                  <User className="h-4 w-4 text-white" />
+                                </div>
+                                <div>
+                                  <h4 className="font-semibold text-lg">{user.full_name}</h4>
+                                  <p className="text-gray-600">@{user.username}</p>
+                                </div>
+                                <Badge variant={user.active ? 'default' : 'secondary'}>
+                                  {user.active ? '✅ Ativo' : '❌ Inativo'}
+                                </Badge>
+                                {user.username === 'admin' && (
+                                  <Badge variant="destructive">👑 Principal</Badge>
+                                )}
+                              </div>
+                              
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+                                <div>
+                                  <span className="font-medium">Função:</span> {user.role}
+                                </div>
+                                <div>
+                                  <span className="font-medium">Criado em:</span> {' '}
+                                  {user.created_at ? new Date(user.created_at).toLocaleDateString('pt-BR') : 'N/A'}
+                                </div>
+                                <div>
+                                  <span className="font-medium">Última atualização:</span> {' '}
+                                  {user.updated_at ? new Date(user.updated_at).toLocaleDateString('pt-BR') : 'N/A'}
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="flex items-center gap-2 ml-4">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setAdminPasswordModal({
+                                  show: true,
+                                  userId: user.id,
+                                  username: user.username,
+                                  newPassword: '',
+                                  showPassword: false
+                                })}
+                                className="text-blue-600 hover:text-blue-700"
+                              >
+                                <Key className="h-3 w-3 mr-1" />
+                                Reset Senha
+                              </Button>
+                              
+                              {user.username !== 'admin' && (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleDeleteAdminUser(user.id, user.username)}
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {/* Informações de segurança */}
+                  <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                      <div className="text-sm">
+                        <p className="font-semibold text-yellow-800">⚠️ Informações de Segurança:</p>
+                        <ul className="text-yellow-700 mt-2 space-y-1">
+                          <li>• O usuário "admin" principal não pode ser excluído</li>
+                          <li>• Senhas são armazenadas de forma segura (hash em produção)</li>
+                          <li>• Registre todas as ações administrativas por auditoria</li>
+                          <li>• Use senhas fortes para todos os usuários administrativos</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           <TabsContent value="discounts">
             <Card>
               <CardHeader>
