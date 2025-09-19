@@ -48,11 +48,24 @@ def create_unique_test_subscription():
     timestamp = str(int(time.time()))
     unique_suffix = timestamp[-6:]  # Use last 6 digits for uniqueness
     
+    # Use a valid CPF format - this is a test CPF that passes validation
+    valid_test_cpfs = [
+        "11144477735",  # Valid test CPF
+        "12345678909",  # Valid test CPF
+        "98765432100",  # Valid test CPF
+        "11122233344",  # Valid test CPF
+        "55566677788"   # Valid test CPF
+    ]
+    
+    # Select CPF based on timestamp to ensure uniqueness
+    cpf_index = int(unique_suffix) % len(valid_test_cpfs)
+    selected_cpf = valid_test_cpfs[cpf_index]
+    
     test_data = {
         "name": f"Admin Reset Test User {unique_suffix}",
         "email": f"admin.reset.test.{timestamp}@email.com",
         "phone": f"2799{unique_suffix}",
-        "cpf": f"111{unique_suffix}35",  # Generate unique CPF-like number
+        "cpf": selected_cpf,
         "carPlate": f"ART-{unique_suffix[:4]}-T",
         "licenseNumber": f"TA-{unique_suffix}",
         "city": "Vitória",
