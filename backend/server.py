@@ -744,6 +744,110 @@ async def login_student(login_request: LoginRequest):
         logging.error(f"Erro no login: {str(e)}")
         raise HTTPException(status_code=500, detail="Erro interno do servidor")
 
+@api_router.post("/courses", response_model=Course)
+async def create_course(course: CourseCreate):
+    """Criar novo curso"""
+    try:
+        course_data = {
+            "id": str(uuid.uuid4()),
+            "name": course.name,
+            "description": course.description,
+            "price": course.price,
+            "duration_hours": course.duration_hours,
+            "category": course.category,
+            "active": course.active,
+            "created_at": datetime.now(timezone.utc)
+        }
+        
+        prepared_data = prepare_for_mongo(course_data)
+        result = await db.courses.insert_one(prepared_data)
+        
+        logging.info(f"Curso criado: {course.name} - Preço: R${course.price}")
+        
+        return Course(**course_data)
+        
+    except Exception as e:
+        logging.error(f"Erro ao criar curso: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro ao criar curso")
+
+@api_router.get("/courses")
+async def get_courses():
+    """Listar todos os cursos"""
+    try:
+        courses = await db.courses.find().to_list(length=None)
+        return [parse_from_mongo(course) for course in courses]
+    except Exception as e:
+        logging.error(f"Erro ao buscar cursos: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro ao buscar cursos")
+
+@api_router.get("/stats/cities")
+async def get_city_stats():
+    """Obter estatísticas por cidade"""
+    try:
+        pipeline = [
+            {
+                "$group": {
+                    "_id": "$city",
+                    "count": {"$sum": 1},
+                    "paid": {
+                        "$sum": {
+                            "$cond": [{"$eq": ["$status", "paid"]}, 1, 0]
+                        }
+                    },
+                    "pending": {
+                        "$sum": {
+                            "$cond": [{"$eq": ["$status", "pending"]}, 1, 0]
+                        }
+                    }
+                }
+            },
+            {
+                "$sort": {"count": -1}
+            }
+        ]
+        
+        city_stats = await db.subscriptions.aggregate(pipeline).to_list(length=None)
+        
+        # Formatar resultado
+        formatted_stats = []
+        for stat in city_stats:
+            if stat["_id"]:  # Ignorar cidades vazias
+                formatted_stats.append({
+                    "city": stat["_id"],
+                    "total": stat["count"],
+                    "paid": stat["paid"],
+                    "pending": stat["pending"]
+                })
+        
+        return formatted_stats
+        
+    except Exception as e:
+        logging.error(f"Erro ao obter estatísticas de cidades: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro ao obter estatísticas")
+
+@api_router.post("/check-duplicates", response_model=DuplicateCheckResponse)
+async def check_duplicates(subscription: UserSubscriptionCreate):
+    """Verificar duplicatas antes do cadastro"""
+    try:
+        duplicates = await check_duplicate_registration(
+            db, 
+            subscription.name, 
+            subscription.email, 
+            subscription.cpf,
+            subscription.phone,
+            subscription.carPlate,
+            subscription.licenseNumber
+        )
+        
+        return DuplicateCheckResponse(
+            has_duplicates=len(duplicates) > 0,
+            duplicates=duplicates
+        )
+        
+    except Exception as e:
+        logging.error(f"Erro ao verificar duplicatas: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro ao verificar duplicatas")
+
 @api_router.post("/subscribe", response_model=PasswordSentResponse)
 async def create_subscription(subscription: UserSubscriptionCreate):
     """Create a new subscription and send password"""
