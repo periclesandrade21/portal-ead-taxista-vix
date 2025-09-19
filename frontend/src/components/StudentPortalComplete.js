@@ -270,15 +270,46 @@ const StudentPortalComplete = () => {
   };
 
   const handleResetPassword = async () => {
+    if (!resetEmail.trim()) {
+      alert('Por favor, digite seu email.');
+      return;
+    }
+    
     try {
       setLoading(true);
-      await axios.post(`${API}/auth/reset-password`, { email: resetEmail });
-      alert('📧 Instruções de redefinição de senha enviadas para seu email!');
+      const response = await axios.post(`${API}/auth/reset-password`, { email: resetEmail });
+      
+      // Show detailed success message
+      const emailSent = response.data.email_sent;
+      const whatsappSent = response.data.whatsapp_sent;
+      
+      let message = '🎉 Nova senha temporária foi gerada com sucesso!\n\n';
+      
+      if (emailSent) {
+        message += '📧 ✅ Email enviado com sucesso\n';
+      } else {
+        message += '📧 ❌ Não foi possível enviar o email\n';
+      }
+      
+      if (whatsappSent) {
+        message += '📱 ✅ WhatsApp enviado com sucesso\n';
+      } else {
+        message += '📱 ⚠️ WhatsApp não configurado (opcional)\n';
+      }
+      
+      message += '\n💡 Verifique sua caixa de entrada e spam.';
+      message += '\n🔑 Use a nova senha para fazer login.';
+      
+      alert(message);
       setShowResetModal(false);
       setResetEmail('');
     } catch (error) {
       console.error('Erro ao solicitar reset:', error);
-      alert('Erro ao solicitar redefinição de senha. Tente novamente.');
+      if (error.response?.status === 404) {
+        alert('❌ Email não encontrado no sistema.\n\n📝 Verifique se o email está correto ou faça um novo cadastro.');
+      } else {
+        alert('❌ Erro ao solicitar redefinição de senha.\n\n🔄 Tente novamente em alguns minutos.');
+      }
     } finally {
       setLoading(false);
     }
