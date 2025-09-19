@@ -67,7 +67,7 @@ const AdminDashboard = () => {
   // Novos estados para funcionalidades administrativas
   const [discountModal, setDiscountModal] = useState({ show: false, userId: null, discount: 0 });
   const [bonusModal, setBonusModal] = useState({ show: false, userId: null });
-  const [resetPasswordModal, setResetPasswordModal] = useState({ show: false, userId: null, newPassword: '' });
+  const [resetPasswordModal, setResetPasswordModal] = useState({ show: false, userId: null, newPassword: '', showPassword: false });
 
   useEffect(() => {
     if (isAuthenticated) {
