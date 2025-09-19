@@ -711,38 +711,54 @@ const AdminDashboardEAD = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           {/* Navigation */}
-          <TabsList className="grid w-full grid-cols-8">
+          <TabsList className="grid w-full grid-cols-12">
             <TabsTrigger value="dashboard">
-              <Home className="h-4 w-4 mr-2" />
-              Dashboard
+              <Home className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">Dashboard</span>
+            </TabsTrigger>
+            <TabsTrigger value="subscriptions">
+              <Users className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">Inscrições</span>
             </TabsTrigger>
             <TabsTrigger value="drivers">
-              <Users className="h-4 w-4 mr-2" />
-              Motoristas
+              <Car className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">Motoristas</span>
+            </TabsTrigger>
+            <TabsTrigger value="payments">
+              <CreditCard className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">Pagamentos</span>
+            </TabsTrigger>
+            <TabsTrigger value="charts">
+              <BarChart3 className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">Gráficos</span>
+            </TabsTrigger>
+            <TabsTrigger value="cities">
+              <MapPin className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">Cidades</span>
             </TabsTrigger>
             <TabsTrigger value="courses">
-              <BookOpen className="h-4 w-4 mr-2" />
-              Cursos
+              <BookOpen className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">Cursos</span>
             </TabsTrigger>
-            <TabsTrigger value="classes">
-              <CalendarIcon className="h-4 w-4 mr-2" />
-              Turmas
+            <TabsTrigger value="videos">
+              <Play className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">Vídeos</span>
             </TabsTrigger>
             <TabsTrigger value="certificates">
-              <Award className="h-4 w-4 mr-2" />
-              Certificados
+              <Award className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">Certificados</span>
             </TabsTrigger>
-            <TabsTrigger value="reports">
-              <BarChart3 className="h-4 w-4 mr-2" />
-              Relatórios
+            <TabsTrigger value="admin-users">
+              <UserCheck className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">Admin</span>
             </TabsTrigger>
             <TabsTrigger value="communication">
-              <MessageCircle className="h-4 w-4 mr-2" />
-              Comunicação
+              <MessageCircle className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">Comunicação</span>
             </TabsTrigger>
             <TabsTrigger value="settings">
-              <Settings className="h-4 w-4 mr-2" />
-              Configurações
+              <Settings className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">Config</span>
             </TabsTrigger>
           </TabsList>
 
