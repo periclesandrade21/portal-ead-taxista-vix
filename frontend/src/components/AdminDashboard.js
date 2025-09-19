@@ -681,8 +681,8 @@ const AdminDashboard = () => {
                           <td className="p-2">
                             <span className={subscription.discount ? 'text-green-600' : ''}>
                               R$ {subscription.discount ? 
-                                (150 * (1 - subscription.discount / 100)).toFixed(2) : 
-                                '150,00'
+                                (coursePrice * (1 - subscription.discount / 100)).toFixed(2) : 
+                                coursePrice.toFixed(2)
                               }
                               {subscription.discount && (
                                 <Badge variant="outline" className="ml-1 text-xs">
