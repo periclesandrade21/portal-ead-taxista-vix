@@ -447,6 +447,113 @@ const Home = () => {
 
   return (
     <>
+      {/* Modal Política de Privacidade LGPD */}
+      {privacyPolicyModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-800">🔒 Política de Privacidade e Proteção de Dados</h2>
+              <Button
+                onClick={() => setPrivacyPolicyModal(false)}
+                variant="ghost"
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </Button>
+            </div>
+            
+            <div className="space-y-6 text-sm text-gray-700">
+              <section>
+                <h3 className="text-lg font-semibold text-blue-600 mb-3">📋 1. Coleta e Tratamento de Dados</h3>
+                <p className="mb-2">
+                  O <strong>Sindicato dos Taxistas do Espírito Santo (SINDTAXI-ES)</strong> coleta e trata seus dados pessoais com base na 
+                  <strong> Lei Geral de Proteção de Dados (LGPD - Lei 13.709/2018)</strong> para as seguintes finalidades:
+                </p>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li>Processamento de inscrições no curso EAD obrigatório para taxistas</li>
+                  <li>Emissão de certificados reconhecidos pelo DETRAN-ES</li>
+                  <li>Comunicações sobre o curso e suporte técnico</li>
+                  <li>Cumprimento de obrigações legais e regulamentares</li>
+                </ul>
+              </section>
+
+              <section>
+                <h3 className="text-lg font-semibold text-blue-600 mb-3">🛡️ 2. Dados Coletados</h3>
+                <p className="mb-2">Coletamos os seguintes dados pessoais:</p>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li><strong>Dados de identificação:</strong> Nome completo, CPF, email</li>
+                  <li><strong>Dados de contato:</strong> Telefone/WhatsApp</li>
+                  <li><strong>Dados profissionais:</strong> Número do alvará, placa do veículo, cidade de atuação</li>
+                  <li><strong>Dados de pagamento:</strong> Informações necessárias para processamento PIX</li>
+                </ul>
+              </section>
+
+              <section>
+                <h3 className="text-lg font-semibold text-blue-600 mb-3">🔐 3. Segurança e Proteção</h3>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li>Utilizamos criptografia SSL/TLS para proteger dados em trânsito</li>
+                  <li>Dados armazenados em servidores seguros com backup regular</li>
+                  <li>Acesso restrito apenas a pessoal autorizado</li>
+                  <li>Monitoramento constante contra acessos não autorizados</li>
+                </ul>
+              </section>
+
+              <section>
+                <h3 className="text-lg font-semibold text-blue-600 mb-3">📞 4. Seus Direitos (LGPD)</h3>
+                <p className="mb-2">Você tem os seguintes direitos sobre seus dados pessoais:</p>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li><strong>Acesso:</strong> Solicitar informações sobre seus dados</li>
+                  <li><strong>Correção:</strong> Atualizar dados incompletos ou incorretos</li>
+                  <li><strong>Exclusão:</strong> Solicitar remoção de dados (quando aplicável)</li>
+                  <li><strong>Portabilidade:</strong> Obter seus dados em formato estruturado</li>
+                  <li><strong>Revogação:</strong> Retirar consentimento a qualquer momento</li>
+                </ul>
+              </section>
+
+              <section>
+                <h3 className="text-lg font-semibold text-blue-600 mb-3">⏰ 5. Retenção de Dados</h3>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li>Dados são mantidos pelo período necessário para prestação do serviço</li>
+                  <li>Certificados e registros mantidos conforme exigência legal (mínimo 5 anos)</li>
+                  <li>Dados podem ser anonimizados para fins estatísticos</li>
+                </ul>
+              </section>
+
+              <section>
+                <h3 className="text-lg font-semibold text-blue-600 mb-3">🏢 6. Compartilhamento</h3>
+                <p className="mb-2">Seus dados podem ser compartilhados apenas com:</p>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li>DETRAN-ES (para reconhecimento de certificados)</li>
+                  <li>Processadores de pagamento (para transações PIX)</li>
+                  <li>Autoridades competentes (quando exigido por lei)</li>
+                </ul>
+              </section>
+
+              <section>
+                <h3 className="text-lg font-semibold text-blue-600 mb-3">📧 7. Contato - Encarregado de Dados</h3>
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <p><strong>Email:</strong> privacidade@sindtaxi-es.org</p>
+                  <p><strong>Telefone:</strong> (27) 3033-4455</p>
+                  <p><strong>Endereço:</strong> Rua XV de Novembro, 123 - Centro, Vitória/ES</p>
+                  <p className="text-sm text-blue-600 mt-2">
+                    Para exercer seus direitos ou esclarecer dúvidas sobre tratamento de dados
+                  </p>
+                </div>
+              </section>
+            </div>
+
+            <div className="flex justify-center mt-8">
+              <Button
+                onClick={() => setPrivacyPolicyModal(false)}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3"
+              >
+                Entendi
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Popup de Duplicatas */}
       {duplicatePopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
