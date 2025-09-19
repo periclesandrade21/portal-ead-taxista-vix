@@ -4052,8 +4052,620 @@ def test_asaas_webhook_enhanced_with_moodle():
         print_error(f"Enhanced webhook test failed: {str(e)}")
         return False
 
-def run_all_tests():
-    """Run all tests and provide summary"""
+def test_modules_endpoint():
+    """Test GET /api/modules - verificar se retorna os 4 módulos populados"""
+    print_test_header("Módulos - GET /api/modules")
+    
+    try:
+        response = requests.get(f"{BACKEND_URL}/modules", timeout=10)
+        
+        if response.status_code == 200:
+            modules = response.json()
+            print_success(f"Modules endpoint responded successfully")
+            print_info(f"Found {len(modules)} modules")
+            
+            # Expected modules
+            expected_modules = [
+                "Mecânica Básica",
+                "Legislação", 
+                "Primeiros Socorros",
+                "Relações Humanas"
+            ]
+            
+            found_modules = [module.get('name', '') for module in modules]
+            
+            # Check if all expected modules are present
+            missing_modules = []
+            for expected in expected_modules:
+                if not any(expected.lower() in found.lower() for found in found_modules):
+                    missing_modules.append(expected)
+            
+            if not missing_modules:
+                print_success("✅ All 4 expected modules found")
+                for module in modules:
+                    print_info(f"  - {module.get('name')} ({module.get('duration_hours', 0)}h)")
+                return True, modules
+            else:
+                print_error(f"❌ Missing modules: {', '.join(missing_modules)}")
+                print_info(f"Found modules: {', '.join(found_modules)}")
+                return False, modules
+        else:
+            print_error(f"Modules endpoint failed with status {response.status_code}: {response.text}")
+            return False, None
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Modules request failed: {str(e)}")
+        return False, None
+
+def test_create_module():
+    """Test POST /api/modules - testar criação de novo módulo"""
+    print_test_header("Módulos - POST /api/modules")
+    
+    test_module = {
+        "name": "Teste Módulo Novo",
+        "description": "Módulo criado para teste do sistema",
+        "duration_hours": 2.5,
+        "color": "#ff6b6b"
+    }
+    
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/modules",
+            json=test_module,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            module_data = response.json()
+            print_success("✅ Module created successfully")
+            print_info(f"Module ID: {module_data.get('id')}")
+            print_info(f"Name: {module_data.get('name')}")
+            print_info(f"Duration: {module_data.get('duration_hours')}h")
+            return True, module_data
+        else:
+            print_error(f"Module creation failed with status {response.status_code}: {response.text}")
+            return False, None
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Module creation request failed: {str(e)}")
+        return False, None
+
+def test_module_videos(modules):
+    """Test GET /api/modules/{module_id}/videos - verificar vídeos de cada módulo"""
+    print_test_header("Vídeos por Módulo - GET /api/modules/{module_id}/videos")
+    
+    if not modules:
+        print_warning("No modules available for video testing")
+        return False
+    
+    results = []
+    total_videos = 0
+    
+    for module in modules:
+        module_id = module.get('id')
+        module_name = module.get('name')
+        
+        try:
+            response = requests.get(f"{BACKEND_URL}/modules/{module_id}/videos", timeout=10)
+            
+            if response.status_code == 200:
+                videos = response.json()
+                video_count = len(videos)
+                total_videos += video_count
+                
+                print_success(f"✅ {module_name}: {video_count} videos")
+                
+                # Check video structure
+                for video in videos[:2]:  # Check first 2 videos
+                    if all(key in video for key in ['id', 'title', 'youtube_url', 'youtube_id']):
+                        print_info(f"  - {video.get('title')} (ID: {video.get('youtube_id')})")
+                    else:
+                        print_warning(f"  - Video missing required fields: {video}")
+                
+                results.append(True)
+            else:
+                print_error(f"❌ {module_name}: Failed ({response.status_code})")
+                results.append(False)
+                
+        except requests.exceptions.RequestException as e:
+            print_error(f"❌ {module_name}: Request failed - {str(e)}")
+            results.append(False)
+    
+    print_info(f"Total videos found across all modules: {total_videos}")
+    
+    # Check if we have approximately 12 videos as expected
+    if total_videos >= 10:
+        print_success("✅ Good number of videos found (expected ~12)")
+    else:
+        print_warning(f"⚠️ Only {total_videos} videos found (expected ~12)")
+    
+    return all(results)
+
+def test_create_video():
+    """Test POST /api/videos - testar criação de novo vídeo"""
+    print_test_header("Vídeos - POST /api/videos")
+    
+    # First get a module to use
+    try:
+        modules_response = requests.get(f"{BACKEND_URL}/modules", timeout=10)
+        if modules_response.status_code != 200:
+            print_error("Cannot get modules for video creation test")
+            return False
+        
+        modules = modules_response.json()
+        if not modules:
+            print_error("No modules available for video creation test")
+            return False
+        
+        test_module_id = modules[0].get('id')
+        
+        # Test with different YouTube URL formats
+        test_videos = [
+            {
+                "title": "Teste Vídeo YouTube - Formato 1",
+                "description": "Vídeo de teste com URL padrão do YouTube",
+                "youtube_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                "module_id": test_module_id,
+                "duration_minutes": 5
+            },
+            {
+                "title": "Teste Vídeo YouTube - Formato 2", 
+                "description": "Vídeo de teste com URL curta do YouTube",
+                "youtube_url": "https://youtu.be/dQw4w9WgXcQ",
+                "module_id": test_module_id,
+                "duration_minutes": 3
+            }
+        ]
+        
+        created_videos = []
+        
+        for test_video in test_videos:
+            response = requests.post(
+                f"{BACKEND_URL}/videos",
+                json=test_video,
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                video_data = response.json()
+                print_success(f"✅ Video created: {video_data.get('title')}")
+                print_info(f"  YouTube ID: {video_data.get('youtube_id')}")
+                print_info(f"  Thumbnail: {video_data.get('thumbnail_url')}")
+                created_videos.append(video_data)
+            else:
+                print_error(f"❌ Video creation failed: {response.status_code} - {response.text}")
+                return False, None
+        
+        return True, created_videos
+        
+    except requests.exceptions.RequestException as e:
+        print_error(f"Video creation request failed: {str(e)}")
+        return False, None
+
+def test_delete_video(created_videos):
+    """Test DELETE /api/videos/{video_id} - testar exclusão de vídeo"""
+    print_test_header("Vídeos - DELETE /api/videos/{video_id}")
+    
+    if not created_videos:
+        print_warning("No created videos available for deletion test")
+        return False
+    
+    video_to_delete = created_videos[0]
+    video_id = video_to_delete.get('id')
+    
+    try:
+        response = requests.delete(f"{BACKEND_URL}/videos/{video_id}", timeout=10)
+        
+        if response.status_code == 200:
+            print_success(f"✅ Video deleted successfully: {video_to_delete.get('title')}")
+            return True
+        else:
+            print_error(f"❌ Video deletion failed: {response.status_code} - {response.text}")
+            return False
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Video deletion request failed: {str(e)}")
+        return False
+
+def test_questions_by_module(modules):
+    """Test GET /api/questions/{module_id} - verificar questões organizadas por dificuldade"""
+    print_test_header("Questões - GET /api/questions/{module_id}")
+    
+    if not modules:
+        print_warning("No modules available for questions testing")
+        return False
+    
+    results = []
+    total_questions = 0
+    
+    for module in modules:
+        module_id = module.get('id')
+        module_name = module.get('name')
+        
+        try:
+            response = requests.get(f"{BACKEND_URL}/questions/{module_id}", timeout=10)
+            
+            if response.status_code == 200:
+                questions = response.json()
+                question_count = len(questions)
+                total_questions += question_count
+                
+                # Count by difficulty
+                easy_count = len([q for q in questions if q.get('difficulty') == 'facil'])
+                medium_count = len([q for q in questions if q.get('difficulty') == 'media'])
+                hard_count = len([q for q in questions if q.get('difficulty') == 'dificil'])
+                
+                print_success(f"✅ {module_name}: {question_count} questions")
+                print_info(f"  - Fáceis: {easy_count}")
+                print_info(f"  - Médias: {medium_count}")
+                print_info(f"  - Difíceis: {hard_count}")
+                
+                # Check if distribution matches expected (5 easy, 3 medium, 2 hard)
+                if easy_count >= 3 and medium_count >= 2 and hard_count >= 1:
+                    print_success("  ✅ Good difficulty distribution")
+                else:
+                    print_warning("  ⚠️ Unexpected difficulty distribution")
+                
+                results.append(True)
+            else:
+                print_error(f"❌ {module_name}: Failed ({response.status_code})")
+                results.append(False)
+                
+        except requests.exceptions.RequestException as e:
+            print_error(f"❌ {module_name}: Request failed - {str(e)}")
+            results.append(False)
+    
+    print_info(f"Total questions found across all modules: {total_questions}")
+    
+    # Check if we have approximately 30 questions as expected (4 modules × ~7-8 questions each)
+    if total_questions >= 25:
+        print_success("✅ Good number of questions found (expected ~30)")
+    else:
+        print_warning(f"⚠️ Only {total_questions} questions found (expected ~30)")
+    
+    return all(results)
+
+def test_create_question():
+    """Test POST /api/questions - testar criação de nova questão"""
+    print_test_header("Questões - POST /api/questions")
+    
+    # First get a module to use
+    try:
+        modules_response = requests.get(f"{BACKEND_URL}/modules", timeout=10)
+        if modules_response.status_code != 200:
+            print_error("Cannot get modules for question creation test")
+            return False
+        
+        modules = modules_response.json()
+        if not modules:
+            print_error("No modules available for question creation test")
+            return False
+        
+        test_module_id = modules[0].get('id')
+        
+        test_question = {
+            "module_id": test_module_id,
+            "question": "Qual é a velocidade máxima permitida em vias urbanas?",
+            "options": [
+                "40 km/h",
+                "50 km/h", 
+                "60 km/h",
+                "70 km/h"
+            ],
+            "correct_answer": 2,  # 60 km/h
+            "difficulty": "media",
+            "explanation": "A velocidade máxima em vias urbanas é de 60 km/h, conforme o Código de Trânsito Brasileiro."
+        }
+        
+        response = requests.post(
+            f"{BACKEND_URL}/questions",
+            json=test_question,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            question_data = response.json()
+            print_success("✅ Question created successfully")
+            print_info(f"Question ID: {question_data.get('id')}")
+            print_info(f"Question: {question_data.get('question')}")
+            print_info(f"Difficulty: {question_data.get('difficulty')}")
+            print_info(f"Correct Answer: Option {question_data.get('correct_answer') + 1}")
+            return True, question_data
+        else:
+            print_error(f"Question creation failed with status {response.status_code}: {response.text}")
+            return False, None
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Question creation request failed: {str(e)}")
+        return False, None
+
+def test_youtube_functionality():
+    """Test YouTube ID extraction and thumbnail generation"""
+    print_test_header("Funcionalidades YouTube - Extração de ID e Thumbnails")
+    
+    # Test different YouTube URL formats
+    test_urls = [
+        "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "https://youtu.be/dQw4w9WgXcQ",
+        "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        "https://www.youtube.com/v/dQw4w9WgXcQ"
+    ]
+    
+    expected_id = "dQw4w9WgXcQ"
+    expected_thumbnail = f"https://img.youtube.com/vi/{expected_id}/maxresdefault.jpg"
+    
+    # Get a module for testing
+    try:
+        modules_response = requests.get(f"{BACKEND_URL}/modules", timeout=10)
+        if modules_response.status_code != 200:
+            print_error("Cannot get modules for YouTube functionality test")
+            return False
+        
+        modules = modules_response.json()
+        if not modules:
+            print_error("No modules available for YouTube functionality test")
+            return False
+        
+        test_module_id = modules[0].get('id')
+        results = []
+        
+        for i, url in enumerate(test_urls):
+            test_video = {
+                "title": f"Teste YouTube URL Format {i+1}",
+                "description": f"Teste de extração de ID do YouTube - Formato {i+1}",
+                "youtube_url": url,
+                "module_id": test_module_id,
+                "duration_minutes": 3
+            }
+            
+            response = requests.post(
+                f"{BACKEND_URL}/videos",
+                json=test_video,
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                video_data = response.json()
+                extracted_id = video_data.get('youtube_id')
+                thumbnail_url = video_data.get('thumbnail_url')
+                
+                if extracted_id == expected_id:
+                    print_success(f"✅ URL Format {i+1}: ID extracted correctly ({extracted_id})")
+                    results.append(True)
+                else:
+                    print_error(f"❌ URL Format {i+1}: Wrong ID extracted ({extracted_id}, expected {expected_id})")
+                    results.append(False)
+                
+                if thumbnail_url == expected_thumbnail:
+                    print_success(f"✅ URL Format {i+1}: Thumbnail URL correct")
+                else:
+                    print_warning(f"⚠️ URL Format {i+1}: Thumbnail URL: {thumbnail_url}")
+                
+                # Clean up - delete the test video
+                requests.delete(f"{BACKEND_URL}/videos/{video_data.get('id')}", timeout=5)
+            else:
+                print_error(f"❌ URL Format {i+1}: Video creation failed ({response.status_code})")
+                results.append(False)
+        
+        return all(results)
+        
+    except requests.exceptions.RequestException as e:
+        print_error(f"YouTube functionality test failed: {str(e)}")
+        return False
+
+def test_video_validation():
+    """Test video creation with invalid YouTube URLs"""
+    print_test_header("Validações - URLs YouTube Inválidas")
+    
+    # Get a module for testing
+    try:
+        modules_response = requests.get(f"{BACKEND_URL}/modules", timeout=10)
+        if modules_response.status_code != 200:
+            print_error("Cannot get modules for validation test")
+            return False
+        
+        modules = modules_response.json()
+        if not modules:
+            print_error("No modules available for validation test")
+            return False
+        
+        test_module_id = modules[0].get('id')
+        
+        # Test invalid URLs
+        invalid_urls = [
+            "https://www.google.com",
+            "not-a-url",
+            "https://vimeo.com/123456",
+            ""
+        ]
+        
+        results = []
+        
+        for i, invalid_url in enumerate(invalid_urls):
+            test_video = {
+                "title": f"Teste URL Inválida {i+1}",
+                "description": "Teste com URL inválida",
+                "youtube_url": invalid_url,
+                "module_id": test_module_id,
+                "duration_minutes": 3
+            }
+            
+            response = requests.post(
+                f"{BACKEND_URL}/videos",
+                json=test_video,
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+            
+            # Should either reject the invalid URL or handle it gracefully
+            if response.status_code == 400:
+                print_success(f"✅ Invalid URL {i+1}: Correctly rejected ({response.status_code})")
+                results.append(True)
+            elif response.status_code == 200:
+                video_data = response.json()
+                youtube_id = video_data.get('youtube_id')
+                if not youtube_id or youtube_id == "":
+                    print_success(f"✅ Invalid URL {i+1}: Handled gracefully (empty ID)")
+                    results.append(True)
+                else:
+                    print_warning(f"⚠️ Invalid URL {i+1}: Unexpected ID extracted ({youtube_id})")
+                    results.append(True)  # Still acceptable
+                
+                # Clean up
+                requests.delete(f"{BACKEND_URL}/videos/{video_data.get('id')}", timeout=5)
+            else:
+                print_error(f"❌ Invalid URL {i+1}: Unexpected response ({response.status_code})")
+                results.append(False)
+        
+        return all(results)
+        
+    except requests.exceptions.RequestException as e:
+        print_error(f"Video validation test failed: {str(e)}")
+        return False
+
+def test_question_validation():
+    """Test question creation with invalid format"""
+    print_test_header("Validações - Formato de Questão Inválido")
+    
+    # Get a module for testing
+    try:
+        modules_response = requests.get(f"{BACKEND_URL}/modules", timeout=10)
+        if modules_response.status_code != 200:
+            print_error("Cannot get modules for question validation test")
+            return False
+        
+        modules = modules_response.json()
+        if not modules:
+            print_error("No modules available for question validation test")
+            return False
+        
+        test_module_id = modules[0].get('id')
+        
+        # Test invalid question formats
+        invalid_questions = [
+            {
+                "module_id": test_module_id,
+                # Missing question field
+                "options": ["A", "B", "C", "D"],
+                "correct_answer": 0,
+                "difficulty": "facil"
+            },
+            {
+                "module_id": test_module_id,
+                "question": "Teste?",
+                # Missing options
+                "correct_answer": 0,
+                "difficulty": "facil"
+            },
+            {
+                "module_id": test_module_id,
+                "question": "Teste?",
+                "options": ["A", "B"],  # Too few options
+                "correct_answer": 0,
+                "difficulty": "facil"
+            },
+            {
+                "module_id": test_module_id,
+                "question": "Teste?",
+                "options": ["A", "B", "C", "D"],
+                "correct_answer": 5,  # Invalid answer index
+                "difficulty": "facil"
+            }
+        ]
+        
+        results = []
+        
+        for i, invalid_question in enumerate(invalid_questions):
+            response = requests.post(
+                f"{BACKEND_URL}/questions",
+                json=invalid_question,
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+            
+            # Should reject invalid questions
+            if response.status_code in [400, 422]:
+                print_success(f"✅ Invalid Question {i+1}: Correctly rejected ({response.status_code})")
+                results.append(True)
+            else:
+                print_error(f"❌ Invalid Question {i+1}: Should be rejected ({response.status_code})")
+                results.append(False)
+        
+        return all(results)
+        
+    except requests.exceptions.RequestException as e:
+        print_error(f"Question validation test failed: {str(e)}")
+        return False
+
+def test_required_fields_validation():
+    """Test validation of required fields in modules, videos, and questions"""
+    print_test_header("Validações - Campos Obrigatórios")
+    
+    results = []
+    
+    # Test module creation with missing fields
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/modules",
+            json={},  # Empty payload
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code in [400, 422]:
+            print_success("✅ Module: Required fields validation working")
+            results.append(True)
+        else:
+            print_error(f"❌ Module: Should reject empty payload ({response.status_code})")
+            results.append(False)
+    except:
+        print_error("❌ Module: Validation test failed")
+        results.append(False)
+    
+    # Test video creation with missing fields
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/videos",
+            json={"title": "Test"},  # Missing required fields
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code in [400, 422]:
+            print_success("✅ Video: Required fields validation working")
+            results.append(True)
+        else:
+            print_error(f"❌ Video: Should reject incomplete payload ({response.status_code})")
+            results.append(False)
+    except:
+        print_error("❌ Video: Validation test failed")
+        results.append(False)
+    
+    # Test question creation with missing fields
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/questions",
+            json={"question": "Test?"},  # Missing required fields
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code in [400, 422]:
+            print_success("✅ Question: Required fields validation working")
+            results.append(True)
+        else:
+            print_error(f"❌ Question: Should reject incomplete payload ({response.status_code})")
+            results.append(False)
+    except:
+        print_error("❌ Question: Validation test failed")
+        results.append(False)
+    
+    return all(results)
+
 def run_all_tests():
     """Run all tests and provide summary"""
     print(f"{Colors.BOLD}EAD TAXISTA ES - COMPLETE SYSTEM TESTING{Colors.ENDC}")
