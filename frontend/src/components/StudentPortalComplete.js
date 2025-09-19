@@ -881,6 +881,120 @@ const StudentPortalComplete = () => {
               </div>
             </div>
           )}
+
+          {/* Modal de Troca de Senha */}
+          {changePasswordModal.show && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                <h3 className="text-lg font-semibold mb-4">Alterar Senha</h3>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="current-password">Senha Atual</Label>
+                    <div className="relative">
+                      <Input
+                        id="current-password"
+                        type={changePasswordModal.showCurrentPassword ? "text" : "password"}
+                        value={changePasswordModal.currentPassword}
+                        onChange={(e) => setChangePasswordModal(prev => ({
+                          ...prev,
+                          currentPassword: e.target.value
+                        }))}
+                        placeholder="Digite sua senha atual"
+                        className="pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setChangePasswordModal(prev => ({
+                          ...prev,
+                          showCurrentPassword: !prev.showCurrentPassword
+                        }))}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        {changePasswordModal.showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="new-password">Nova Senha</Label>
+                    <div className="relative">
+                      <Input
+                        id="new-password"
+                        type={changePasswordModal.showNewPassword ? "text" : "password"}
+                        value={changePasswordModal.newPassword}
+                        onChange={(e) => setChangePasswordModal(prev => ({
+                          ...prev,
+                          newPassword: e.target.value
+                        }))}
+                        placeholder="Digite a nova senha (mín. 6 caracteres)"
+                        className="pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setChangePasswordModal(prev => ({
+                          ...prev,
+                          showNewPassword: !prev.showNewPassword
+                        }))}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        {changePasswordModal.showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="confirm-password">Confirmar Nova Senha</Label>
+                    <div className="relative">
+                      <Input
+                        id="confirm-password"
+                        type={changePasswordModal.showConfirmPassword ? "text" : "password"}
+                        value={changePasswordModal.confirmPassword}
+                        onChange={(e) => setChangePasswordModal(prev => ({
+                          ...prev,
+                          confirmPassword: e.target.value
+                        }))}
+                        placeholder="Confirme a nova senha"
+                        className="pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setChangePasswordModal(prev => ({
+                          ...prev,
+                          showConfirmPassword: !prev.showConfirmPassword
+                        }))}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        {changePasswordModal.showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2 mt-6">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setChangePasswordModal({ 
+                      show: false, 
+                      currentPassword: '', 
+                      newPassword: '', 
+                      confirmPassword: '',
+                      showCurrentPassword: false,
+                      showNewPassword: false,
+                      showConfirmPassword: false
+                    })}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button 
+                    onClick={handleChangePassword}
+                    disabled={loading || !changePasswordModal.currentPassword || !changePasswordModal.newPassword || !changePasswordModal.confirmPassword}
+                  >
+                    {loading ? 'Alterando...' : 'Alterar Senha'}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </Tabs>
       </div>
     </div>
