@@ -423,35 +423,73 @@ const StudentPortal = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-                <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
-                  1
-                </div>
-                <div>
-                  <p className="font-medium">Confirmação de Pagamento</p>
-                  <p className="text-sm text-gray-600">Aguardando confirmação do PIX</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg opacity-50">
-                <div className="w-8 h-8 bg-gray-400 text-white rounded-full flex items-center justify-center text-sm font-bold">
-                  2
-                </div>
-                <div>
-                  <p className="font-medium">Iniciar Módulo 1</p>
-                  <p className="text-sm text-gray-600">Relações Humanas - 14h</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg opacity-50">
-                <div className="w-8 h-8 bg-gray-400 text-white rounded-full flex items-center justify-center text-sm font-bold">
-                  3
-                </div>
-                <div>
-                  <p className="font-medium">Realizar Avaliação</p>
-                  <p className="text-sm text-gray-600">Nota mínima: 7.0</p>
-                </div>
-              </div>
+              {userInfo?.status === 'pending' ? (
+                // Mostrar etapas para usuários com pagamento pendente
+                <>
+                  <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
+                    <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                      1
+                    </div>
+                    <div>
+                      <p className="font-medium">Confirmação de Pagamento</p>
+                      <p className="text-sm text-gray-600">Aguardando confirmação do PIX</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg opacity-50">
+                    <div className="w-8 h-8 bg-gray-400 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                      2
+                    </div>
+                    <div>
+                      <p className="font-medium">Iniciar Módulo 1</p>
+                      <p className="text-sm text-gray-600">Relações Humanas - 14h</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg opacity-50">
+                    <div className="w-8 h-8 bg-gray-400 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                      3
+                    </div>
+                    <div>
+                      <p className="font-medium">Realizar Avaliação</p>
+                      <p className="text-sm text-gray-600">Nota mínima: 7.0</p>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                // Mostrar etapas para usuários com pagamento confirmado
+                <>
+                  <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+                    <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                      ✓
+                    </div>
+                    <div>
+                      <p className="font-medium">Pagamento Confirmado</p>
+                      <p className="text-sm text-green-600">PIX processado com sucesso</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
+                    <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                      1
+                    </div>
+                    <div>
+                      <p className="font-medium">Iniciar Módulo 1</p>
+                      <p className="text-sm text-gray-600">Relações Humanas - 14h</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                    <div className="w-8 h-8 bg-gray-400 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                      2
+                    </div>
+                    <div>
+                      <p className="font-medium">Realizar Avaliação</p>
+                      <p className="text-sm text-gray-600">Nota mínima: 7.0</p>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </CardContent>
         </Card>
