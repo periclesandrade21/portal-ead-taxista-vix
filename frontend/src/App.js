@@ -655,10 +655,10 @@ const Home = () => {
         </div>
       )}
 
-      {/* Popup de Senha Enviada */}
+      {/* Popup de Senha Enviada - Melhorado */}
       {showPasswordPopup && passwordSentInfo && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-8 max-w-md mx-4 shadow-2xl">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-8 max-w-lg mx-4 shadow-2xl">
             <div className="text-center">
               {/* Ícone de sucesso */}
               <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -667,34 +667,41 @@ const Home = () => {
               
               {/* Título */}
               <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                🎉 Cadastro Realizado!
+                🎉 Cadastro Realizado com Sucesso!
               </h3>
               
               {/* Mensagem principal */}
-              <p className="text-lg text-gray-600 mb-6">
-                {passwordSentInfo.message}
-              </p>
+              <div className="bg-blue-50 p-4 rounded-lg mb-6">
+                <h4 className="font-semibold text-blue-900 mb-2 flex items-center justify-center">
+                  <Key className="h-5 w-5 mr-2" />
+                  🔑 Sua Senha de Acesso Foi Enviada!
+                </h4>
+                <p className="text-blue-800 text-sm">
+                  Sua senha temporária foi enviada pelos canais selecionados abaixo.
+                  Use esta senha para acessar o Portal do Aluno.
+                </p>
+              </div>
               
-              {/* Status de envio */}
+              {/* Status de envio detalhado */}
               <div className="bg-gray-50 p-4 rounded-lg mb-6">
                 <h4 className="font-semibold mb-3 text-gray-800">📱 Status do Envio:</h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center justify-between">
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-center justify-between p-2 bg-white rounded">
                     <span className="flex items-center">
-                      <Mail className="h-4 w-4 mr-2" />
-                      Email:
+                      <Mail className="h-4 w-4 mr-2 text-blue-600" />
+                      📧 Email ({email}):
                     </span>
                     <Badge className={passwordSentInfo.password_sent_email ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
                       {passwordSentInfo.password_sent_email ? "✅ Enviado" : "❌ Falhou"}
                     </Badge>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between p-2 bg-white rounded">
                     <span className="flex items-center">
-                      <Phone className="h-4 w-4 mr-2" />
-                      WhatsApp:
+                      <Phone className="h-4 w-4 mr-2 text-green-600" />
+                      📱 WhatsApp ({phone}):
                     </span>
-                    <Badge className={passwordSentInfo.password_sent_whatsapp ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
-                      {passwordSentInfo.password_sent_whatsapp ? "✅ Enviado" : "❌ Falhou"}
+                    <Badge className={passwordSentInfo.password_sent_whatsapp ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}>
+                      {passwordSentInfo.password_sent_whatsapp ? "✅ Enviado" : "⚠️ Não configurado"}
                     </Badge>
                   </div>
                 </div>
@@ -702,20 +709,30 @@ const Home = () => {
               
               {/* Senha temporária (apenas para desenvolvimento) */}
               {passwordSentInfo.temporary_password && (
-                <div className="bg-blue-50 p-4 rounded-lg mb-6">
-                  <p className="text-sm text-blue-800">
-                    <strong>Senha temporária:</strong> {passwordSentInfo.temporary_password}
-                  </p>
-                  <p className="text-xs text-blue-600 mt-1">
-                    (Esta informação será removida em produção)
+                <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6">
+                  <h4 className="font-semibold text-blue-900 mb-2">🔒 Senha Temporária:</h4>
+                  <div className="bg-blue-100 p-3 rounded font-mono text-lg text-blue-900 border border-blue-300">
+                    {passwordSentInfo.temporary_password}
+                  </div>
+                  <p className="text-xs text-blue-600 mt-2">
+                    💡 <strong>Modo Desenvolvimento:</strong> Esta informação será removida em produção
                   </p>
                 </div>
               )}
               
-              {/* Instruções */}
-              <p className="text-sm text-gray-500 mb-6">
-                Use sua senha para acessar o portal do aluno após confirmar o pagamento.
-              </p>
+              {/* Instruções importantes */}
+              <div className="bg-yellow-50 p-4 rounded-lg mb-6 text-left">
+                <h4 className="font-semibold text-yellow-900 mb-2 flex items-center">
+                  <AlertCircle className="h-4 w-4 mr-2" />
+                  📋 Próximos Passos:
+                </h4>
+                <ol className="text-sm text-yellow-800 space-y-1">
+                  <li>1. ✅ <strong>Senha enviada</strong> - Verifique sua caixa de entrada e spam</li>
+                  <li>2. 💳 <strong>Pagar o curso</strong> - Continue para o pagamento PIX</li>
+                  <li>3. 🎓 <strong>Acessar o curso</strong> - Use a senha no Portal do Aluno</li>
+                  <li>4. 📚 <strong>Iniciar estudos</strong> - Após pagamento confirmado</li>
+                </ol>
+              </div>
               
               {/* Botão para continuar */}
               <Button
