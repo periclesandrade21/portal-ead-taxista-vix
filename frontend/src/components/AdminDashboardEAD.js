@@ -398,16 +398,12 @@ const AdminDashboardEAD = () => {
       ];
       setDiscounts(mockDiscounts);
 
-      // Carregar notificações (mock)
-      setNotifications([
-        { id: 1, type: 'alert', message: '23 certificações vencem em 30 dias', time: '1 hora atrás' },
-        { id: 2, type: 'info', message: 'Nova turma de Vila Velha criada', time: '2 horas atrás' },
-        { id: 3, type: 'warning', message: '15 documentos pendentes de validação', time: '3 horas atrás' }
-      ]);
-
-    } catch (error) {
-      console.error('Erro ao carregar dados:', error);
-    }
+    // Carregar notificações (mock)
+    setNotifications([
+      { id: 1, type: 'alert', message: '23 certificações vencem em 30 dias', time: '1 hora atrás' },
+      { id: 2, type: 'info', message: 'Nova turma de Vila Velha criada', time: '2 horas atrás' },
+      { id: 3, type: 'warning', message: '15 documentos pendentes de validação', time: '3 horas atrás' }
+    ]);
   };
 
   const handleLogout = () => {
