@@ -550,8 +550,8 @@ test_plan:
 
 test_plan:
   current_focus:
-    - "Sistema de reset de senha no Portal do Aluno"
-    - "Sistema de gestão de usuários administrativos"
+    - "Integração Moodle com portal do aluno"
+    - "Real Asaas webhook processing with production data"
   stuck_tasks: 
     - "Real Asaas webhook processing with production data"
   test_all: false
