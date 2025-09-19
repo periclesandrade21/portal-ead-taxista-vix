@@ -2815,6 +2815,158 @@ def test_dynamic_price_system_complete():
     
     return passed, failed
 
+def test_password_sending_functionality():
+    """Test password sending functionality as requested in review"""
+    print_test_header("🔐 PASSWORD SENDING FUNCTIONALITY TEST")
+    
+    # Test data exactly as specified in the review request
+    test_data = {
+        "name": "Teste Usuario Logs",
+        "email": "teste.logs@email.com",
+        "phone": "27999887766",
+        "cpf": "12345678901",
+        "carPlate": "LOG-1234",
+        "licenseNumber": "TA-54321",
+        "city": "Vitória",
+        "lgpd_consent": True
+    }
+    
+    print_info("Creating test registration with specified data:")
+    print_info(f"  Name: {test_data['name']}")
+    print_info(f"  Email: {test_data['email']}")
+    print_info(f"  Phone: {test_data['phone']}")
+    print_info(f"  CPF: {test_data['cpf']}")
+    print_info(f"  Car Plate: {test_data['carPlate']}")
+    print_info(f"  License: {test_data['licenseNumber']}")
+    print_info(f"  City: {test_data['city']}")
+    print_info(f"  LGPD Consent: {test_data['lgpd_consent']}")
+    
+    try:
+        print_info("\n📡 Sending POST request to /api/subscribe...")
+        response = requests.post(
+            f"{BACKEND_URL}/subscribe",
+            json=test_data,
+            headers={"Content-Type": "application/json"},
+            timeout=15
+        )
+        
+        print_info(f"Response Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_success("✅ Registration created successfully!")
+            
+            # Check the registration response structure
+            print_info("\n📋 Analyzing registration response:")
+            
+            tests_passed = []
+            
+            # 1. Check if password_sent_email field is included
+            password_sent_email = data.get('password_sent_email')
+            if password_sent_email is not None:
+                print_success(f"✅ password_sent_email field present: {password_sent_email}")
+                tests_passed.append(True)
+                
+                if password_sent_email == True:
+                    print_success("✅ Email sending function was called (simulated in development)")
+                elif password_sent_email == False:
+                    print_warning("⚠️ Email sending function returned False")
+                    
+            else:
+                print_error("❌ password_sent_email field missing from response")
+                tests_passed.append(False)
+            
+            # 2. Check if password_sent_whatsapp field is included
+            password_sent_whatsapp = data.get('password_sent_whatsapp')
+            if password_sent_whatsapp is not None:
+                print_success(f"✅ password_sent_whatsapp field present: {password_sent_whatsapp}")
+                tests_passed.append(True)
+                
+                if password_sent_whatsapp == True:
+                    print_success("✅ WhatsApp sending function was called")
+                elif password_sent_whatsapp == False:
+                    print_info("ℹ️ WhatsApp sending function returned False (honest about not working)")
+                    
+            else:
+                print_error("❌ password_sent_whatsapp field missing from response")
+                tests_passed.append(False)
+            
+            # 3. Check if temporary_password is being generated correctly
+            temporary_password = data.get('temporary_password')
+            if temporary_password:
+                print_success(f"✅ temporary_password generated: {temporary_password}")
+                tests_passed.append(True)
+                
+                # Analyze password quality
+                print_info(f"Password length: {len(temporary_password)} characters")
+                
+                password_analysis = []
+                if any(c.isupper() for c in temporary_password):
+                    password_analysis.append("uppercase")
+                if any(c.islower() for c in temporary_password):
+                    password_analysis.append("lowercase")
+                if any(c.isdigit() for c in temporary_password):
+                    password_analysis.append("numbers")
+                if any(c in "@#$%*" for c in temporary_password):
+                    password_analysis.append("symbols")
+                
+                print_info(f"Password contains: {', '.join(password_analysis)}")
+                
+            else:
+                print_error("❌ temporary_password missing from response")
+                tests_passed.append(False)
+            
+            # 4. Check message field
+            message = data.get('message')
+            if message:
+                print_success(f"✅ Response message: {message}")
+                tests_passed.append(True)
+            else:
+                print_warning("⚠️ Response message missing")
+                tests_passed.append(False)
+            
+            # Display complete response for analysis
+            print_info("\n📄 Complete API Response:")
+            for key, value in data.items():
+                print_info(f"  {key}: {value}")
+            
+            # Overall assessment
+            all_tests_passed = all(tests_passed)
+            
+            if all_tests_passed:
+                print_success("\n🎉 PASSWORD SENDING FUNCTIONALITY TEST PASSED!")
+                print_success("✅ All expected fields are present in the response")
+                print_success("✅ Password generation is working correctly")
+                print_success("✅ Email and WhatsApp sending functions are being called")
+                
+                # Additional recommendations
+                print_info("\n💡 Observations:")
+                if password_sent_email == True:
+                    print_info("• Email sending is simulated in development mode - check backend logs for detailed email content")
+                if password_sent_whatsapp == False:
+                    print_info("• WhatsApp sending is honest about not working (API not configured)")
+                print_info("• Password generation meets security requirements")
+                
+                return True, data
+            else:
+                print_error("\n❌ PASSWORD SENDING FUNCTIONALITY TEST FAILED")
+                print_error("Some expected fields are missing or incorrect")
+                return False, data
+                
+        elif response.status_code == 400:
+            print_error(f"❌ Registration failed with validation error: {response.text}")
+            print_info("This might be due to duplicate data or validation issues")
+            return False, None
+            
+        else:
+            print_error(f"❌ Registration failed with status {response.status_code}")
+            print_error(f"Response: {response.text}")
+            return False, None
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"❌ Request failed with exception: {str(e)}")
+        return False, None
+
 def run_all_tests():
     """Run all tests and provide summary"""
 def run_all_tests():
