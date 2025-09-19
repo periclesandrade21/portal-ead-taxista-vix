@@ -129,6 +129,7 @@ const AdminDashboard = () => {
       setCityStats(cityStatsRes.data || []);
       setCourses(coursesRes.data || []);
       setCoursePrice(coursePriceRes.data?.price || 150);
+      setAdminUsers(adminUsersRes.data || []);
       
       // Calcular estatísticas de pagamento
       calculatePaymentStats(subscriptionsRes.data);
