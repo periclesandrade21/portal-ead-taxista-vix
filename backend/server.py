@@ -1033,6 +1033,156 @@ async def set_default_course_price(price_data: dict):
         logging.error(f"Erro ao definir preço do curso padrão: {str(e)}")
         raise HTTPException(status_code=500, detail="Erro ao definir preço do curso")
 
+@api_router.post("/auth/reset-password")
+async def request_password_reset(request: StudentPasswordResetRequest):
+    """Solicitar reset de senha para estudante"""
+    try:
+        # Verificar se o email existe no sistema
+        user = await db.subscriptions.find_one({"email": request.email})
+        
+        if not user:
+            raise HTTPException(status_code=404, detail="Email não encontrado no sistema")
+        
+        # Gerar nova senha temporária
+        new_password = generate_password()
+        
+        # Atualizar senha no banco
+        result = await db.subscriptions.update_one(
+            {"email": request.email},
+            {"$set": {"temporary_password": new_password}}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Usuário não encontrado")
+        
+        # Tentar enviar por email
+        email_sent = await send_password_email(user.get('name', 'Usuário'), request.email, new_password)
+        
+        # Tentar enviar por WhatsApp (se disponível)
+        whatsapp_sent = False
+        if user.get('phone'):
+            whatsapp_sent = await send_password_whatsapp(user.get('name', 'Usuário'), user.get('phone'), new_password)
+        
+        logging.info(f"Reset de senha solicitado para: {request.email}")
+        
+        return {
+            "message": "Nova senha enviada com sucesso",
+            "email_sent": email_sent,
+            "whatsapp_sent": whatsapp_sent,
+            "email": request.email
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Erro no reset de senha: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro interno do servidor")
+
+@api_router.get("/admin/users")
+async def get_admin_users():
+    """Listar usuários administrativos"""
+    try:
+        # Buscar na collection admin_users
+        admin_users = await db.admin_users.find().to_list(100)
+        
+        # Remover senhas dos resultados
+        for user in admin_users:
+            user.pop('password', None)
+            user.pop('_id', None)  # Remover ObjectId
+        
+        return admin_users
+        
+    except Exception as e:
+        logging.error(f"Erro ao buscar usuários admin: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro ao buscar usuários administrativos")
+
+@api_router.post("/admin/users")
+async def create_admin_user(user_data: AdminUserCreate):
+    """Criar novo usuário administrativo"""
+    try:
+        # Verificar se username já existe
+        existing_user = await db.admin_users.find_one({"username": user_data.username})
+        if existing_user:
+            raise HTTPException(status_code=400, detail="Nome de usuário já existe")
+        
+        # Criar novo usuário admin
+        admin_user = {
+            "id": str(uuid.uuid4()),
+            "username": user_data.username,
+            "password": user_data.password,  # Em produção: hash da senha
+            "full_name": user_data.full_name,
+            "role": user_data.role,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "active": True
+        }
+        
+        # Inserir no banco
+        await db.admin_users.insert_one(admin_user)
+        
+        # Remover senha da resposta
+        admin_user.pop('password')
+        admin_user.pop('_id', None)
+        
+        logging.info(f"Novo usuário admin criado: {user_data.username}")
+        
+        return admin_user
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Erro ao criar usuário admin: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro ao criar usuário administrativo")
+
+@api_router.put("/admin/users/{user_id}/reset-password")
+async def reset_admin_password(user_id: str, request: AdminPasswordReset):
+    """Reset de senha para usuário administrativo"""
+    try:
+        # Atualizar senha do usuário admin
+        result = await db.admin_users.update_one(
+            {"id": user_id},
+            {"$set": {
+                "password": request.new_password,  # Em produção: hash da senha
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Usuário administrativo não encontrado")
+        
+        logging.info(f"Senha de admin resetada para usuário ID: {user_id}")
+        
+        return {"message": "Senha administrativa alterada com sucesso"}
+        
+    except HTTPException:  
+        raise
+    except Exception as e:
+        logging.error(f"Erro ao resetar senha admin: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro ao alterar senha administrativa")
+
+@api_router.delete("/admin/users/{user_id}")
+async def delete_admin_user(user_id: str):
+    """Excluir usuário administrativo"""
+    try:
+        # Não permitir excluir o usuário admin principal
+        user = await db.admin_users.find_one({"id": user_id})
+        if user and user.get('username') == 'admin':
+            raise HTTPException(status_code=400, detail="Não é possível excluir o usuário admin principal")
+        
+        result = await db.admin_users.delete_one({"id": user_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Usuário administrativo não encontrado")
+        
+        logging.info(f"Usuário admin excluído: ID {user_id}")
+        
+        return {"message": "Usuário administrativo excluído com sucesso"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Erro ao excluir usuário admin: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro ao excluir usuário administrativo")
+
 @api_router.get("/stats/cities")
 async def get_city_stats():
     """Obter estatísticas por cidade"""
