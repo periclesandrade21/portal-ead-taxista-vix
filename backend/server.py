@@ -11,6 +11,7 @@ import re
 import uuid
 import secrets
 import string
+import requests
 from datetime import datetime, timezone, timedelta
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 import smtplib
