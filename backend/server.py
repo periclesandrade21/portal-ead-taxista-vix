@@ -902,15 +902,109 @@ async def create_course(course: CourseCreate):
         logging.error(f"Erro ao criar curso: {str(e)}")
         raise HTTPException(status_code=500, detail="Erro ao criar curso")
 
-@api_router.get("/courses")
-async def get_courses():
-    """Listar todos os cursos"""
+@api_router.delete("/courses/{course_id}")
+async def delete_course(course_id: str):
+    """Excluir curso"""
     try:
-        courses = await db.courses.find().to_list(length=None)
-        return [parse_from_mongo(course) for course in courses]
+        result = await db.courses.delete_one({"id": course_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Curso não encontrado")
+        
+        logging.info(f"Curso excluído: ID {course_id}")
+        return {"message": "Curso excluído com sucesso"}
+        
+    except HTTPException:
+        raise
     except Exception as e:
-        logging.error(f"Erro ao buscar cursos: {str(e)}")
-        raise HTTPException(status_code=500, detail="Erro ao buscar cursos")
+        logging.error(f"Erro ao excluir curso: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro ao excluir curso")
+
+@api_router.put("/courses/{course_id}")
+async def update_course(course_id: str, course: CourseCreate):
+    """Atualizar curso"""
+    try:
+        update_data = {
+            "name": course.name,
+            "description": course.description,
+            "price": course.price,
+            "duration_hours": course.duration_hours,
+            "category": course.category,
+            "active": course.active,
+            "updated_at": datetime.now(timezone.utc)
+        }
+        
+        prepared_data = prepare_for_mongo(update_data)
+        result = await db.courses.update_one(
+            {"id": course_id},
+            {"$set": prepared_data}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Curso não encontrado")
+        
+        logging.info(f"Curso atualizado: ID {course_id} - Novo preço: R${course.price}")
+        
+        # Buscar curso atualizado
+        updated_course = await db.courses.find_one({"id": course_id})
+        return parse_from_mongo(updated_course)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Erro ao atualizar curso: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro ao atualizar curso")
+
+@api_router.get("/courses/default/price")
+async def get_default_course_price():
+    """Obter preço do curso padrão (EAD Taxista)"""
+    try:
+        # Buscar curso padrão
+        default_course = await db.courses.find_one({"category": "obrigatorio", "active": True})
+        
+        if default_course:
+            return {"price": default_course.get("price", 150.0)}
+        else:
+            # Se não houver curso padrão, retornar preço padrão de R$ 150
+            return {"price": 150.0}
+        
+    except Exception as e:
+        logging.error(f"Erro ao buscar preço do curso padrão: {str(e)}")
+        return {"price": 150.0}  # Fallback
+
+@api_router.post("/courses/default/set-price")
+async def set_default_course_price(price_data: dict):
+    """Definir preço do curso padrão"""
+    try:
+        new_price = float(price_data.get("price", 150.0))
+        
+        # Atualizar ou criar curso padrão
+        result = await db.courses.update_one(
+            {"category": "obrigatorio", "name": "EAD Taxista ES - Curso Completo"},
+            {
+                "$set": {
+                    "price": new_price,
+                    "updated_at": datetime.now(timezone.utc)
+                },
+                "$setOnInsert": {
+                    "id": str(uuid.uuid4()),
+                    "name": "EAD Taxista ES - Curso Completo",
+                    "description": "Curso obrigatório para taxistas do Espírito Santo",
+                    "duration_hours": 28,
+                    "category": "obrigatorio",
+                    "active": True,
+                    "created_at": datetime.now(timezone.utc)
+                }
+            },
+            upsert=True
+        )
+        
+        logging.info(f"Preço do curso padrão atualizado para: R${new_price}")
+        return {"message": "Preço atualizado com sucesso", "price": new_price}
+        
+    except Exception as e:
+        logging.error(f"Erro ao definir preço do curso padrão: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro ao definir preço do curso")
 
 @api_router.get("/stats/cities")
 async def get_city_stats():
