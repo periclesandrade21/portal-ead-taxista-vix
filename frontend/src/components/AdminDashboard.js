@@ -255,10 +255,32 @@ const AdminDashboard = () => {
 
   // Filtros para cidade
   const getFilteredCityStats = () => {
-    if (cityFilter === 'all') {
-      return cityStats;
+    // Calcular estatísticas reais baseadas nas inscrições
+    const cityData = {};
+    
+    // Processar inscrições para calcular dados por cidade
+    subscriptions.forEach(subscription => {
+      const city = subscription.city || 'Não informado';
+      if (!cityData[city]) {
+        cityData[city] = { city, total: 0, paid: 0, pending: 0 };
+      }
+      
+      cityData[city].total++;
+      if (subscription.status === 'paid') {
+        cityData[city].paid++;
+      } else {
+        cityData[city].pending++;
+      }
+    });
+    
+    // Converter para array e ordenar por total de usuários
+    const statsArray = Object.values(cityData).sort((a, b) => b.total - a.total);
+    
+    // Aplicar filtro se necessário
+    if (cityFilter === 'all' || !cityFilter) {
+      return statsArray;
     }
-    return cityStats.filter(city => 
+    return statsArray.filter(city => 
       city.city.toLowerCase().includes(cityFilter.toLowerCase())
     );
   };
