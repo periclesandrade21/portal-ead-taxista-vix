@@ -562,33 +562,75 @@ def validate_name_offline(name: str) -> dict:
 async def send_password_email(email: str, name: str, password: str):
     """Envia senha por email"""
     try:
-        # Configurações do email (usando Gmail como exemplo)
+        # Verificar se as credenciais de email estão configuradas
+        sender_password = os.environ.get('EMAIL_PASSWORD', '')
+        
+        if not sender_password:
+            logging.warning("EMAIL_PASSWORD não configurado no .env - Email não será enviado")
+            return False
+        
+        # Configurações do email
         smtp_server = "smtp.gmail.com"
         smtp_port = 587
-        sender_email = "suporte@sindtaxi-es.org"  # Você precisará configurar isso
-        sender_password = os.environ.get('EMAIL_PASSWORD', '')  # Adicione no .env
+        sender_email = "suporte@sindtaxi-es.org"
         
-        # Criar mensagem
+        # Criar mensagem melhorada
         message = MIMEMultipart()
         message["From"] = sender_email
         message["To"] = email
-        message["Subject"] = "Sua senha de acesso - EAD Taxista ES"
+        message["Subject"] = "🔑 Sua senha de acesso - EAD Taxista ES"
         
         body = f"""
-        Olá {name},
-        
-        Seu cadastro foi realizado com sucesso!
-        
-        Sua senha temporária de acesso é: {password}
-        
-        Você pode usar esta senha para acessar o portal do aluno após a confirmação do pagamento.
-        
-        Atenciosamente,
-        Equipe EAD Taxista ES
-        Sindicato dos Taxistas do Espírito Santo
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+        .header {{ background: linear-gradient(135deg, #1e40af, #059669); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }}
+        .content {{ background: #f8fafc; padding: 30px; border-radius: 0 0 10px 10px; }}
+        .password-box {{ background: #e0f2fe; border: 2px solid #0288d1; padding: 20px; margin: 20px 0; text-align: center; border-radius: 8px; }}
+        .password {{ font-size: 24px; font-weight: bold; color: #0277bd; letter-spacing: 2px; }}
+        .footer {{ text-align: center; margin-top: 20px; font-size: 12px; color: #666; }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 EAD Taxista ES</h1>
+            <p>Sindicato dos Taxistas do Espírito Santo</p>
+        </div>
+        <div class="content">
+            <h2>Olá, {name}!</h2>
+            <p><strong>🎉 Seu cadastro foi realizado com sucesso!</strong></p>
+            
+            <div class="password-box">
+                <p><strong>Sua senha temporária de acesso:</strong></p>
+                <div class="password">{password}</div>
+            </div>
+            
+            <p><strong>📋 Próximos passos:</strong></p>
+            <ol>
+                <li>Confirme seu pagamento via PIX</li>
+                <li>Acesse o portal do aluno com esta senha</li>
+                <li>Inicie seus estudos no curso EAD</li>
+            </ol>
+            
+            <p><strong>🔒 Segurança:</strong> Mantenha esta senha em local seguro. Você poderá alterá-la após o primeiro acesso.</p>
+            
+            <p><strong>📞 Suporte:</strong> privacidade@sindtaxi-es.org | (27) 3033-4455</p>
+        </div>
+        <div class="footer">
+            <p>📍 Rua XV de Novembro, 123 - Centro, Vitória/ES</p>
+            <p>Este email foi enviado automaticamente. Não responda diretamente.</p>
+        </div>
+    </div>
+</body>
+</html>
         """
         
-        message.attach(MIMEText(body, "plain"))
+        message.attach(MIMEText(body, "html"))
         
         # Enviar email
         server = smtplib.SMTP(smtp_server, smtp_port)
@@ -598,23 +640,29 @@ async def send_password_email(email: str, name: str, password: str):
         server.sendmail(sender_email, email, text)
         server.quit()
         
+        logging.info(f"Email enviado com sucesso para {email}")
         return True
+        
     except Exception as e:
         logging.error(f"Erro ao enviar email: {str(e)}")
         return False
 
 async def send_password_whatsapp(phone: str, name: str, password: str):
-    """Envia senha por WhatsApp - Simulado por enquanto"""
+    """Envia senha por WhatsApp - Implementação transparente"""
     try:
-        # Por enquanto, vamos simular o envio
-        # Em produção, você integraria com API do WhatsApp Business ou similar
-        logging.info(f"WhatsApp enviado para {phone}: Senha {password}")
+        # WhatsApp Business API não está configurado
+        # Retornar False para ser transparente sobre não envio
+        logging.info(f"WhatsApp não configurado - Senha para {phone}: {password}")
         
-        # Simular sucesso (70% de sucesso)
-        import random
-        return random.random() > 0.3
+        # Em produção, integrar com:
+        # - WhatsApp Business API
+        # - Twilio
+        # - Ou outra API de WhatsApp
+        
+        return False  # Ser honesto sobre não envio
+        
     except Exception as e:
-        logging.error(f"Erro ao enviar WhatsApp: {str(e)}")
+        logging.error(f"Erro na função WhatsApp: {str(e)}")
         return False
 
 def get_bot_context():
