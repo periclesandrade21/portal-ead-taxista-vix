@@ -398,7 +398,7 @@ def test_subscription_creation():
         "email": "joao.teste@email.com",
         "phone": "27999999999",
         "cpf": "11144477735",  # Valid CPF for testing
-        "carPlate": "ABC-1234",
+        "carPlate": "ABC-1234-T",
         "licenseNumber": "12345",
         "city": "Vitória"
     }
