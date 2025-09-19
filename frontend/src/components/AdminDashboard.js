@@ -1437,6 +1437,172 @@ const AdminDashboard = () => {
             </Card>
           </TabsContent>
 
+          {/* Aba Gestão de Vídeos */}
+          <TabsContent value="videos" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Coluna 1: Seleção de Módulo */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BookOpen className="h-5 w-5" />
+                    Módulos do Curso
+                  </CardTitle>
+                  <CardDescription>Selecione um módulo para gerenciar seus vídeos</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <Button 
+                    onClick={() => setModuleModal({ show: true, module: { name: '', description: '', duration_hours: 0, color: '#3b82f6' } })}
+                    className="w-full mb-3"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Novo Módulo
+                  </Button>
+                  
+                  {modules.map((module) => (
+                    <div 
+                      key={module.id}
+                      className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                        selectedModule === module.id 
+                          ? 'border-blue-500 bg-blue-50' 
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                      onClick={() => setSelectedModule(module.id)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div 
+                          className="w-4 h-4 rounded-full" 
+                          style={{ backgroundColor: module.color }}
+                        ></div>
+                        <div className="flex-1">
+                          <h4 className="font-medium">{module.name}</h4>
+                          <p className="text-sm text-gray-600">{module.video_count || 0} vídeos • {module.duration_hours}h</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              {/* Coluna 2 e 3: Lista de Vídeos */}
+              <div className="lg:col-span-2">
+                <Card>
+                  <CardHeader>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <CardTitle className="flex items-center gap-2">
+                          <Play className="h-5 w-5" />
+                          Vídeos do Módulo
+                        </CardTitle>
+                        <CardDescription>
+                          {selectedModule ? 
+                            `Gerencie os vídeos do módulo selecionado` : 
+                            'Selecione um módulo para ver seus vídeos'
+                          }
+                        </CardDescription>
+                      </div>
+                      {selectedModule && (
+                        <Button onClick={() => setVideoModal({ 
+                          show: true, 
+                          video: { title: '', description: '', youtube_url: '', module_id: selectedModule, duration_minutes: 0 } 
+                        })}>
+                          <Plus className="h-4 w-4 mr-2" />
+                          Novo Vídeo
+                        </Button>
+                      )}
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    {!selectedModule ? (
+                      <div className="text-center py-8">
+                        <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                        <h3 className="text-lg font-medium text-gray-600 mb-2">Selecione um Módulo</h3>
+                        <p className="text-gray-500">Escolha um módulo na lista ao lado para ver e gerenciar seus vídeos</p>
+                      </div>
+                    ) : videoLoadingStates[selectedModule] ? (
+                      <div className="text-center py-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                        <p className="text-gray-500">Carregando vídeos...</p>
+                      </div>
+                    ) : videos.length === 0 ? (
+                      <div className="text-center py-8">
+                        <Play className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                        <h3 className="text-lg font-medium text-gray-600 mb-2">Nenhum vídeo encontrado</h3>
+                        <p className="text-gray-500 mb-4">Este módulo ainda não possui vídeos</p>
+                        <Button onClick={() => setVideoModal({ 
+                          show: true, 
+                          video: { title: '', description: '', youtube_url: '', module_id: selectedModule, duration_minutes: 0 } 
+                        })}>
+                          <Plus className="h-4 w-4 mr-2" />
+                          Adicionar Primeiro Vídeo
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {videos.map((video, index) => (
+                          <div key={video.id} className="border rounded-lg p-4 bg-gray-50">
+                            <div className="flex gap-4">
+                              {/* Thumbnail */}
+                              <div className="flex-shrink-0">
+                                <img 
+                                  src={video.thumbnail_url} 
+                                  alt={video.title}
+                                  className="w-32 h-20 object-cover rounded-lg"
+                                  onError={(e) => {
+                                    e.target.src = `https://img.youtube.com/vi/${video.youtube_id}/default.jpg`;
+                                  }}
+                                />
+                              </div>
+                              
+                              {/* Conteúdo */}
+                              <div className="flex-1">
+                                <div className="flex justify-between items-start">
+                                  <div>
+                                    <h4 className="font-semibold text-lg mb-1">{video.title}</h4>
+                                    <p className="text-gray-600 text-sm mb-2">{video.description}</p>
+                                    <div className="flex items-center gap-4 text-sm text-gray-500">
+                                      <span>#{index + 1}</span>
+                                      {video.duration_minutes && <span>{formatDuration(video.duration_minutes)}</span>}
+                                      <a 
+                                        href={video.youtube_url} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 hover:underline"
+                                      >
+                                        Ver no YouTube
+                                      </a>
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Ações */}
+                                  <div className="flex gap-2">
+                                    <Button 
+                                      size="sm" 
+                                      variant="outline"
+                                      onClick={() => window.open(video.youtube_url, '_blank')}
+                                    >
+                                      <Eye className="h-4 w-4" />
+                                    </Button>
+                                    <Button 
+                                      size="sm" 
+                                      variant="outline"
+                                      onClick={() => setDeleteVideoModal({ show: true, videoId: video.id, videoTitle: video.title })}
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
+
           {/* Aba Usuários Administrativos */}
           <TabsContent value="admin-users" className="space-y-4">
             <Card>
