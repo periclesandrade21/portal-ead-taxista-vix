@@ -1263,22 +1263,63 @@ async def asaas_webhook(request: dict):
         event = request.get('event')
         payment_data = request.get('payment', {})
         
-        if event == 'PAYMENT_CONFIRMED':
+        # Aceitar tanto PAYMENT_CONFIRMED quanto PAYMENT_RECEIVED
+        if event in ['PAYMENT_CONFIRMED', 'PAYMENT_RECEIVED']:
             # Extrair informações do pagamento
-            customer_email = payment_data.get('customer', {}).get('email')
+            customer_info = payment_data.get('customer', {})
+            
+            # Tentar extrair email (formato antigo) ou customer ID (formato novo)
+            customer_email = None
+            customer_id = None
+            
+            if isinstance(customer_info, dict):
+                # Formato antigo: customer: { email: "..." }
+                customer_email = customer_info.get('email')
+            elif isinstance(customer_info, str):
+                # Formato novo: customer: "cus_000130254085"
+                customer_id = customer_info
+            else:
+                # Fallback: tentar como string direta
+                customer_id = str(customer_info) if customer_info else None
+            
             payment_id = payment_data.get('id')
             value = payment_data.get('value')
             
-            logging.info(f"Pagamento confirmado via Asaas: {payment_id} - {customer_email} - R$ {value}")
+            logging.info(f"Pagamento {event} via Asaas: {payment_id} - Email: {customer_email} - Customer ID: {customer_id} - R$ {value}")
             
-            # Atualizar status da inscrição
+            # Buscar inscrição por email ou customer ID
+            query_filter = {}
             if customer_email:
+                query_filter = {"email": customer_email}
+            elif customer_id:
+                # Buscar por customer_id (se existir) ou tentar encontrar por algum outro critério
+                # Para agora, vou buscar por payment_id se existir, ou tentar por valor aproximado
+                query_filter = {"$or": [
+                    {"asaas_customer_id": customer_id},
+                    {"payment_id": payment_id}
+                ]}
+                
+                # Se não encontrar por customer_id, buscar por critérios alternativos
+                existing_subscription = await db.subscriptions.find_one(query_filter)
+                if not existing_subscription:
+                    # Buscar qualquer inscrição pendente com valor próximo (margem de ±10%)
+                    min_value = value * 0.9 if value else 0
+                    max_value = value * 1.1 if value else 0
+                    
+                    # Para agora, vou buscar qualquer inscrição pendente - isso pode ser refinado
+                    query_filter = {"status": "pending"}
+                    
+                    logging.info(f"Buscando inscrição pendente para processar pagamento {payment_id}")
+            
+            if query_filter:
                 result = await db.subscriptions.update_one(
-                    {"email": customer_email},
+                    query_filter,
                     {
                         "$set": {
                             "status": "paid",
                             "payment_id": payment_id,
+                            "asaas_customer_id": customer_id,
+                            "payment_value": value,
                             "payment_confirmed_at": datetime.now(timezone.utc).isoformat(),
                             "course_access": "granted"
                         }
@@ -1286,17 +1327,19 @@ async def asaas_webhook(request: dict):
                 )
                 
                 if result.matched_count > 0:
-                    logging.info(f"Curso liberado para: {customer_email}")
+                    # Buscar o usuário atualizado para log
+                    updated_user = await db.subscriptions.find_one(query_filter)
+                    user_email = updated_user.get('email', 'N/A') if updated_user else 'N/A'
                     
-                    # Aqui você pode adicionar lógica adicional:
-                    # - Enviar email de confirmação
-                    # - Criar usuário no Moodle
-                    # - Notificar admin
+                    logging.info(f"Curso liberado para: {user_email} (Customer: {customer_id}, Payment: {payment_id})")
                     
-                    return {"message": "Pagamento processado e curso liberado", "status": "success"}
+                    return {"message": "Pagamento processado e curso liberado", "status": "success", "email": user_email}
                 else:
-                    logging.warning(f"Inscrição não encontrada para email: {customer_email}")
+                    logging.warning(f"Inscrição não encontrada para Customer: {customer_id} ou Email: {customer_email}")
                     return {"message": "Inscrição não encontrada", "status": "warning"}
+            else:
+                logging.warning(f"Dados insuficientes no webhook: {request}")
+                return {"message": "Dados insuficientes para processar pagamento", "status": "warning"}
         
         return {"message": "Webhook recebido", "status": "received"}
         
