@@ -9,7 +9,7 @@ import { Input } from "./components/ui/input";
 import { Label } from "./components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import AdminDashboard from "./components/AdminDashboard";
-import StudentPortal from "./components/StudentPortal";
+import StudentPortalComplete from "./components/StudentPortalComplete";
 import ChatBot from "./components/ChatBot";
 import PaymentFlow from "./components/PaymentFlow";
 import ProgressSteps from "./components/ProgressSteps";
