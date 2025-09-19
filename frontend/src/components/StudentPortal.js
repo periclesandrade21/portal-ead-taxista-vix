@@ -65,11 +65,44 @@ const StudentPortal = () => {
     }
   ];
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Simular login - em produção seria validado com o backend
-    if (loginData.email && loginData.password) {
-      setIsLoggedIn(true);
+    setLoginError('');
+    setIsLoading(true);
+    
+    try {
+      // Validar com o backend
+      const response = await axios.post(`${API}/api/auth/login`, {
+        email: loginData.email.toLowerCase().trim(),
+        password: loginData.password
+      });
+      
+      if (response.data.success) {
+        setUserInfo(response.data.user);
+        setIsLoggedIn(true);
+        console.log('Login realizado com sucesso:', response.data.user.name);
+      } else {
+        setLoginError('Email ou senha incorretos');
+      }
+      
+    } catch (error) {
+      console.error('Erro no login:', error);
+      
+      if (error.response) {
+        // Erro do servidor
+        if (error.response.status === 401) {
+          setLoginError('Email ou senha incorretos');
+        } else if (error.response.status === 403) {
+          setLoginError('Acesso negado. Verifique se seu pagamento foi confirmado.');
+        } else {
+          setLoginError('Erro no servidor. Tente novamente.');
+        }
+      } else {
+        // Erro de conexão
+        setLoginError('Erro de conexão. Verifique sua internet.');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
