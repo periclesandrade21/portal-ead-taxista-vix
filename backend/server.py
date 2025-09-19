@@ -603,7 +603,22 @@ async def get_status_checks():
 async def create_subscription(subscription: UserSubscriptionCreate):
     """Create a new subscription and send password"""
     try:
-        # Validar formato de nome
+        # Validar formato de CPF
+        if not validate_cpf_format(subscription.cpf):
+            raise HTTPException(
+                status_code=400, 
+                detail="CPF inválido. Verifique os dígitos informados."
+            )
+        
+        # Validar CPF com API
+        cpf_validation = await validate_cpf_with_api(subscription.cpf)
+        if not cpf_validation["valid"]:
+            raise HTTPException(
+                status_code=400, 
+                detail="CPF não é válido ou não foi possível validar."
+            )
+        
+        # Validar formato de nome (mais flexível com CPF)
         name_validation = validate_name_format(subscription.name)
         if not name_validation["valid"]:
             raise HTTPException(
@@ -611,16 +626,12 @@ async def create_subscription(subscription: UserSubscriptionCreate):
                 detail=f"Nome inválido: {', '.join(name_validation['errors'])}"
             )
         
-        # Validar nome com APIs e lista offline
+        # Validar nome com APIs e lista offline (mais tolerante com CPF válido)
         name_offline_check = validate_name_offline(subscription.name)
         if not name_offline_check["valid"]:
-            # Tentar com API se a validação offline falhar
-            name_api_check = await validate_name_with_api(subscription.name)
-            if not name_api_check["valid"] and name_api_check["api_used"]:
-                raise HTTPException(
-                    status_code=400, 
-                    detail="Nome não reconhecido como comum brasileiro. Use seu nome real completo."
-                )
+            # Com CPF válido, ser mais flexível na validação de nome
+            logging.info(f"Nome {subscription.name} não encontrado na lista brasileira, mas CPF é válido")
+            # Não bloquear se CPF for válido - apenas log para monitoramento
         
         # Validar formato de email
         if not validate_email_format(subscription.email):
@@ -643,13 +654,15 @@ async def create_subscription(subscription: UserSubscriptionCreate):
                 detail="Formato de alvará inválido. Use formatos como: TA-12345, TAX-2023-1234, T-1234567 ou apenas números"
             )
         
-        # Verificar duplicidades
-        duplicates = await check_duplicate_registration(db, subscription.name, subscription.email)
+        # Verificar duplicidades (incluindo CPF)
+        duplicates = await check_duplicate_registration(db, subscription.name, subscription.email, subscription.cpf)
         
         if duplicates:
             error_messages = []
             if duplicates.get("email"):
                 error_messages.append("Email já cadastrado no sistema")
+            if duplicates.get("cpf"):
+                error_messages.append("CPF já cadastrado no sistema")
             if duplicates.get("name"):
                 error_messages.append("Nome já cadastrado no sistema")
             
@@ -658,37 +671,41 @@ async def create_subscription(subscription: UserSubscriptionCreate):
                 detail=" | ".join(error_messages)
             )
         
-        # Normalizar email para salvar (sempre em lowercase)
+        # Normalizar dados
         normalized_email = subscription.email.strip().lower()
-        
-        # Normalizar nome (Title Case)
         normalized_name = " ".join([part.capitalize() for part in subscription.name.strip().split()])
+        clean_cpf = re.sub(r'[^\d]', '', subscription.cpf)
         
         # Gerar senha temporária
         temporary_password = generate_password()
         
         # Criar dados da inscrição
-        subscription_data = UserSubscription(
-            name=normalized_name,  # Nome normalizado
-            email=normalized_email,  # Email normalizado
-            phone=subscription.phone,
-            car_plate=subscription.carPlate,
-            license_number=subscription.licenseNumber,
-            status="pending",
-            temporary_password=temporary_password
-        )
+        subscription_data = {
+            "id": str(uuid.uuid4()),
+            "name": normalized_name,
+            "email": normalized_email,
+            "phone": subscription.phone,
+            "cpf": clean_cpf,  # Salvar CPF limpo
+            "car_plate": subscription.carPlate,
+            "license_number": subscription.licenseNumber,
+            "city": subscription.city,
+            "status": "pending",
+            "course_access": "denied",
+            "temporary_password": temporary_password,
+            "created_at": datetime.now(timezone.utc)
+        }
         
         # Preparar para MongoDB
-        prepared_data = prepare_for_mongo(subscription_data.dict())
+        prepared_data = prepare_for_mongo(subscription_data)
         
         # Salvar no banco
         result = await db.subscriptions.insert_one(prepared_data)
         
-        # Enviar senha por email e WhatsApp (usar dados originais para envio)
+        # Enviar senha por email e WhatsApp
         email_sent = await send_password_email(subscription.email, normalized_name, temporary_password)
         whatsapp_sent = await send_password_whatsapp(subscription.phone, normalized_name, temporary_password)
         
-        logging.info(f"Inscrição criada: {normalized_email} - Nome: {normalized_name}")
+        logging.info(f"Inscrição criada: {normalized_email} - Nome: {normalized_name} - CPF: {clean_cpf}")
         logging.info(f"Email enviado: {email_sent}, WhatsApp enviado: {whatsapp_sent}")
         
         return PasswordSentResponse(
