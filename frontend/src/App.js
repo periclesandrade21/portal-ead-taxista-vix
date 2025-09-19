@@ -162,6 +162,56 @@ const Home = () => {
     
     return true;
   };
+
+  // Validação de CPF
+  const validateCPF = (cpf) => {
+    if (!cpf) return false;
+    
+    // Remove formatação
+    const cleanCPF = cpf.replace(/[^\d]/g, '');
+    
+    // Verifica se tem 11 dígitos
+    if (cleanCPF.length !== 11) return false;
+    
+    // Verifica se todos os dígitos são iguais
+    if (/^(\d)\1{10}$/.test(cleanCPF)) return false;
+    
+    // Validação dos dígitos verificadores
+    let sum = 0;
+    let remainder;
+    
+    // Primeiro dígito verificador
+    for (let i = 1; i <= 9; i++) {
+      sum += parseInt(cleanCPF.substring(i - 1, i)) * (11 - i);
+    }
+    remainder = (sum * 10) % 11;
+    if (remainder === 10 || remainder === 11) remainder = 0;
+    if (remainder !== parseInt(cleanCPF.substring(9, 10))) return false;
+    
+    // Segundo dígito verificador
+    sum = 0;
+    for (let i = 1; i <= 10; i++) {
+      sum += parseInt(cleanCPF.substring(i - 1, i)) * (12 - i);
+    }
+    remainder = (sum * 10) % 11;
+    if (remainder === 10 || remainder === 11) remainder = 0;
+    if (remainder !== parseInt(cleanCPF.substring(10, 11))) return false;
+    
+    return true;
+  };
+
+  // Formatação de CPF
+  const formatCPF = (value) => {
+    const cleanValue = value.replace(/[^\d]/g, '');
+    const match = cleanValue.match(/^(\d{0,3})(\d{0,3})(\d{0,3})(\d{0,2})$/);
+    if (match) {
+      return !match[2] ? match[1] : 
+             !match[3] ? `${match[1]}.${match[2]}` :
+             !match[4] ? `${match[1]}.${match[2]}.${match[3]}` :
+             `${match[1]}.${match[2]}.${match[3]}-${match[4]}`;
+    }
+    return value;
+  };
   const validateTaxiPlate = (plate) => {
     if (!plate) return false;
     
