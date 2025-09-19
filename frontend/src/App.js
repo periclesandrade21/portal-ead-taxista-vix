@@ -467,6 +467,20 @@ const Home = () => {
     setCurrentStep("registration");
   };
 
+  const handleRegistrationComplete = (registrationData) => {
+    console.log('Registration completed:', registrationData);
+    // Redirect to student portal or show success message
+    setShowNewRegistration(false);
+    alert('🎉 Cadastro concluído com sucesso! Você já pode acessar o curso.');
+  };
+
+  // Renderizar o novo sistema de cadastro se solicitado
+  if (showNewRegistration) {
+    return (
+      <MultiStepRegistration onRegistrationComplete={handleRegistrationComplete} />
+    );
+  }
+
   return (
     <>
       {/* Modal Política de Privacidade LGPD */}
