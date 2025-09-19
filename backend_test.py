@@ -1492,6 +1492,28 @@ def run_all_tests():
         test_results['auth_valid_paid_user'] = False
         print_error("Could not test valid paid user authentication")
     
+    # Run ADMIN PASSWORD RESET TESTS
+    print(f"\n{Colors.BOLD}{Colors.BLUE}{'='*60}{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.BLUE}🔑 ADMIN PASSWORD RESET FUNCTIONALITY TESTS 🔑{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.BLUE}{'='*60}{Colors.ENDC}")
+    
+    # Create test subscription for password reset tests
+    test_subscription = create_test_subscription_for_password_reset()
+    
+    # Run admin password reset tests
+    test_results['admin_reset_valid_user'], new_password = test_admin_password_reset_valid_user(test_subscription)
+    test_results['admin_reset_invalid_user'] = test_admin_password_reset_invalid_user()
+    test_results['admin_reset_malformed_request'] = test_admin_password_reset_malformed_request()
+    
+    # Test student login with new password
+    if test_subscription and new_password:
+        test_results['student_login_new_password'] = test_student_login_with_new_password(test_subscription, new_password)
+        test_results['student_login_old_password_fails'] = test_student_login_with_old_password(test_subscription)
+    else:
+        test_results['student_login_new_password'] = False
+        test_results['student_login_old_password_fails'] = False
+        print_error("Could not test student login after password reset")
+    
     # Print summary
     print_test_header("TEST SUMMARY")
     
