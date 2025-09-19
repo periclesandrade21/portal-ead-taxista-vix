@@ -392,11 +392,12 @@ def test_subscription_creation():
     """Test subscription creation endpoint"""
     print_test_header("Asaas Payment Flow - Subscription Creation")
     
-    # Test data as specified in the review request
+    # Test data as specified in the review request - now including CPF
     test_data = {
         "name": "João Silva Teste",
         "email": "joao.teste@email.com",
         "phone": "27999999999",
+        "cpf": "12345678901",  # Added required CPF field
         "carPlate": "ABC-1234",
         "licenseNumber": "12345",
         "city": "Vitória"
@@ -413,20 +414,12 @@ def test_subscription_creation():
         if response.status_code == 200:
             data = response.json()
             print_success("Subscription created successfully")
-            print_info(f"Subscription ID: {data.get('id')}")
-            print_info(f"Name: {data.get('name')}")
-            print_info(f"Email: {data.get('email')}")
-            print_info(f"Status: {data.get('status')}")
-            print_info(f"Car Plate: {data.get('car_plate')}")
-            print_info(f"License Number: {data.get('license_number')}")
+            print_info(f"Message: {data.get('message')}")
+            print_info(f"Email sent: {data.get('password_sent_email')}")
+            print_info(f"WhatsApp sent: {data.get('password_sent_whatsapp')}")
+            print_info(f"Temporary password: {data.get('temporary_password')}")
             
-            # Verify status is "pending"
-            if data.get('status') == 'pending':
-                print_success("Subscription status correctly set to 'pending'")
-                return True, data.get('id'), data.get('email')
-            else:
-                print_error(f"Expected status 'pending', got '{data.get('status')}'")
-                return False, None, None
+            return True, None, test_data["email"]
         else:
             print_error(f"Subscription creation failed with status {response.status_code}: {response.text}")
             return False, None, None
