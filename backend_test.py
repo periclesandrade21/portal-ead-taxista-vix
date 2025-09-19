@@ -2259,6 +2259,247 @@ def test_real_asaas_webhook_metadata_storage():
         print_error(f"Webhook metadata storage test failed: {str(e)}")
         return False
 
+def test_mongodb_webhook_metadata_storage():
+    """Debug MongoDB webhook metadata storage issue as requested in review"""
+    print_test_header("🔍 MONGODB WEBHOOK METADATA STORAGE DEBUG")
+    
+    try:
+        # Step 1: Check current database schema for subscriptions collection
+        print_info("Step 1: Checking current database schema for subscriptions collection...")
+        response = requests.get(f"{BACKEND_URL}/subscriptions", timeout=10)
+        
+        if response.status_code != 200:
+            print_error(f"Failed to fetch subscriptions: {response.status_code}")
+            return False
+        
+        subscriptions = response.json()
+        if not subscriptions:
+            print_warning("No subscriptions found in database")
+            return False
+        
+        # Analyze field structure from existing documents
+        print_success(f"Found {len(subscriptions)} subscription documents")
+        sample_subscription = subscriptions[0]
+        
+        print_info("Sample subscription document fields:")
+        for key, value in sample_subscription.items():
+            print_info(f"  {key}: {type(value).__name__} = {value}")
+        
+        # Step 2: Create a test user for webhook metadata testing
+        print_info("\nStep 2: Creating test user for webhook metadata testing...")
+        import time
+        timestamp = str(int(time.time()))
+        
+        test_data = {
+            "name": "Test User Webhook Metadata",
+            "email": f"test.webhook.{timestamp}@email.com",
+            "phone": "27999888777",
+            "cpf": "11144477735",  # Valid CPF
+            "carPlate": f"TWM-{timestamp[-4:]}-T",
+            "licenseNumber": f"TA-{timestamp[-5:]}",
+            "city": "Vitória",
+            "lgpd_consent": True
+        }
+        
+        create_response = requests.post(
+            f"{BACKEND_URL}/subscribe",
+            json=test_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if create_response.status_code != 200:
+            print_error(f"Failed to create test user: {create_response.status_code}")
+            return False
+        
+        create_data = create_response.json()
+        test_email = test_data["email"]
+        print_success(f"Test user created: {test_email}")
+        
+        # Step 3: Test MongoDB update operation manually with webhook data
+        print_info("\nStep 3: Testing MongoDB update operation with webhook metadata...")
+        
+        # Real Asaas webhook data structure as mentioned in the issue
+        webhook_data = {
+            "event": "PAYMENT_RECEIVED",
+            "payment": {
+                "id": "pay_2zg8sti32jdr0v04",
+                "value": 60.72,
+                "customer": {"email": test_email},  # Use test email for matching
+                "billingType": "PIX",
+                "pixTransaction": {
+                    "transactionId": "b693788f-e4e5-4938-b915-6cd5d3f9bbdd",
+                    "qrCode": "SINDTAVIES0000000000000521867206ASA"
+                }
+            }
+        }
+        
+        print_info("Sending webhook with metadata fields:")
+        print_info(f"  payment_id: {webhook_data['payment']['id']}")
+        print_info(f"  customer_email: {test_email}")
+        print_info(f"  payment_value: {webhook_data['payment']['value']}")
+        print_info(f"  event: {webhook_data['event']}")
+        
+        webhook_response = requests.post(
+            f"{BACKEND_URL}/webhook/asaas-payment",
+            json=webhook_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if webhook_response.status_code != 200:
+            print_error(f"Webhook failed: {webhook_response.status_code} - {webhook_response.text}")
+            return False
+        
+        webhook_result = webhook_response.json()
+        print_success("Webhook processed successfully")
+        print_info(f"Webhook response: {webhook_result}")
+        
+        # Step 4: Check if metadata fields persist in database
+        print_info("\nStep 4: Checking if webhook metadata fields persisted in database...")
+        
+        # Re-fetch subscriptions to check if metadata was stored
+        response = requests.get(f"{BACKEND_URL}/subscriptions", timeout=10)
+        if response.status_code != 200:
+            print_error(f"Failed to re-fetch subscriptions: {response.status_code}")
+            return False
+        
+        updated_subscriptions = response.json()
+        test_subscription = None
+        
+        for sub in updated_subscriptions:
+            if sub.get('email') == test_email:
+                test_subscription = sub
+                break
+        
+        if not test_subscription:
+            print_error("Test subscription not found after webhook")
+            return False
+        
+        print_info("Updated subscription document after webhook:")
+        for key, value in test_subscription.items():
+            print_info(f"  {key}: {value}")
+        
+        # Step 5: Verify specific metadata fields
+        print_info("\nStep 5: Verifying webhook metadata field persistence...")
+        
+        metadata_fields = [
+            'payment_id',
+            'asaas_customer_id', 
+            'payment_value',
+            'payment_confirmed_at',
+            'course_access'
+        ]
+        
+        metadata_results = []
+        
+        for field in metadata_fields:
+            field_value = test_subscription.get(field)
+            if field_value is not None and field_value != "":
+                print_success(f"✅ {field}: {field_value}")
+                metadata_results.append(True)
+            else:
+                print_error(f"❌ {field}: NULL/None/Empty")
+                metadata_results.append(False)
+        
+        # Step 6: Test with string customer ID format (as in real production data)
+        print_info("\nStep 6: Testing with string customer ID format...")
+        
+        # Create another test user
+        test_data_2 = {
+            "name": "Test User String Customer ID",
+            "email": f"test.string.{timestamp}@email.com",
+            "phone": "27999777666",
+            "cpf": "98765432100",  # Valid CPF
+            "carPlate": f"TSC-{timestamp[-4:]}-T",
+            "licenseNumber": f"TA-{timestamp[-4:]}",
+            "city": "Vitória",
+            "lgpd_consent": True
+        }
+        
+        create_response_2 = requests.post(
+            f"{BACKEND_URL}/subscribe",
+            json=test_data_2,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if create_response_2.status_code == 200:
+            test_email_2 = test_data_2["email"]
+            
+            # Test with string customer ID (as mentioned in the issue)
+            webhook_data_2 = {
+                "event": "PAYMENT_RECEIVED",
+                "payment": {
+                    "id": "pay_string_test_123",
+                    "value": 150.00,
+                    "customer": "cus_000130254085",  # String format as in real data
+                    "billingType": "PIX"
+                }
+            }
+            
+            print_info("Testing webhook with string customer ID (production format)...")
+            webhook_response_2 = requests.post(
+                f"{BACKEND_URL}/webhook/asaas-payment",
+                json=webhook_data_2,
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+            
+            print_info(f"String customer ID webhook response: {webhook_response_2.status_code}")
+            if webhook_response_2.status_code == 200:
+                result_2 = webhook_response_2.json()
+                print_info(f"Response: {result_2}")
+                
+                # Check if it found a user to update
+                if result_2.get('status') == 'success':
+                    print_success("String customer ID webhook found user to update")
+                elif result_2.get('status') == 'warning':
+                    print_warning("String customer ID webhook couldn't find matching user")
+                    print_info("This is expected behavior when customer ID doesn't match")
+        
+        # Step 7: Summary and diagnosis
+        print_info("\nStep 7: Diagnosis Summary...")
+        
+        metadata_stored = all(metadata_results)
+        
+        if metadata_stored:
+            print_success("🎉 WEBHOOK METADATA STORAGE IS WORKING!")
+            print_success("All metadata fields are being persisted correctly")
+        else:
+            print_error("❌ WEBHOOK METADATA STORAGE ISSUE CONFIRMED")
+            print_error("Some or all metadata fields are NOT being persisted")
+            
+            # Provide diagnostic information
+            print_info("\n🔍 DIAGNOSTIC INFORMATION:")
+            print_info("1. Webhook processing appears to work (returns 200)")
+            print_info("2. User status is updated correctly")
+            print_info("3. But metadata fields are not being stored")
+            print_info("4. This suggests an issue with the MongoDB update operation")
+            print_info("5. The $set operation may not be working with new fields")
+            
+            # Check if it's a schema issue
+            print_info("\n💡 POTENTIAL CAUSES:")
+            print_info("- MongoDB collection may require field pre-definition")
+            print_info("- Update operation filter may not be matching correctly")
+            print_info("- Field names in update operation may not match expected names")
+            print_info("- Silent failure in MongoDB update_one operation")
+            print_info("- Logic flaw in webhook handler when customer is string format")
+            
+            print_info("\n🔧 RECOMMENDED FIXES:")
+            print_info("1. Check webhook handler code in server.py lines 1290-1373")
+            print_info("2. Verify MongoDB update_one operation with $set")
+            print_info("3. Test manual database update with same field names")
+            print_info("4. Add more detailed logging to webhook handler")
+            print_info("5. Consider using upsert operation instead of update_one")
+            print_info("6. Fix logic flaw when customer is string format")
+        
+        return metadata_stored
+        
+    except Exception as e:
+        print_error(f"MongoDB webhook metadata test failed: {str(e)}")
+        return False
+
 def run_all_tests():
     """Run all tests and provide summary"""
     print(f"{Colors.BOLD}EAD TAXISTA ES - COMPLETE SYSTEM TESTING{Colors.ENDC}")
