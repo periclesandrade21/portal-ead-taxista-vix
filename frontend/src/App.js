@@ -41,6 +41,7 @@ const Home = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [cpf, setCpf] = useState("");
   const [carPlate, setCarPlate] = useState("");
   const [licenseNumber, setLicenseNumber] = useState("");
   const [city, setCity] = useState("");
