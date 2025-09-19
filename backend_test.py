@@ -388,6 +388,286 @@ def test_existing_endpoints():
     
     return all(results)
 
+def test_improved_password_generation():
+    """Test improved password generation - 10 characters with mixed types"""
+    print_test_header("🔧 CRITICAL FIX TEST - Improved Password Generation")
+    
+    # Test data as specified in review request
+    test_data = {
+        "name": "João Teste Senha",
+        "email": "joao.senha@email.com",
+        "phone": "27999888777",
+        "cpf": "12345678901",
+        "carPlate": "TST-1234-T",
+        "licenseNumber": "TA-99999",
+        "city": "Vitória",
+        "lgpd_consent": True
+    }
+    
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/subscribe",
+            json=test_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            data = response.json()
+            password = data.get('temporary_password', '')
+            
+            print_success("Subscription created successfully")
+            print_info(f"Generated password: {password}")
+            
+            # Test password requirements
+            password_tests = []
+            
+            # 1. Length test (10 characters)
+            if len(password) == 10:
+                print_success("✅ Password length: 10 characters")
+                password_tests.append(True)
+            else:
+                print_error(f"❌ Password length: {len(password)} (expected 10)")
+                password_tests.append(False)
+            
+            # 2. Contains uppercase
+            if any(c.isupper() for c in password):
+                print_success("✅ Contains uppercase letters")
+                password_tests.append(True)
+            else:
+                print_error("❌ Missing uppercase letters")
+                password_tests.append(False)
+            
+            # 3. Contains lowercase
+            if any(c.islower() for c in password):
+                print_success("✅ Contains lowercase letters")
+                password_tests.append(True)
+            else:
+                print_error("❌ Missing lowercase letters")
+                password_tests.append(False)
+            
+            # 4. Contains numbers
+            if any(c.isdigit() for c in password):
+                print_success("✅ Contains numbers")
+                password_tests.append(True)
+            else:
+                print_error("❌ Missing numbers")
+                password_tests.append(False)
+            
+            # 5. Contains symbols
+            symbols = "@#$%*"
+            if any(c in symbols for c in password):
+                print_success("✅ Contains symbols (@#$%*)")
+                password_tests.append(True)
+            else:
+                print_error("❌ Missing symbols")
+                password_tests.append(False)
+            
+            # 6. Avoids confusing characters
+            confusing_chars = "0O1lI"
+            if not any(c in confusing_chars for c in password):
+                print_success("✅ Avoids confusing characters (0, O, 1, l, I)")
+                password_tests.append(True)
+            else:
+                print_error("❌ Contains confusing characters")
+                password_tests.append(False)
+            
+            all_passed = all(password_tests)
+            if all_passed:
+                print_success("🎉 ALL PASSWORD REQUIREMENTS MET!")
+            else:
+                print_error("❌ Some password requirements failed")
+            
+            return all_passed, data, test_data["email"]
+        else:
+            print_error(f"Subscription creation failed with status {response.status_code}: {response.text}")
+            return False, None, None
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Subscription creation request failed: {str(e)}")
+        return False, None, None
+
+def test_email_transparency():
+    """Test email transparency - development mode with detailed logs"""
+    print_test_header("🔧 CRITICAL FIX TEST - Email Transparency")
+    
+    # Test data as specified in review request
+    test_data = {
+        "name": "Maria Email Transparente",
+        "email": "maria.email@teste.com",
+        "phone": "27999777666",
+        "cpf": "98765432100",
+        "carPlate": "EML-5678-T",
+        "licenseNumber": "TA-88888",
+        "city": "Vitória",
+        "lgpd_consent": True
+    }
+    
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/subscribe",
+            json=test_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            data = response.json()
+            
+            print_success("Subscription created successfully")
+            
+            # Test email transparency
+            email_sent = data.get('password_sent_email', False)
+            
+            if email_sent == True:
+                print_success("✅ Email status: TRUE (simulated in development)")
+                print_info("Email should show detailed logs in backend console")
+                print_info("Check backend logs for formatted email content")
+                return True, data
+            else:
+                print_error(f"❌ Email status: {email_sent} (expected True for development mode)")
+                return False, data
+        else:
+            print_error(f"Email transparency test failed with status {response.status_code}: {response.text}")
+            return False, None
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Email transparency test failed: {str(e)}")
+        return False, None
+
+def test_whatsapp_honesty():
+    """Test WhatsApp honesty - now returns false instead of lying"""
+    print_test_header("🔧 CRITICAL FIX TEST - WhatsApp Honesty")
+    
+    # Test data as specified in review request
+    test_data = {
+        "name": "Carlos WhatsApp Honesto",
+        "email": "carlos.whatsapp@teste.com",
+        "phone": "27999555444",
+        "cpf": "11122233344",
+        "carPlate": "WPP-9999-T",
+        "licenseNumber": "TA-77777",
+        "city": "Vitória",
+        "lgpd_consent": True
+    }
+    
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/subscribe",
+            json=test_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            data = response.json()
+            
+            print_success("Subscription created successfully")
+            
+            # Test WhatsApp honesty
+            whatsapp_sent = data.get('password_sent_whatsapp', None)
+            
+            if whatsapp_sent == False:
+                print_success("✅ WhatsApp status: FALSE (honest about not working)")
+                print_info("WhatsApp no longer lies about sending messages")
+                print_info("Check backend logs for transparent WhatsApp message")
+                return True, data
+            else:
+                print_error(f"❌ WhatsApp status: {whatsapp_sent} (expected False for honesty)")
+                print_error("WhatsApp should return False to be honest about not working")
+                return False, data
+        else:
+            print_error(f"WhatsApp honesty test failed with status {response.status_code}: {response.text}")
+            return False, None
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"WhatsApp honesty test failed: {str(e)}")
+        return False, None
+
+def test_complete_endpoint_with_fixes():
+    """Test complete endpoint with all fixes as specified in review request"""
+    print_test_header("🔧 CRITICAL FIX TEST - Complete Endpoint Test")
+    
+    # Exact test data from review request
+    test_data = {
+        "name": "João Teste Senha",
+        "email": "joao.senha@email.com",
+        "phone": "27999888777",
+        "cpf": "12345678901",
+        "carPlate": "TST-1234-T",
+        "licenseNumber": "TA-99999",
+        "city": "Vitória",
+        "lgpd_consent": True
+    }
+    
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/subscribe",
+            json=test_data,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            data = response.json()
+            
+            print_success("Complete endpoint test successful")
+            print_info(f"Response type: PasswordSentResponse")
+            
+            # Verify all expected fields
+            tests_passed = []
+            
+            # 1. Check password_sent_email is true (simulated)
+            email_status = data.get('password_sent_email', None)
+            if email_status == True:
+                print_success("✅ password_sent_email: true (simulated)")
+                tests_passed.append(True)
+            else:
+                print_error(f"❌ password_sent_email: {email_status} (expected true)")
+                tests_passed.append(False)
+            
+            # 2. Check password_sent_whatsapp is false (honest)
+            whatsapp_status = data.get('password_sent_whatsapp', None)
+            if whatsapp_status == False:
+                print_success("✅ password_sent_whatsapp: false (honest)")
+                tests_passed.append(True)
+            else:
+                print_error(f"❌ password_sent_whatsapp: {whatsapp_status} (expected false)")
+                tests_passed.append(False)
+            
+            # 3. Check password is more secure (10 chars)
+            password = data.get('temporary_password', '')
+            if len(password) == 10:
+                print_success(f"✅ temporary_password: {password} (10 characters)")
+                tests_passed.append(True)
+            else:
+                print_error(f"❌ temporary_password: {password} (expected 10 characters, got {len(password)})")
+                tests_passed.append(False)
+            
+            # 4. Check message
+            message = data.get('message', '')
+            if message:
+                print_success(f"✅ message: {message}")
+                tests_passed.append(True)
+            else:
+                print_error("❌ message: missing")
+                tests_passed.append(False)
+            
+            all_passed = all(tests_passed)
+            if all_passed:
+                print_success("🎉 ALL ENDPOINT FIXES VERIFIED!")
+            else:
+                print_error("❌ Some endpoint fixes failed verification")
+            
+            return all_passed, data, test_data["email"]
+        else:
+            print_error(f"Complete endpoint test failed with status {response.status_code}: {response.text}")
+            return False, None, None
+            
+    except requests.exceptions.RequestException as e:
+        print_error(f"Complete endpoint test failed: {str(e)}")
+        return False, None, None
+
 def test_subscription_creation():
     """Test subscription creation endpoint"""
     print_test_header("Asaas Payment Flow - Subscription Creation")
@@ -400,7 +680,8 @@ def test_subscription_creation():
         "cpf": "11144477735",  # Valid CPF for testing
         "carPlate": "ABC-1234-T",
         "licenseNumber": "12345",
-        "city": "Vitória"
+        "city": "Vitória",
+        "lgpd_consent": True
     }
     
     try:
