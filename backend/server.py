@@ -865,8 +865,8 @@ Bons estudos! 🎓"""
         # )
         
         # Simulate WhatsApp API call
-        logger.info(f"📱 Simulating WhatsApp send to {clean_phone}")
-        logger.info(f"Message: {message}")
+        logging.info(f"📱 Simulating WhatsApp send to {clean_phone}")
+        logging.info(f"Message: {message}")
         
         # Simulate API response delay
         await asyncio.sleep(random.uniform(1, 3))
@@ -880,14 +880,14 @@ Bons estudos! 🎓"""
         whatsapp_sent = random.random() < success_rate
         
         if whatsapp_sent:
-            logger.info(f"✅ WhatsApp sent successfully to {clean_phone}")
+            logging.info(f"✅ WhatsApp sent successfully to {clean_phone}")
         else:
-            logger.warning(f"❌ WhatsApp failed to send to {clean_phone}")
+            logging.warning(f"❌ WhatsApp failed to send to {clean_phone}")
         
         return whatsapp_sent
         
     except Exception as e:
-        logger.error(f"Error sending WhatsApp: {e}")
+        logging.error(f"Error sending WhatsApp: {e}")
         return False
 
 def get_bot_context():
