@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  moodle-db:
+    image: postgres:15-alpine
+    container_name: moodle-postgres
+    environment:
+      POSTGRES_DB: moodle
+      POSTGRES_USER: moodleuser
+      POSTGRES_PASSWORD: ${MOODLE_DB_PASSWORD}
+      POSTGRES_ROOT_PASSWORD: ${POSTGRES_ROOT_PASSWORD}
+    volumes:
+      - moodle-db-data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - moodle-network
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+
+  moodle:
+    image: bitnami/moodle:4.3
+    container_name: moodle-app
+    depends_on:
+      - moodle-db
+    environment:
+      MOODLE_DATABASE_TYPE: pgsql
+      MOODLE_DATABASE_HOST: moodle-db  
+      MOODLE_DATABASE_PORT_NUMBER: 5432
+      MOODLE_DATABASE_NAME: moodle
+      MOODLE_DATABASE_USER: moodleuser
+      MOODLE_DATABASE_PASSWORD: ${MOODLE_DB_PASSWORD}
+      MOODLE_USERNAME: admin
+      MOODLE_PASSWORD: ${MOODLE_ADMIN_PASSWORD}
+      MOODLE_EMAIL: admin@sindtaxi-es.org
+      MOODLE_SITE_NAME: "EAD Taxista ES - Learning Center"
+      MOODLE_HOST: ${MOODLE_HOST}
+      BITNAMI_DEBUG: true
+    ports:
+      - "8080:8080"
+    volumes:
+      - moodle-data:/bitnami/moodle
+      - moodle-moodledata:/bitnami/moodledata
+      - ./custom-config:/opt/bitnami/moodle/config
+    networks:
+      - moodle-network
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: moodle-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@sindtaxi-es.org
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - moodle-network
+    restart: unless-stopped
+
+volumes:
+  moodle-db-data:
+  moodle-data:
+  moodle-moodledata:
+  pgadmin-data:
+
+networks:
+  moodle-network:
+    driver: bridge
