@@ -967,7 +967,7 @@ const AdminDashboard = () => {
 
                 <div className="flex gap-2 pt-4">
                   <Button 
-                    onClick={deleteUser}
+                    onClick={() => handleDeleteUser(deleteModal.user.id)}
                     className="bg-red-600 hover:bg-red-700 text-white flex-1"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
