@@ -1414,8 +1414,106 @@ const AdminDashboard = () => {
           </div>
         )}
 
-        {/* Modal de Novo Curso */}
-        {courseModal.show && (
+        {/* Modal de Editar Preço do Curso */}
+        {editPriceModal.show && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <Card className="w-96">
+              <CardHeader>
+                <CardTitle>💰 Editar Valor do Curso</CardTitle>
+                <CardDescription>
+                  Defina o novo valor do curso EAD Taxista ES
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label>Novo Valor (R$)</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={coursePrice}
+                    onChange={(e) => setCoursePrice(parseFloat(e.target.value) || 0)}
+                    placeholder="0.00"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Este valor será mostrado no bot IA e na tela de cadastro
+                  </p>
+                </div>
+                
+                <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                  <p className="text-sm text-blue-800">
+                    💡 <strong>Valor atual:</strong> R$ {coursePrice.toFixed(2)}
+                  </p>
+                  <p className="text-xs text-blue-600 mt-1">
+                    As estatísticas financeiras serão atualizadas automaticamente
+                  </p>
+                </div>
+                
+                <div className="flex gap-2">
+                  <Button onClick={handleUpdateCoursePrice}>
+                    <DollarSign className="h-4 w-4 mr-2" />
+                    Atualizar Valor
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setEditPriceModal({ show: false })}
+                  >
+                    Cancelar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Modal de Confirmação de Exclusão de Curso */}
+        {deleteConfirmModal.show && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <Card className="w-96">
+              <CardHeader>
+                <CardTitle className="text-red-600 flex items-center">
+                  <AlertCircle className="h-5 w-5 mr-2" />
+                  Confirmar Exclusão
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+                  <p className="text-sm text-red-800 mb-2">
+                    <strong>⚠️ ATENÇÃO:</strong> Esta ação não pode ser desfeita!
+                  </p>
+                  <p className="text-sm text-gray-700">
+                    Você está prestes a excluir permanentemente o curso:
+                  </p>
+                  <div className="mt-3 p-3 bg-white rounded border">
+                    <p className="font-bold">{deleteConfirmModal.courseName}</p>
+                  </div>
+                </div>
+                
+                <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+                  <p className="text-xs text-yellow-800">
+                    Todos os dados do curso serão perdidos definitivamente.
+                  </p>
+                </div>
+
+                <div className="flex gap-2 pt-4">
+                  <Button 
+                    onClick={() => handleDeleteCourse(deleteConfirmModal.courseId)}
+                    className="bg-red-600 hover:bg-red-700 text-white flex-1"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Sim, Excluir Definitivamente
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setDeleteConfirmModal({ show: false, courseId: null, courseName: '' })}
+                  >
+                    Cancelar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <Card className="w-96 max-h-96 overflow-y-auto">
               <CardHeader>
