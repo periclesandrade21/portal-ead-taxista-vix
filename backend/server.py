@@ -64,6 +64,7 @@ class UserSubscriptionCreate(BaseModel):
     carPlate: Optional[str] = None
     licenseNumber: Optional[str] = None
     city: Optional[str] = None
+    lgpd_consent: bool = False
 
 class LoginRequest(BaseModel):
     email: EmailStr
