@@ -201,7 +201,7 @@ const MultiStepRegistration = ({ onRegistrationComplete }) => {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            🚖 Cadastro EAD Taxista ES
+            🚖 Faça Seu Cadastro - EAD Taxista ES
           </h1>
           <p className="text-lg text-gray-600">
             Complete seu cadastro em {steps.length} etapas simples
