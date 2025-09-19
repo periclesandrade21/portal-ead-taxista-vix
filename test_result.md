@@ -554,6 +554,8 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: "Iniciando implementação do bot IA. Prioridades: 1) Bot IA funcional, 2) Ajustes no formulário, 3) Autoplay video, 4) Preparar estrutura para fluxo cadastro+pagamento"
+  - agent: "testing"
+    message: "🚨 CRITICAL ROUTING ISSUES IDENTIFIED - Comprehensive testing revealed that both password reset and admin user management features are implemented correctly in their respective components, but are inaccessible due to routing problems. FINDINGS: 1) STUDENT PASSWORD RESET: StudentPortal.js contains complete implementation (🔑 Esqueci minha senha button, modal with email input, /api/auth/reset-password integration, success/error handling, eye icon toggle), but /student-portal route redirects to main page instead of rendering login form. 2) ADMIN USER MANAGEMENT: AdminDashboard.js contains complete implementation (Usuários Admin tab, Novo Usuário Admin modal, form validation, Reset Senha functionality with eye icon, delete confirmation), but /admin route redirects to main page instead of rendering admin login. 3) ROOT CAUSE: React Router configuration issue preventing proper component rendering. 4) IMPACT: Features are fully coded but completely inaccessible to users. URGENT: Fix routing in App.js to properly render StudentPortal and AdminDashboard components."
   - agent: "main"
     message: "✅ IMPLEMENTAÇÕES CONCLUÍDAS: 1) Bot IA completo (backend + frontend), 2) Autoplay do vídeo, 3) Formulário melhorado. Backend testado e funcionando. Frontend precisa de teste para validar integração completa."
   - agent: "testing"
