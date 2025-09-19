@@ -48,7 +48,7 @@ def test_real_asaas_webhook_production_data():
     timestamp = str(int(time.time()))
     
     test_data = {
-        "name": f"Webhook Test User {timestamp}",
+        "name": f"João Silva Santos",
         "email": f"webhook.test.{timestamp}@email.com",
         "phone": f"2799{timestamp[-7:]}",  # Unique phone
         "cpf": "11144477735",  # Valid CPF for testing
