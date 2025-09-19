@@ -796,31 +796,33 @@ const Home = () => {
                 e pelas prefeituras, válido em todo o território nacional e homologado pelo 
                 Sindicato dos Taxistas do Espírito Santo.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center max-w-2xl mx-auto">
                 <Button 
                   onClick={() => {
                     console.log('Button clicked! Setting showNewRegistration to true');
                     setShowNewRegistration(true);
                   }}
-                  className="px-8 py-4 text-lg bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-semibold rounded-lg shadow-lg transform transition hover:scale-105"
+                  className="w-full sm:w-auto px-8 py-4 text-lg bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-semibold rounded-lg shadow-lg transform transition hover:scale-105"
                 >
                   <Car className="mr-2 h-6 w-6" />
-                  🚀 Novo Cadastro Completo
+                  🚀 Fazer Inscrição Completa
                 </Button>
                 
-                <Link to="/student-portal">
-                  <Button variant="outline" className="px-8 py-4 text-lg border-2">
-                    <GraduationCap className="mr-2 h-5 w-5" />
-                    Portal do Aluno
-                  </Button>
-                </Link>
+                <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                  <Link to="/student-portal" className="w-full sm:w-auto">
+                    <Button className="w-full px-6 py-4 text-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md border-2 border-blue-600">
+                      <GraduationCap className="mr-2 h-5 w-5" />
+                      Portal do Aluno
+                    </Button>
+                  </Link>
 
-                <Link to="/admin-ead">
-                  <Button variant="outline" className="px-8 py-4 text-lg border-2">
-                    <Shield className="mr-2 h-5 w-5" />
-                    Admin EAD
-                  </Button>
-                </Link>
+                  <Link to="/admin-ead" className="w-full sm:w-auto">
+                    <Button className="w-full px-6 py-4 text-lg bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md border-2 border-green-600">
+                      <Shield className="mr-2 h-5 w-5" />
+                      Admin EAD
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </div>
             <div className="relative">
