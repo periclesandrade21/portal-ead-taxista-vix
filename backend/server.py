@@ -1637,7 +1637,42 @@ async def asaas_webhook(request: dict):
                             if stored_status == "paid" and stored_payment_id == payment_id:
                                 logging.info(f"✅ Pagamento processado com sucesso para: {user_name} ({user_email})")
                                 
-                                return {
+                                # Integração com Moodle - matricular usuário automaticamente
+                                moodle_enrollment_result = None
+                                if moodle_service:
+                                    try:
+                                        # Encontrar o ID do usuário baseado no filtro usado
+                                        if "id" in subscription_filter:
+                                            user_id = subscription_filter["id"]
+                                        elif "email" in subscription_filter:
+                                            user_id = updated_user.get("id") or str(updated_user.get("_id"))
+                                        else:
+                                            user_id = str(updated_user.get("_id"))
+                                        
+                                        logging.info(f"Tentando matricular usuário {user_id} no Moodle...")
+                                        moodle_result = await moodle_service.enroll_user_in_course(user_id, check_payment=False)
+                                        
+                                        if moodle_result["success"]:
+                                            logging.info(f"✅ Usuário matriculado no Moodle com sucesso")
+                                            moodle_enrollment_result = {
+                                                "enrolled": True,
+                                                "moodle_user_id": moodle_result.get("moodle_user_id"),
+                                                "moodle_course_id": moodle_result.get("moodle_course_id")
+                                            }
+                                        else:
+                                            logging.warning(f"⚠️ Falha na matrícula do Moodle: {moodle_result['error']}")
+                                            moodle_enrollment_result = {
+                                                "enrolled": False,
+                                                "error": moodle_result["error"]
+                                            }
+                                    except Exception as moodle_error:
+                                        logging.error(f"❌ Erro na integração com Moodle: {moodle_error}")
+                                        moodle_enrollment_result = {
+                                            "enrolled": False,
+                                            "error": str(moodle_error)
+                                        }
+                                
+                                response_data = {
                                     "message": "Pagamento processado e curso liberado",
                                     "status": "success",
                                     "user_name": user_name,
@@ -1653,6 +1688,11 @@ async def asaas_webhook(request: dict):
                                         "course_access": stored_access
                                     }
                                 }
+                                
+                                if moodle_enrollment_result:
+                                    response_data["moodle_enrollment"] = moodle_enrollment_result
+                                
+                                return response_data
                             else:
                                 logging.error(f"❌ Atualização não persistiu corretamente")
                                 logging.error(f"Esperado status=paid, payment_id={payment_id}")
