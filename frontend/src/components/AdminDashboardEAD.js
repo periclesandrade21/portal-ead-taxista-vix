@@ -169,6 +169,104 @@ const AdminDashboardEAD = () => {
 
   const loadAdminData = async () => {
     try {
+      // Carregar dados reais da API
+      await fetchSubscriptions();
+      await fetchUsers();
+      await fetchPayments();
+      await fetchCourses();
+      await fetchCities();
+      await fetchAdminUsers();
+      
+      // Carregar dados mock para funcionalidades que ainda não têm API
+      await loadMockData();
+      
+    } catch (error) {
+      console.error('Erro ao carregar dados:', error);
+      // Em caso de erro, carregar dados mock
+      await loadMockData();
+    }
+  };
+
+  const fetchSubscriptions = async () => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/subscriptions`);
+      if (response.data) {
+        setSubscriptions(response.data);
+        console.log(`✅ Carregadas ${response.data.length} inscrições da API`);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar inscrições:', error);
+      // Manter dados mock se falhar
+      setSubscriptions([]);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/users`);
+      if (response.data) {
+        setUsers(response.data);
+        console.log(`✅ Carregados ${response.data.length} usuários da API`);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+      setUsers([]);
+    }
+  };
+
+  const fetchPayments = async () => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/payments`);
+      if (response.data) {
+        setPayments(response.data);
+        console.log(`✅ Carregados ${response.data.length} pagamentos da API`);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar pagamentos:', error);
+      setPayments([]);
+    }
+  };
+
+  const fetchCourses = async () => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/courses`);
+      if (response.data) {
+        setCoursesWithPrices(response.data);
+        console.log(`✅ Carregados ${response.data.length} cursos da API`);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar cursos:', error);
+      setCoursesWithPrices([]);
+    }
+  };
+
+  const fetchCities = async () => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/cities`);
+      if (response.data) {
+        setCities(response.data);
+        console.log(`✅ Carregadas ${response.data.length} cidades da API`);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar cidades:', error);
+      setCities([]);
+    }
+  };
+
+  const fetchAdminUsers = async () => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/admin-users`);
+      if (response.data) {
+        setAdminUsers(response.data);
+        console.log(`✅ Carregados ${response.data.length} admin users da API`);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar admin users:', error);
+      setAdminUsers([]);
+    }
+  };
+
+  const loadMockData = async () => {
       // Carregar dados dos motoristas (mock)
       const mockDrivers = [
         {
