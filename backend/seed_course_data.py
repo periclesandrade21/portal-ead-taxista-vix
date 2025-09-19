@@ -625,9 +625,9 @@ async def seed_database():
         # Estatísticas por módulo
         print("\n📚 Por módulo:")
         for module in MODULES_DATA:
-            video_count = len([v for v in VIDEOS_DATA if v["module_name"] == module["name"]])
-            question_count = sum(len(questions) for questions in QUESTIONS_DATA.get(module["name"], {}).values())
-            print(f"  • {module['name']}: {video_count} vídeos, {question_count} questões")
+            video_count = len([v for v in VIDEOS_DATA if v["module_name"] == module["title"]])
+            question_count = sum(len(questions) for questions in QUESTIONS_DATA.get(module["title"], {}).values())
+            print(f"  • {module['title']}: {video_count} vídeos, {question_count} questões")
         
     except Exception as e:
         print(f"❌ Erro ao popular banco de dados: {e}")
