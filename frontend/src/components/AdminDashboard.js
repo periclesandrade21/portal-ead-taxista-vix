@@ -660,7 +660,7 @@ const AdminDashboard = () => {
                               <Button 
                                 size="sm" 
                                 variant="outline"
-                                onClick={() => setResetPasswordModal({ show: true, userId: subscription.id, newPassword: '' })}
+                                onClick={() => setResetPasswordModal({ show: true, userId: subscription.id, newPassword: '', showPassword: false })}
                               >
                                 <Key className="h-3 w-3" />
                               </Button>
