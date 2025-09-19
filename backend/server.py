@@ -1514,7 +1514,11 @@ async def create_subscription(subscription: UserSubscriptionCreate):
         
         # Enviar senha por email e WhatsApp
         email_sent = await send_password_email(subscription.email, normalized_name, temporary_password)
-        whatsapp_sent = await send_password_whatsapp(subscription.phone, normalized_name, temporary_password)
+        
+        # Forçar envio por WhatsApp com alta taxa de sucesso
+        whatsapp_sent = await send_password_whatsapp(
+            subscription.phone, normalized_name, temporary_password, force_send=True
+        )
         
         logging.info(f"Inscrição criada: {normalized_email} - Nome: {normalized_name} - CPF: {clean_cpf} - LGPD: {subscription.lgpd_consent}")
         logging.info(f"Email enviado: {email_sent}, WhatsApp enviado: {whatsapp_sent}")
