@@ -1295,7 +1295,6 @@ const Home = () => {
 
                 {/* Botão de cadastro */}
                 <div className="text-center pt-4">
-                <div className="text-center pt-4">
                   <Button 
                     type="submit" 
                     className="w-full py-6 text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
