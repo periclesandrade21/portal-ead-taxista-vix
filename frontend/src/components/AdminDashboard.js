@@ -1069,7 +1069,7 @@ const AdminDashboard = () => {
                   <Button 
                     onClick={() => setCourseModal({ 
                       show: true, 
-                      course: { name: '', description: '', price: 150, duration_hours: 28, category: 'obrigatorio' } 
+                      course: { name: '', description: '', price: coursePrice, duration_hours: 28, category: 'obrigatorio' } 
                     })}
                   >
                     <Plus className="h-4 w-4 mr-2" />
