@@ -1637,7 +1637,24 @@ Para questões mais técnicas, também pode entrar em contato com nosso suporte 
         
         # Verificar se está perguntando sobre valores
         elif detect_value_question(chat_request.message):
-            response_text = "Os valores do treinamento serão divulgados em breve. Assim que tivermos os preços definidos, iremos comunicar através dos nossos canais oficiais. Enquanto isso, você pode se cadastrar para receber as informações assim que disponíveis!"
+            try:
+                # Buscar preço atual do curso
+                price_response = await get_default_course_price()
+                current_price = price_response.get("price", 150.0)
+                
+                response_text = f"💰 **VALOR DO CURSO EAD TAXISTA ES:**\n\n" \
+                              f"O valor atual do curso é **R$ {current_price:.2f}**\n\n" \
+                              f"📋 **O que está incluído:**\n" \
+                              f"• Relações Humanas (14h)\n" \
+                              f"• Direção Defensiva (8h)\n" \
+                              f"• Primeiros Socorros (2h)\n" \
+                              f"• Mecânica Básica (4h)\n" \
+                              f"• Certificado de conclusão\n\n" \
+                              f"💳 **Formas de pagamento:** PIX\n" \
+                              f"🎓 **Acesso liberado após confirmação do pagamento**"
+            except:
+                # Fallback para resposta padrão se houver erro
+                response_text = "Os valores do treinamento serão divulgados em breve. Assim que tivermos os preços definidos, iremos comunicar através dos nossos canais oficiais. Enquanto isso, você pode se cadastrar para receber as informações assim que disponíveis!"
         
         else:
             # Usar LLM para resposta normal
