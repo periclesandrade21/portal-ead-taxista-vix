@@ -185,6 +185,16 @@ const AdminDashboardEAD = () => {
       ];
       setDrivers(mockDrivers);
 
+      // Carregar inscrições (mock para manter compatibilidade)
+      const mockSubscriptions = mockDrivers.map(driver => ({
+        ...driver,
+        created_at: '2024-09-15T10:30:00Z',
+        payment_value: 150,
+        payment_status: driver.status === 'certified' ? 'paid' : 'pending'
+      }));
+      setSubscriptions(mockSubscriptions);
+      setUsers(mockSubscriptions);
+
       // Carregar turmas (mock)
       const mockClasses = [
         {
@@ -210,6 +220,78 @@ const AdminDashboardEAD = () => {
         }
       ];
       setCertificates(mockCertificates);
+
+      // Carregar estatísticas administrativas
+      const mockAdminStats = {
+        totalSubscriptions: mockDrivers.length,
+        totalUsers: mockDrivers.length,
+        activeUsers: mockDrivers.filter(d => d.status === 'certified').length,
+        completedUsers: mockDrivers.filter(d => d.course_progress === 100).length,
+        pendingSubscriptions: mockDrivers.filter(d => d.status === 'pending').length,
+        paidSubscriptions: mockDrivers.filter(d => d.status === 'certified').length,
+        totalRevenue: mockDrivers.filter(d => d.status === 'certified').length * 150,
+        monthlyRevenue: 2250,
+        weeklyRevenue: 750,
+        dailyRevenue: 150
+      };
+      setAdminStats(mockAdminStats);
+
+      // Carregar dados de cidades
+      const mockCities = [
+        { city: 'Vitória', total: 456, paid: 387, pending: 69, revenue: 58050 },
+        { city: 'Vila Velha', total: 423, paid: 356, pending: 67, revenue: 53400 },
+        { city: 'Serra', total: 234, paid: 198, pending: 36, revenue: 29700 },
+        { city: 'Cariacica', total: 98, paid: 78, pending: 20, revenue: 11700 },
+        { city: 'Viana', total: 36, paid: 28, pending: 8, revenue: 4200 }
+      ];
+      setCities(mockCities);
+      setCityStatsData(mockCities);
+
+      // Carregar estatísticas de pagamento
+      const mockPaymentStats = mockCities.map(city => ({
+        city: city.city,
+        paid: city.paid,
+        pending: city.pending,
+        revenue: city.revenue
+      }));
+      setPaymentStats(mockPaymentStats);
+
+      // Carregar usuários administrativos
+      const mockAdminUsers = [
+        { id: '1', username: 'admin', full_name: 'Administrador Principal', role: 'admin', created_at: '2024-01-01' },
+        { id: '2', username: 'coordenador', full_name: 'João Coordenador', role: 'coordinator', created_at: '2024-02-15' },
+        { id: '3', username: 'suporte', full_name: 'Maria Suporte', role: 'support', created_at: '2024-03-10' }
+      ];
+      setAdminUsers(mockAdminUsers);
+
+      // Carregar módulos de vídeo
+      try {
+        const modulesResponse = await fetch(`${API}/modules`);
+        if (modulesResponse.ok) {
+          const modulesData = await modulesResponse.json();
+          setModules(modulesData.modules || []);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar módulos:', error);
+      }
+
+      // Carregar cursos com preços
+      const mockCoursesWithPrices = [
+        { id: '1', title: 'Direção Defensiva', price: 50, status: 'active', enrolled: 456 },
+        { id: '2', title: 'Relações Humanas', price: 75, status: 'active', enrolled: 423 },
+        { id: '3', title: 'Primeiros Socorros', price: 30, status: 'active', enrolled: 389 },
+        { id: '4', title: 'Legislação de Trânsito', price: 45, status: 'active', enrolled: 445 },
+        { id: '5', title: 'Mecânica Básica', price: 40, status: 'active', enrolled: 234 }
+      ];
+      setCoursesWithPrices(mockCoursesWithPrices);
+
+      // Carregar descontos
+      const mockDiscounts = [
+        { id: '1', code: 'PRIMEIRA_HABILITACAO', discount: 20, type: 'percentage', active: true, usage_count: 15 },
+        { id: '2', code: 'RENOVACAO_2024', discount: 15, type: 'percentage', active: true, usage_count: 8 },
+        { id: '3', code: 'TAXISTA_ANTIGO', discount: 25, type: 'fixed', active: true, usage_count: 12 }
+      ];
+      setDiscounts(mockDiscounts);
 
       // Carregar notificações (mock)
       setNotifications([
