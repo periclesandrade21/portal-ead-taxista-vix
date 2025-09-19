@@ -579,6 +579,179 @@ const AdminDashboardEAD = () => {
               </CardContent>
             </Card>
           </TabsContent>
+
+          {/* Gestão de Motoristas */}
+          <DriversTab 
+            drivers={drivers}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            dateFilter={dateFilter}
+            setDateFilter={setDateFilter}
+            filteredDrivers={filteredDrivers}
+            setDriverModal={setDriverModal}
+            getStatusBadge={getStatusBadge}
+            getDocumentStatusBadge={getDocumentStatusBadge}
+            handleGenerateCertificate={handleGenerateCertificate}
+            selectedDrivers={selectedDrivers}
+            setSelectedDrivers={setSelectedDrivers}
+          />
+
+          {/* Gestão de Cursos */}
+          <CoursesTab courses={courses} setCourses={setCourses} />
+
+          {/* Gestão de Turmas */}
+          <ClassesTab 
+            classes={classes}
+            setClassModal={setClassModal}
+            classModal={classModal}
+            setClasses={setClasses}
+          />
+
+          {/* Certificados */}
+          <CertificatesTab 
+            certificates={certificates}
+            drivers={drivers}
+            handleGenerateCertificate={handleGenerateCertificate}
+          />
+
+          {/* Relatórios */}
+          <ReportsTab 
+            reportFilters={reportFilters}
+            setReportFilters={setReportFilters}
+            exportReport={exportReport}
+          />
+
+          {/* Comunicação */}
+          <CommunicationTab 
+            messageModal={messageModal}
+            setMessageModal={setMessageModal}
+            handleSendNotification={handleSendNotification}
+            drivers={drivers}
+            notifications={notifications}
+          />
+
+          {/* Configurações */}
+          <SettingsTab />
+
+          {/* Modal de Novo Motorista */}
+          {driverModal.show && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                <h3 className="text-lg font-semibold mb-4">Novo Motorista</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="driver-name">Nome Completo</Label>
+                    <Input
+                      id="driver-name"
+                      value={driverModal.driver.name}
+                      onChange={(e) => setDriverModal(prev => ({
+                        ...prev,
+                        driver: { ...prev.driver, name: e.target.value }
+                      }))}
+                      placeholder="Nome completo do motorista"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="driver-cpf">CPF</Label>
+                    <Input
+                      id="driver-cpf"
+                      value={driverModal.driver.cpf}
+                      onChange={(e) => setDriverModal(prev => ({
+                        ...prev,
+                        driver: { ...prev.driver, cpf: e.target.value }
+                      }))}
+                      placeholder="000.000.000-00"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="driver-cnh">CNH</Label>
+                    <Input
+                      id="driver-cnh"
+                      value={driverModal.driver.cnh}
+                      onChange={(e) => setDriverModal(prev => ({
+                        ...prev,
+                        driver: { ...prev.driver, cnh: e.target.value }
+                      }))}
+                      placeholder="Número da CNH"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="driver-license">Número do Alvará</Label>
+                    <Input
+                      id="driver-license"
+                      value={driverModal.driver.license_number}
+                      onChange={(e) => setDriverModal(prev => ({
+                        ...prev,
+                        driver: { ...prev.driver, license_number: e.target.value }
+                      }))}
+                      placeholder="TAX001"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="driver-city">Cidade</Label>
+                    <select 
+                      id="driver-city"
+                      className="w-full p-2 border rounded-lg"
+                      value={driverModal.driver.city}
+                      onChange={(e) => setDriverModal(prev => ({
+                        ...prev,
+                        driver: { ...prev.driver, city: e.target.value }
+                      }))}
+                    >
+                      <option value="">Selecione a cidade</option>
+                      <option value="Vitória">Vitória</option>
+                      <option value="Vila Velha">Vila Velha</option>
+                      <option value="Serra">Serra</option>
+                      <option value="Cariacica">Cariacica</option>
+                      <option value="Viana">Viana</option>
+                    </select>
+                  </div>
+                  <div>
+                    <Label htmlFor="driver-phone">Telefone</Label>
+                    <Input
+                      id="driver-phone"
+                      value={driverModal.driver.phone}
+                      onChange={(e) => setDriverModal(prev => ({
+                        ...prev,
+                        driver: { ...prev.driver, phone: e.target.value }
+                      }))}
+                      placeholder="(27) 99999-0000"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label htmlFor="driver-email">Email</Label>
+                    <Input
+                      id="driver-email"
+                      type="email"
+                      value={driverModal.driver.email}
+                      onChange={(e) => setDriverModal(prev => ({
+                        ...prev,
+                        driver: { ...prev.driver, email: e.target.value }
+                      }))}
+                      placeholder="email@exemplo.com"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2 mt-6">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setDriverModal({ 
+                      show: false, 
+                      driver: {
+                        name: '', cpf: '', cnh: '', license_number: '', city: '', phone: '', email: '', photo: null,
+                        status: 'pending', course_progress: 0, documents_status: 'pending'
+                      }
+                    })}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button onClick={handleCreateDriver}>
+                    Cadastrar Motorista
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </Tabs>
       </div>
     </div>
