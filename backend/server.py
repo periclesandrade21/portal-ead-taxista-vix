@@ -903,17 +903,21 @@ async def create_subscription(subscription: UserSubscriptionCreate):
                 detail="Formato de alvará inválido. Use formatos como: TA-12345, TAX-2023-1234, T-1234567 ou apenas números"
             )
         
-        # Verificar duplicidades (incluindo CPF)
-        duplicates = await check_duplicate_registration(db, subscription.name, subscription.email, subscription.cpf)
+        # Verificar duplicidades (incluindo todos os campos)
+        duplicates = await check_duplicate_registration(
+            db, 
+            subscription.name, 
+            subscription.email, 
+            subscription.cpf,
+            subscription.phone,
+            subscription.carPlate,
+            subscription.licenseNumber
+        )
         
         if duplicates:
             error_messages = []
-            if duplicates.get("email"):
-                error_messages.append("Email já cadastrado no sistema")
-            if duplicates.get("cpf"):
-                error_messages.append("CPF já cadastrado no sistema")
-            if duplicates.get("name"):
-                error_messages.append("Nome já cadastrado no sistema")
+            for field, info in duplicates.items():
+                error_messages.append(f"{info['field']} já cadastrado para {info['existing_user']}")
             
             raise HTTPException(
                 status_code=400, 
