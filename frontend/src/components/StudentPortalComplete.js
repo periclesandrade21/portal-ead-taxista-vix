@@ -14,6 +14,14 @@ import {
   Volume2, Settings, CreditCard, Receipt, GraduationCap, Shield, Bell, Home, LogOut, Camera
 } from 'lucide-react';
 import axios from 'axios';
+import { 
+  ContentTab, 
+  GradesTab, 
+  CalendarTab, 
+  SupportTab, 
+  FinancialTab, 
+  ProfileTab 
+} from './StudentPortalTabs';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
