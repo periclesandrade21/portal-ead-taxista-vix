@@ -61,6 +61,23 @@ const Home = () => {
   const [lgpdConsent, setLgpdConsent] = useState(false);
   const [privacyPolicyModal, setPrivacyPolicyModal] = useState(false);
 
+  // Buscar preço do curso ao carregar componente
+  useEffect(() => {
+    const fetchCoursePrice = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/api/courses/default/price`);
+        if (response.data && response.data.price) {
+          setCoursePrice(response.data.price);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar preço do curso:', error);
+        // Manter valor padrão de 150 em caso de erro
+      }
+    };
+
+    fetchCoursePrice();
+  }, []);
+
   // Função de geolocalização
   const detectUserLocation = async () => {
     setIsDetectingLocation(true);
