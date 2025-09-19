@@ -40,6 +40,20 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const Home = () => {
+  const [showNewRegistration, setShowNewRegistration] = useState(false);
+
+  const handleRegistrationComplete = (registrationData) => {
+    console.log('Registration completed:', registrationData);
+    // Redirect to student portal or show success message
+    setShowNewRegistration(false);
+    alert('🎉 Cadastro concluído com sucesso! Você já pode acessar o curso.');
+  };
+
+  if (showNewRegistration) {
+    return (
+      <MultiStepRegistration onRegistrationComplete={handleRegistrationComplete} />
+    );
+  }
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
