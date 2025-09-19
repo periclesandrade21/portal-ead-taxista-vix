@@ -24,7 +24,10 @@ export const SubscriptionsTab = ({
   setSearchTerm,
   dateFilter,
   setDateFilter,
-  handleDeleteUser
+  handleDeleteUser,
+  handleApplyDiscount,
+  handleResetStudentPassword,
+  handleClearFields
 }) => (
   <TabsContent value="subscriptions" className="space-y-4">
     <Card>
@@ -34,7 +37,7 @@ export const SubscriptionsTab = ({
           Gestão de Inscrições
         </CardTitle>
         <CardDescription>
-          Visualização e gerenciamento de todas as inscrições no sistema
+          Visualização e gerenciamento de todas as inscrições no sistema - Descontos, Doações e Reset de Senhas
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -93,6 +96,13 @@ export const SubscriptionsTab = ({
                       <span>🏙️ {subscription.city}</span>
                       <span>🚗 {subscription.license_number}</span>
                     </div>
+                    {subscription.discount_applied && (
+                      <div className="mt-1">
+                        <Badge variant="secondary" className="bg-green-100 text-green-800">
+                          💰 Desconto: {subscription.discount_type === 'percentage' ? `${subscription.discount_value}%` : `R$ ${subscription.discount_value}`}
+                        </Badge>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
@@ -104,19 +114,57 @@ export const SubscriptionsTab = ({
                     >
                       {subscription.payment_status === 'paid' ? '✅ Pago' : '⏳ Pendente'}
                     </Badge>
-                    <p className="text-sm text-gray-500 mt-1">R$ {subscription.payment_value || '150,00'}</p>
+                    <p className="text-sm text-gray-500 mt-1">
+                      {subscription.discount_applied ? (
+                        <>
+                          <span className="line-through text-gray-400">R$ 150,00</span>
+                          <span className="ml-2 font-bold text-green-600">R$ {subscription.final_price || '0,00'}</span>
+                        </>
+                      ) : (
+                        `R$ ${subscription.payment_value || '150,00'}`
+                      )}
+                    </p>
                   </div>
-                  <div className="flex space-x-2">
-                    <Button size="sm" variant="outline">
+                  <div className="flex flex-wrap gap-2">
+                    <Button size="sm" variant="outline" title="Visualizar">
                       <Eye className="h-4 w-4" />
                     </Button>
-                    <Button size="sm" variant="outline">
+                    <Button size="sm" variant="outline" title="Editar">
                       <Edit className="h-4 w-4" />
                     </Button>
                     <Button 
                       size="sm" 
                       variant="outline"
+                      title="Aplicar Desconto/Doação"
+                      onClick={() => handleApplyDiscount(subscription.id)}
+                      className="text-green-600 hover:text-green-700"
+                    >
+                      <Gift className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      title="Reset de Senha"
+                      onClick={() => handleResetStudentPassword(subscription.id)}
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      <Key className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      title="Limpar Campos"
+                      onClick={() => handleClearFields(subscription.id)}
+                      className="text-purple-600 hover:text-purple-700"
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      title="Excluir"
                       onClick={() => handleDeleteUser(subscription.id)}
+                      className="text-red-600 hover:text-red-700"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
