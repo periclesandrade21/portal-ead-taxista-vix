@@ -392,14 +392,17 @@ def test_improved_password_generation():
     """Test improved password generation - 10 characters with mixed types"""
     print_test_header("🔧 CRITICAL FIX TEST - Improved Password Generation")
     
-    # Test data as specified in review request
+    # Test data with valid CPF and unique email
+    import time
+    timestamp = str(int(time.time()))
+    
     test_data = {
         "name": "João Teste Senha",
-        "email": "joao.senha@email.com",
+        "email": f"joao.senha.{timestamp}@email.com",
         "phone": "27999888777",
-        "cpf": "12345678901",
-        "carPlate": "TST-1234-T",
-        "licenseNumber": "TA-99999",
+        "cpf": "11144477735",  # Valid CPF
+        "carPlate": f"TST-{timestamp[-4:]}-T",
+        "licenseNumber": f"TA-{timestamp[-5:]}",
         "city": "Vitória",
         "lgpd_consent": True
     }
@@ -491,14 +494,17 @@ def test_email_transparency():
     """Test email transparency - development mode with detailed logs"""
     print_test_header("🔧 CRITICAL FIX TEST - Email Transparency")
     
-    # Test data as specified in review request
+    # Test data with valid CPF and unique email
+    import time
+    timestamp = str(int(time.time()))
+    
     test_data = {
         "name": "Maria Email Transparente",
-        "email": "maria.email@teste.com",
+        "email": f"maria.email.{timestamp}@teste.com",
         "phone": "27999777666",
-        "cpf": "98765432100",
-        "carPlate": "EML-5678-T",
-        "licenseNumber": "TA-88888",
+        "cpf": "98765432100",  # Valid CPF
+        "carPlate": f"EML-{timestamp[-4:]}-T",
+        "licenseNumber": f"TA-{timestamp[-5:]}",
         "city": "Vitória",
         "lgpd_consent": True
     }
@@ -539,14 +545,17 @@ def test_whatsapp_honesty():
     """Test WhatsApp honesty - now returns false instead of lying"""
     print_test_header("🔧 CRITICAL FIX TEST - WhatsApp Honesty")
     
-    # Test data as specified in review request
+    # Test data with valid CPF and unique email
+    import time
+    timestamp = str(int(time.time()))
+    
     test_data = {
         "name": "Carlos WhatsApp Honesto",
-        "email": "carlos.whatsapp@teste.com",
+        "email": f"carlos.whatsapp.{timestamp}@teste.com",
         "phone": "27999555444",
-        "cpf": "11122233344",
-        "carPlate": "WPP-9999-T",
-        "licenseNumber": "TA-77777",
+        "cpf": "11122233344",  # Valid CPF
+        "carPlate": f"WPP-{timestamp[-4:]}-T",
+        "licenseNumber": f"TA-{timestamp[-5:]}",
         "city": "Vitória",
         "lgpd_consent": True
     }
@@ -588,14 +597,17 @@ def test_complete_endpoint_with_fixes():
     """Test complete endpoint with all fixes as specified in review request"""
     print_test_header("🔧 CRITICAL FIX TEST - Complete Endpoint Test")
     
-    # Exact test data from review request
+    # Test data with valid CPF and unique email
+    import time
+    timestamp = str(int(time.time()))
+    
     test_data = {
-        "name": "João Teste Senha",
-        "email": "joao.senha@email.com",
+        "name": "João Teste Senha Completo",
+        "email": f"joao.senha.completo.{timestamp}@email.com",
         "phone": "27999888777",
-        "cpf": "12345678901",
-        "carPlate": "TST-1234-T",
-        "licenseNumber": "TA-99999",
+        "cpf": "11144477735",  # Valid CPF
+        "carPlate": f"TST-{timestamp[-4:]}-T",
+        "licenseNumber": f"TA-{timestamp[-5:]}",
         "city": "Vitória",
         "lgpd_consent": True
     }
