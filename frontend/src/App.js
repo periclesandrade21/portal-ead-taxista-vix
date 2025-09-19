@@ -123,6 +123,44 @@ const Home = () => {
     
     return emailRegex.test(email.trim());
   };
+
+  // Validação robusta de nomes brasileiros
+  const validateName = (name) => {
+    if (!name || !name.trim()) return false;
+    
+    const trimmedName = name.trim();
+    
+    // Verificações básicas
+    if (trimmedName.length < 2 || trimmedName.length > 60) return false;
+    
+    // Deve conter apenas letras, espaços, hífens e acentos
+    if (!/^[A-Za-zÀ-ÿ\s\'-]+$/.test(trimmedName)) return false;
+    
+    // Deve ter pelo menos nome e sobrenome
+    const parts = trimmedName.split(/\s+/);
+    if (parts.length < 2) return false;
+    
+    // Cada parte deve ter pelo menos 2 caracteres
+    for (const part of parts) {
+      if (part.length < 2) return false;
+    }
+    
+    // Verificar palavras proibidas
+    const forbiddenWords = [
+      'teste', 'test', 'admin', 'usuario', 'user', 'fake', 'falso', 
+      'exemplo', 'example', 'aaa', 'bbb', 'ccc', '123', 'abc', 'xyz'
+    ];
+    
+    const nameLower = trimmedName.toLowerCase();
+    for (const word of forbiddenWords) {
+      if (nameLower.includes(word)) return false;
+    }
+    
+    // Verificar repetições excessivas
+    if (/(.)\1{3,}/.test(trimmedName)) return false;
+    
+    return true;
+  };
   const validateTaxiPlate = (plate) => {
     if (!plate) return false;
     
