@@ -65,6 +65,15 @@ class UserSubscriptionCreate(BaseModel):
     licenseNumber: Optional[str] = None
     city: Optional[str] = None
 
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+class LoginResponse(BaseModel):
+    success: bool
+    message: str
+    user: Optional[dict] = None
+
 class PasswordSentResponse(BaseModel):
     message: str
     password_sent_email: bool
