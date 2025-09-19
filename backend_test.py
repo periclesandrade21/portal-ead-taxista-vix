@@ -4944,7 +4944,8 @@ def test_video_creation_with_youtube():
             print_error("Cannot get modules for video creation test")
             return False
         
-        modules = modules_response.json()
+        data = modules_response.json()
+        modules = data.get('modules', []) if isinstance(data, dict) else data
         if not modules:
             print_error("No modules available for video creation test")
             return False
