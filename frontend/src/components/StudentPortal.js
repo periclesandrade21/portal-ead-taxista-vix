@@ -93,52 +93,7 @@ const StudentPortal = () => {
     license_number: ''
   });
 
-  // Função para determinar o status dos módulos baseado no status do usuário
-  const getModuleStatus = (moduleId) => {
-    if (!userInfo) return 'locked';
-    
-    // Se usuário tem status paid ou active, liberar acesso aos módulos
-    if (userInfo.status === 'paid' || userInfo.status === 'active') {
-      return 'available'; // ou 'active' se preferir
-    }
-    
-    return 'locked';
-  };
 
-  const modules = [
-    {
-      id: 1,
-      title: 'Relações Humanas',
-      duration: '14h',
-      progress: 0,
-      status: getModuleStatus(1),
-      description: 'Imagem do taxista na sociedade, condições físicas e emocionais'
-    },
-    {
-      id: 2,
-      title: 'Direção Defensiva',
-      duration: '8h',
-      progress: 0,
-      status: getModuleStatus(2),
-      description: 'Conceitos de direção defensiva e prevenção de acidentes'
-    },
-    {
-      id: 3,
-      title: 'Primeiros Socorros',
-      duration: '2h',
-      progress: 0,
-      status: getModuleStatus(3),
-      description: 'Procedimentos de emergência e cuidados básicos'
-    },
-    {
-      id: 4,
-      title: 'Mecânica Básica',
-      duration: '4h',
-      progress: 0,
-      status: getModuleStatus(4),
-      description: 'Funcionamento do motor e manutenção preventiva'
-    }
-  ];
 
   const handleLogin = async (e) => {
     e.preventDefault();
