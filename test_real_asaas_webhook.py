@@ -146,12 +146,23 @@ def test_real_asaas_webhook_production_data():
                     subscriptions = subscriptions_response.json()
                     updated_user = None
                     
-                    # Look for user with the payment metadata
-                    for sub in subscriptions:
-                        if (sub.get('payment_id') == real_webhook_data['payment']['id'] or
-                            sub.get('asaas_customer_id') == real_webhook_data['payment']['customer']):
-                            updated_user = sub
-                            break
+                    # First, look for the specific user mentioned in the webhook response
+                    webhook_email = data.get('email', '')
+                    if webhook_email:
+                        for sub in subscriptions:
+                            if sub.get('email') == webhook_email:
+                                updated_user = sub
+                                print_info(f"Found user by email from webhook response: {webhook_email}")
+                                break
+                    
+                    # If not found by email, look for user with the payment metadata
+                    if not updated_user:
+                        for sub in subscriptions:
+                            if (sub.get('payment_id') == real_webhook_data['payment']['id'] or
+                                sub.get('asaas_customer_id') == real_webhook_data['payment']['customer']):
+                                updated_user = sub
+                                print_info(f"Found user by payment metadata")
+                                break
                     
                     if updated_user:
                         print_success("✅ Found user with webhook metadata in database")
