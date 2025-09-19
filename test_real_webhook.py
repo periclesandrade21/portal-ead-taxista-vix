@@ -51,7 +51,7 @@ def test_real_asaas_webhook_production_data():
         "name": f"Webhook Test User {timestamp}",
         "email": f"webhook.test.{timestamp}@email.com",
         "phone": f"2799{timestamp[-7:]}",  # Unique phone
-        "cpf": "12345678901",  # Simple valid CPF for testing
+        "cpf": "11144477735",  # Valid CPF for testing
         "carPlate": f"WHK-{timestamp[-4:]}-T",
         "licenseNumber": f"TA-{timestamp[-5:]}",
         "city": "Vitória",
