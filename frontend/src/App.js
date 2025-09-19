@@ -798,7 +798,10 @@ const Home = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
-                  onClick={() => setShowNewRegistration(true)}
+                  onClick={() => {
+                    console.log('Button clicked! Setting showNewRegistration to true');
+                    setShowNewRegistration(true);
+                  }}
                   className="px-8 py-4 text-lg bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-semibold rounded-lg shadow-lg transform transition hover:scale-105"
                 >
                   <Car className="mr-2 h-6 w-6" />
