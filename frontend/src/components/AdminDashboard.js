@@ -214,17 +214,62 @@ const AdminDashboard = () => {
     }
   };
 
-  // Função para excluir usuário
-  const deleteUser = async () => {
+  const handleDeleteUser = async (userId) => {
     try {
-      await axios.delete(`${API}/subscriptions/${deleteModal.user.id}`);
-      await fetchAdminData();
+      await axios.delete(`${API}/subscriptions/${userId}`);
+      
+      // Atualizar lista local
+      setSubscriptions(subscriptions.filter(sub => sub.id !== userId));
       setDeleteModal({ show: false, user: null });
-      alert('Usuário excluído com sucesso!');
+      
+      // Mostrar confirmação
+      alert('✅ Usuário excluído com sucesso!');
+      
+      // Recarregar dados para atualizar estatísticas
+      await fetchAdminData();
+      
     } catch (error) {
       console.error('Erro ao excluir usuário:', error);
-      alert('Erro ao excluir usuário');
+      alert('❌ Erro ao excluir usuário. Tente novamente.');
     }
+  };
+
+  // Funções para gestão de cursos
+  const handleCreateCourse = async () => {
+    try {
+      const response = await axios.post(`${API}/courses`, courseModal.course);
+      setCourses([...courses, response.data]);
+      setCourseModal({ 
+        show: false, 
+        course: { name: '', description: '', price: 0, duration_hours: 0, category: 'obrigatorio' } 
+      });
+      alert('✅ Curso criado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao criar curso:', error);
+      alert('❌ Erro ao criar curso. Tente novamente.');
+    }
+  };
+
+  // Filtros para cidade
+  const getFilteredCityStats = () => {
+    if (cityFilter === 'all') {
+      return cityStats;
+    }
+    return cityStats.filter(city => 
+      city.city.toLowerCase().includes(cityFilter.toLowerCase())
+    );
+  };
+
+  // Obter dados do gráfico de cidades
+  const getCityChartData = () => {
+    const filteredStats = getFilteredCityStats();
+    return filteredStats.map(city => ({
+      name: city.city,
+      total: city.total,
+      paid: city.paid,
+      pending: city.pending,
+      color: city.paid > city.pending ? '#10B981' : '#EF4444'
+    }));
   };
 
   // Função para carregar dados de região (simulado)
