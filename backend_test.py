@@ -894,13 +894,36 @@ def run_all_tests():
     test_results['payment_verification'] = test_payment_verification(test_email)
     test_results['subscription_status_check'] = test_subscription_status_after_webhook(test_email)
     
+    # Run CRITICAL SECURITY AUTHENTICATION TESTS
+    print(f"\n{Colors.BOLD}{Colors.RED}{'='*60}{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.RED}🚨 CRITICAL SECURITY AUTHENTICATION TESTS 🚨{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.RED}{'='*60}{Colors.ENDC}")
+    
+    # Create test user for authentication tests
+    test_user = create_test_user_for_auth()
+    
+    # Run security tests
+    test_results['auth_endpoint_exists'] = test_auth_endpoint_exists()
+    test_results['auth_invalid_email'] = test_auth_invalid_email()
+    test_results['auth_incorrect_password'] = test_auth_incorrect_password(test_user)
+    test_results['auth_pending_payment'] = test_auth_pending_payment(test_user)
+    
+    # Update test user to paid status and test valid authentication
+    if test_user and update_test_user_to_paid(test_user):
+        test_results['auth_valid_paid_user'] = test_auth_valid_paid_user(test_user)
+    else:
+        test_results['auth_valid_paid_user'] = False
+        print_error("Could not test valid paid user authentication")
+    
     # Print summary
     print_test_header("TEST SUMMARY")
     
-    # Separate chat bot and payment flow results
+    # Separate test categories
     chat_tests = ['health_check', 'existing_endpoints', 'chat_normal', 'chat_values', 'chat_password_reset', 
                   'chat_history', 'password_reset_endpoint', 'llm_integration', 'session_isolation']
     payment_tests = ['subscription_creation', 'asaas_webhook', 'payment_verification', 'subscription_status_check']
+    security_tests = ['auth_endpoint_exists', 'auth_invalid_email', 'auth_incorrect_password', 
+                     'auth_pending_payment', 'auth_valid_paid_user']
     
     print(f"{Colors.BOLD}CHAT BOT SYSTEM TESTS:{Colors.ENDC}")
     chat_passed = 0
@@ -924,12 +947,38 @@ def run_all_tests():
             if result:
                 payment_passed += 1
     
+    print(f"\n{Colors.BOLD}{Colors.RED}🚨 CRITICAL SECURITY AUTHENTICATION TESTS:{Colors.ENDC}")
+    security_passed = 0
+    security_failed = []
+    for test_name in security_tests:
+        if test_name in test_results:
+            result = test_results[test_name]
+            status = "PASS" if result else "FAIL"
+            color = Colors.GREEN if result else Colors.RED
+            print(f"{color}{status:>6}{Colors.ENDC} - {test_name.replace('_', ' ').title()}")
+            if result:
+                security_passed += 1
+            else:
+                security_failed.append(test_name)
+    
     total_passed = sum(1 for result in test_results.values() if result)
     total_tests = len(test_results)
     
     print(f"\n{Colors.BOLD}OVERALL RESULT: {total_passed}/{total_tests} tests passed{Colors.ENDC}")
     print(f"{Colors.BOLD}Chat Bot System: {chat_passed}/{len(chat_tests)} tests passed{Colors.ENDC}")
     print(f"{Colors.BOLD}Payment Flow: {payment_passed}/{len(payment_tests)} tests passed{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.RED}🚨 Security Tests: {security_passed}/{len(security_tests)} tests passed{Colors.ENDC}")
+    
+    # Critical security assessment
+    if security_passed == len(security_tests):
+        print_success("🔒 SECURITY ASSESSMENT: ALL CRITICAL SECURITY TESTS PASSED!")
+        print_success("✅ Authentication system is working correctly and securely")
+    else:
+        print_error("🚨 CRITICAL SECURITY ISSUES DETECTED!")
+        print_error(f"❌ {len(security_failed)} security tests failed:")
+        for failed_test in security_failed:
+            print_error(f"   - {failed_test.replace('_', ' ').title()}")
+        print_error("⚠️  IMMEDIATE ATTENTION REQUIRED!")
     
     if total_passed == total_tests:
         print_success("All tests passed! Complete system is working correctly.")
