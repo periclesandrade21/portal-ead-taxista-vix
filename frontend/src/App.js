@@ -1293,31 +1293,8 @@ const Home = () => {
                   </div>
                 </div>
 
-                {/* Botão Verificar Duplicatas */}
-                <div className="text-center mb-6">
-                  <Button
-                    type="button"
-                    onClick={checkDuplicates}
-                    disabled={isCheckingDuplicates}
-                    className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3"
-                  >
-                    {isCheckingDuplicates ? (
-                      <div className="flex items-center">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Verificando...
-                      </div>
-                    ) : (
-                      <>
-                        🔍 Verificar Dados Duplicados
-                      </>
-                    )}
-                  </Button>
-                  <p className="text-xs text-gray-500 mt-2">
-                    Recomendado: Verifique se seus dados já não estão cadastrados
-                  </p>
-                </div>
-
-                {/* Botão de envio melhorado */}
+                {/* Botão de cadastro */}
+                <div className="text-center pt-4">
                 <div className="text-center pt-4">
                   <Button 
                     type="submit" 
