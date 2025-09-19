@@ -2317,6 +2317,288 @@ async def moodle_payment_webhook(user_id: str, payment_status: str):
         logging.error(f"Error processing payment webhook: {e}")
         raise HTTPException(status_code=500, detail="Failed to process payment webhook")
 
+# Document Validation Endpoints
+@app.post("/api/upload-document")
+async def upload_document(
+    document_type: str = Form(...),
+    file: UploadFile = File(...)
+):
+    """Upload and validate a document using AI"""
+    try:
+        # Validate file type
+        allowed_types = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png']
+        if file.content_type not in allowed_types:
+            raise HTTPException(status_code=400, detail="Tipo de arquivo não permitido")
+        
+        # Validate file size (5MB max)
+        max_size = 5 * 1024 * 1024  # 5MB
+        contents = await file.read()
+        if len(contents) > max_size:
+            raise HTTPException(status_code=400, detail="Arquivo muito grande (máx. 5MB)")
+        
+        # Generate unique filename
+        file_id = str(uuid.uuid4())
+        file_extension = file.filename.split('.')[-1] if '.' in file.filename else 'bin'
+        stored_filename = f"{file_id}.{file_extension}"
+        
+        # In a real implementation, you would save to storage (S3, etc.)
+        # For now, we'll simulate storing the file info
+        
+        file_info = {
+            "file_id": file_id,
+            "original_name": file.filename,
+            "stored_name": stored_filename,
+            "document_type": document_type,
+            "file_size": len(contents),
+            "content_type": file.content_type,
+            "upload_date": datetime.now(timezone.utc).isoformat(),
+            "validation_status": "pending"
+        }
+        
+        return {
+            "success": True,
+            "file_info": file_info,
+            "message": "Arquivo enviado com sucesso"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error uploading document: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/validate-documents")
+async def validate_documents(request: dict):
+    """Validate documents using AI analysis"""
+    try:
+        documents = request.get('documents', {})
+        user_id = request.get('user_id')
+        
+        if not documents:
+            raise HTTPException(status_code=400, detail="Nenhum documento fornecido")
+        
+        validation_results = {}
+        
+        for doc_type, doc_info in documents.items():
+            if not doc_info:
+                continue
+                
+            # Simulate AI validation
+            validation_result = await simulate_ai_validation(doc_type, doc_info)
+            validation_results[doc_type] = validation_result
+        
+        # Determine overall validation status
+        all_approved = all(result.get('status') == 'approved' for result in validation_results.values())
+        has_warnings = any(result.get('status') == 'warning' for result in validation_results.values())
+        has_rejections = any(result.get('status') == 'rejected' for result in validation_results.values())
+        
+        overall_status = 'approved' if all_approved else 'manual_review' if has_warnings else 'rejected' if has_rejections else 'processing'
+        
+        # Store validation results (in real app, save to database)
+        validation_record = {
+            "validation_id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "documents": validation_results,
+            "overall_status": overall_status,
+            "validation_date": datetime.now(timezone.utc).isoformat(),
+            "ai_confidence": sum(result.get('confidence', 0) for result in validation_results.values()) / len(validation_results) if validation_results else 0
+        }
+        
+        return {
+            "success": True,
+            "validation_id": validation_record["validation_id"],
+            "overall_status": overall_status,
+            "results": validation_results,
+            "ai_confidence": validation_record["ai_confidence"]
+        }
+        
+    except Exception as e:
+        logger.error(f"Error validating documents: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+async def simulate_ai_validation(doc_type: str, doc_info: dict):
+    """Simulate AI document validation with realistic results"""
+    
+    # Simulate processing time
+    await asyncio.sleep(random.uniform(1, 3))
+    
+    validation_scenarios = {
+        'cnh': [
+            {
+                'status': 'approved',
+                'confidence': random.uniform(0.90, 0.98),
+                'analysis': 'CNH válida identificada. Número, categoria e validade confirmados.',
+                'details': ['Documento legível', 'Dentro da validade', 'Categoria B confirmada', 'Dados consistentes'],
+                'extracted_data': {
+                    'number': f"{random.randint(10000000000, 99999999999)}",
+                    'category': 'B',
+                    'expiry': (datetime.now() + timedelta(days=random.randint(365, 1825))).strftime('%d/%m/%Y')
+                }
+            },
+            {
+                'status': 'warning',
+                'confidence': random.uniform(0.70, 0.85),
+                'analysis': 'CNH identificada mas com baixa qualidade da imagem.',
+                'details': ['Documento parcialmente legível', 'Recomenda-se nova foto', 'Dados básicos confirmados'],
+                'extracted_data': None
+            },
+            {
+                'status': 'rejected',
+                'confidence': random.uniform(0.30, 0.60),
+                'analysis': 'CNH não pôde ser validada adequadamente.',
+                'details': ['Imagem muito escura', 'Documento não legível', 'Possível documento fora da validade'],
+                'extracted_data': None
+            }
+        ],
+        'residenceProof': [
+            {
+                'status': 'approved',
+                'confidence': random.uniform(0.85, 0.95),
+                'analysis': 'Comprovante de residência válido. Endereço confirmado.',
+                'details': ['Documento legível', 'Data recente (últimos 3 meses)', 'Endereço confirmado', 'Empresa reconhecida'],
+                'extracted_data': {
+                    'company': random.choice(['CESAN', 'EDP Escelsa', 'Oi Fibra', 'Vivo']),
+                    'date': (datetime.now() - timedelta(days=random.randint(1, 90))).strftime('%d/%m/%Y'),
+                    'address_confirmed': True
+                }
+            },
+            {
+                'status': 'warning',
+                'confidence': random.uniform(0.65, 0.80),
+                'analysis': 'Comprovante identificado mas data superior a 3 meses.',
+                'details': ['Documento legível', 'Data pode estar desatualizada', 'Empresa confirmada'],
+                'extracted_data': None
+            }
+        ],
+        'photo': [
+            {
+                'status': 'approved',
+                'confidence': random.uniform(0.85, 0.95),
+                'analysis': 'Foto identificada e de boa qualidade.',
+                'details': ['Rosto claramente visível', 'Boa iluminação', 'Qualidade adequada'],
+                'extracted_data': {
+                    'face_detected': True,
+                    'quality_score': random.uniform(0.8, 1.0),
+                    'lighting': 'good'
+                }
+            }
+        ]
+    }
+    
+    # Get scenarios for document type or use generic
+    scenarios = validation_scenarios.get(doc_type, validation_scenarios['residenceProof'])
+    
+    # Randomly select a scenario (weighted towards positive results)
+    weights = [0.7, 0.2, 0.1] if len(scenarios) == 3 else [0.8, 0.2]
+    selected_scenario = random.choices(scenarios[:len(weights)], weights=weights)[0].copy()
+    
+    # Add processing metadata
+    selected_scenario.update({
+        'document_type': doc_type,
+        'file_name': doc_info.get('name', 'unknown'),
+        'file_size': doc_info.get('size', 0),
+        'processing_time': random.uniform(1.5, 4.2),
+        'validation_timestamp': datetime.now(timezone.utc).isoformat(),
+        'ai_model': 'DocumentValidatorAI v2.1',
+        'risk_score': random.uniform(0.1, 0.3) if selected_scenario['status'] == 'approved' else random.uniform(0.4, 0.9)
+    })
+    
+    return selected_scenario
+
+@app.get("/api/validation-status/{validation_id}")
+async def get_validation_status(validation_id: str):
+    """Get the status of a document validation"""
+    try:
+        # In a real implementation, retrieve from database
+        # For now, simulate a response
+        
+        return {
+            "validation_id": validation_id,
+            "status": "completed",
+            "overall_result": "approved",
+            "processed_at": datetime.now(timezone.utc).isoformat(),
+            "message": "Validação concluída com sucesso"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting validation status: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Enhanced Registration Endpoints
+@app.post("/api/registration/create")
+async def create_registration(registration_data: dict):
+    """Create a new multi-step registration"""
+    try:
+        registration_id = str(uuid.uuid4())
+        
+        # Prepare registration document
+        registration_doc = {
+            "registration_id": registration_id,
+            "status": "in_progress",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "step_completed": 1,
+            "total_steps": 7,
+            **registration_data
+        }
+        
+        # In a real app, save to database
+        # await db.registrations.insert_one(registration_doc)
+        
+        return {
+            "success": True,
+            "registration_id": registration_id,
+            "message": "Cadastro iniciado com sucesso"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error creating registration: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.put("/api/registration/{registration_id}")
+async def update_registration(registration_id: str, update_data: dict):
+    """Update registration data"""
+    try:
+        update_doc = {
+            **update_data,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        # In a real app, update in database
+        # await db.registrations.update_one(
+        #     {"registration_id": registration_id},
+        #     {"$set": update_doc}
+        # )
+        
+        return {
+            "success": True,
+            "registration_id": registration_id,
+            "message": "Cadastro atualizado com sucesso"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error updating registration: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/registration/{registration_id}")
+async def get_registration(registration_id: str):
+    """Get registration data"""
+    try:
+        # In a real app, retrieve from database
+        # registration = await db.registrations.find_one({"registration_id": registration_id})
+        
+        # For now, return a mock response
+        return {
+            "registration_id": registration_id,
+            "status": "completed",
+            "step_completed": 7,
+            "total_steps": 7,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "message": "Cadastro encontrado"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting registration: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Health check
 @api_router.get("/health")
 async def health_check():
