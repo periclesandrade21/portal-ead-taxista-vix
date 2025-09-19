@@ -157,6 +157,9 @@ class PasswordResetRequest(BaseModel):
     email: EmailStr
     contact_method: str  # "email" only now (removed SMS)
 
+class ResetPasswordAdminRequest(BaseModel):
+    newPassword: str
+
 class PasswordResetResponse(BaseModel):
     message: str
     status: str
