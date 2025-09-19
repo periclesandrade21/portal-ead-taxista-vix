@@ -2012,7 +2012,7 @@ def run_all_tests():
     critical_fix_tests = ['improved_password', 'email_transparency', 'whatsapp_honesty', 'complete_endpoint_fixes']
     chat_tests = ['health_check', 'existing_endpoints', 'chat_normal', 'chat_values', 'chat_password_reset', 
                   'chat_history', 'password_reset_endpoint', 'llm_integration', 'session_isolation']
-    payment_tests = ['subscription_creation', 'asaas_webhook', 'payment_verification', 'subscription_status_check']
+    payment_tests = ['subscription_creation', 'asaas_webhook', 'payment_verification', 'subscription_status_check', 'real_asaas_webhook_production']
     security_tests = ['auth_endpoint_exists', 'auth_invalid_email', 'auth_incorrect_password', 
                      'auth_pending_payment', 'auth_valid_paid_user']
     admin_password_tests = ['admin_reset_valid_user', 'admin_reset_invalid_user', 'admin_reset_malformed_request',
