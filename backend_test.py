@@ -4190,6 +4190,8 @@ def run_all_tests():
     
     # Separate test categories
     dynamic_price_tests = ['dynamic_price_system']
+    moodle_integration_tests = ['moodle_status', 'health_check_enhanced', 'moodle_sync_user', 'moodle_enroll_user', 
+                               'moodle_user_progress', 'moodle_payment_webhook', 'environment_variables', 'asaas_webhook_enhanced']
     critical_fix_tests = ['improved_password', 'email_transparency', 'whatsapp_honesty', 'complete_endpoint_fixes']
     chat_tests = ['health_check', 'existing_endpoints', 'chat_normal', 'chat_values', 'chat_password_reset', 
                   'chat_history', 'password_reset_endpoint', 'llm_integration', 'session_isolation']
