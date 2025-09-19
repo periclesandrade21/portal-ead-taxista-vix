@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Implementar bot IA para taxistas (português), alterar Auth0 para Keycloak, unificar cadastro+pagamento, autoplay video, melhorar formulário, email suporte@sindtaxi-es.org"
+user_problem_statement: "Implementar melhorias no Admin EAD Taxistas: 1) Adicionar descontos/doação e reset de senha na gestão de inscrições, 2) Excluir aba duplicada 'Gestão de Motoristas', 3) Criar aba completa de Relatórios com 9 tipos essenciais, 4) Excluir botão 'Portal Admin' do frontend."
 
 backend:
   - task: "Bot IA para taxistas - API endpoints"
