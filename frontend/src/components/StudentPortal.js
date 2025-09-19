@@ -160,6 +160,34 @@ const StudentPortal = () => {
     }
   };
 
+  const handlePasswordReset = async () => {
+    if (!resetEmail) {
+      alert('Por favor, informe seu email');
+      return;
+    }
+
+    setResetLoading(true);
+    
+    try {
+      const response = await axios.post(`${API}/api/auth/reset-password`, {
+        email: resetEmail
+      });
+      
+      if (response.status === 200) {
+        setResetSuccess(true);
+        alert('✅ Nova senha enviada! Verifique seu email.');
+      }
+    } catch (error) {
+      if (error.response?.status === 404) {
+        alert('❌ Email não encontrado no sistema. Verifique se você está cadastrado.');
+      } else {
+        alert('❌ Erro ao solicitar reset de senha. Tente novamente.');
+      }
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
   if (!isLoggedIn) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center p-4">
