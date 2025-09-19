@@ -57,21 +57,41 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
+
 const StudentPortal = () => {
+  // Estados de autenticação
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginData, setLoginData] = useState({ email: '', password: '' });
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userInfo, setUserInfo] = useState(null);
-  const [loginError, setLoginError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [errorModal, setErrorModal] = useState({ show: false, type: '', message: '', title: '' });
+  const [loading, setLoading] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
-  const [resetLoading, setResetLoading] = useState(false);
-  const [resetSuccess, setResetSuccess] = useState(false);
-  
-  // URL do backend
-  const API = process.env.REACT_APP_BACKEND_URL;
+  const [user, setUser] = useState(null);
+
+  // Estados do portal
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [modules, setModules] = useState([]);
+  const [selectedModule, setSelectedModule] = useState(null);
+  const [moduleVideos, setModuleVideos] = useState([]);
+  const [userProgress, setUserProgress] = useState({});
+  const [currentVideo, setCurrentVideo] = useState(null);
+  const [quizModal, setQuizModal] = useState({ show: false, questions: [], currentQuestion: 0, answers: [], score: null });
+  const [notifications, setNotifications] = useState([]);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+
+  // Estados de perfil
+  const [profileModal, setProfileModal] = useState({ show: false });
+  const [profileData, setProfileData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    city: '',
+    car_plate: '',
+    license_number: ''
+  });
 
   // Função para determinar o status dos módulos baseado no status do usuário
   const getModuleStatus = (moduleId) => {
