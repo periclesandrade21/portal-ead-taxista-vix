@@ -271,6 +271,18 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
+  - task: "Real Asaas webhook processing with production data"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ REAL ASAAS WEBHOOK PRODUCTION DATA TEST COMPLETED SUCCESSFULLY - Comprehensive testing executed with real production webhook data from Asaas. All 8 test scenarios passed: 1) PAYMENT_RECEIVED event processing working correctly ✅, 2) Customer ID format (cus_000130254085) handled properly ✅, 3) Payment details extracted correctly (ID=pay_2zg8sti32jdr0v04, Value=R$60.72, Billing=PIX) ✅, 4) PIX payment data processed (Transaction ID: b693788f-e4e5-4938-b915-6cd5d3f9bbdd, QR Code: SINDTAVIES0000000000000521867206ASA) ✅, 5) Webhook found and updated pending subscription to 'paid' status ✅, 6) Course access set to 'granted' for updated user (ana.lgpd@email.com) ✅, 7) Real production data structure handled without errors ✅, 8) Payment details stored correctly in database (payment_id, payment_value, asaas_customer_id) ✅. The webhook correctly processes both PAYMENT_CONFIRMED and PAYMENT_RECEIVED events, handles customer ID format variations, and successfully updates subscription status and course access when matching users are found. Production-ready and fully operational."
+
   - task: "Sistema de popup de senha após cadastro"
     implemented: true
     working: true
