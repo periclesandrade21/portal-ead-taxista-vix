@@ -1318,6 +1318,16 @@ const AdminDashboardEAD = () => {
             handleClearFields={handleClearFields}
           />
 
+          {/* Gestão de Documentos */}
+          <DocumentsTab 
+            subscriptions={subscriptions}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            handleViewDocuments={handleViewDocuments}
+            handleValidateDocument={handleValidateDocument}
+            handleRejectDocument={handleRejectDocument}
+          />
+
           {/* Aba de Pagamentos */}
           <PaymentsTab 
             paymentStats={paymentStats}
