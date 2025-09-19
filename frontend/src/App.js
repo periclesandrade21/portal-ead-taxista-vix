@@ -194,6 +194,8 @@ const Home = () => {
     
     if (!name.trim()) {
       errors.name = "Nome é obrigatório";
+    } else if (!validateName(name)) {
+      errors.name = "Informe seu nome completo real (mínimo 2 nomes, sem números ou caracteres especiais)";
     }
     
     if (!email.trim()) {
