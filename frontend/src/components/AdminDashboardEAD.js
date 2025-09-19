@@ -111,6 +111,7 @@ const AdminDashboardEAD = () => {
   // Estados do AdminDashboard antigo integrados
   const [subscriptions, setSubscriptions] = useState([]);
   const [users, setUsers] = useState([]);
+  const [payments, setPayments] = useState([]);
   const [adminStats, setAdminStats] = useState({});
   const [cities, setCities] = useState([]);
   const [paymentStats, setPaymentStats] = useState([]);
