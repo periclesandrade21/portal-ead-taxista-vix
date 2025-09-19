@@ -373,6 +373,12 @@ const Home = () => {
       return;
     }
     
+    // Verificar duplicatas primeiro
+    await checkDuplicates();
+    if (duplicatePopup) {
+      return; // Para se houver duplicatas
+    }
+    
     try {
       const finalCity = city === "Outra" ? customCity : city;
       
@@ -396,7 +402,12 @@ const Home = () => {
       console.error("Erro ao realizar inscrição:", error);
       
       if (error.response && error.response.data && error.response.data.detail) {
-        alert(`Erro: ${error.response.data.detail}`);
+        // Verificar se é erro de duplicata
+        if (error.response.data.detail.includes("já cadastrado")) {
+          alert(`⚠️ Dados duplicados encontrados:\n\n${error.response.data.detail}`);
+        } else {
+          alert(`Erro: ${error.response.data.detail}`);
+        }
       } else {
         alert("Erro ao realizar cadastro. Verifique os dados e tente novamente.");
       }
