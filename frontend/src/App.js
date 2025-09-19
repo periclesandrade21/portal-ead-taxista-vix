@@ -1136,414 +1136,62 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Inscrição */}
+      {/* Seção de Cadastro - Novo Sistema */}
       <section id="cadastro" className="py-20 bg-gradient-to-r from-blue-600 to-green-600">
-        <div className="max-w-6xl mx-auto px-4">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <Badge className="mb-4 bg-white/20 text-white">Sistema Completo</Badge>
+          <h3 className="text-4xl font-bold text-white mb-6">🚀 Cadastro Profissional Completo</h3>
+          <p className="text-xl text-blue-100 mb-4">
+            Sistema avançado de cadastro com 7 etapas detalhadas e validação automática por IA
+          </p>
+          <p className="text-lg text-blue-200 mb-8">
+            ⚡ Upload de documentos • Validação inteligente • Pagamento seguro • Acesso imediato
+          </p>
           
-          {/* Progress Steps */}
-          <div className="mb-12">
-            <ProgressSteps currentStep="registration" />  
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <Card className="bg-white/10 backdrop-blur-lg border border-white/20 text-center">
+              <CardContent className="p-6">
+                <div className="bg-white/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FileCheck className="h-8 w-8 text-white" />
+                </div>
+                <h4 className="font-semibold text-white mb-2">Dados Completos</h4>
+                <p className="text-blue-100 text-sm">Informações pessoais, profissionais e documentos</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-white/10 backdrop-blur-lg border border-white/20 text-center">
+              <CardContent className="p-6">
+                <div className="bg-white/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="h-8 w-8 text-white" />
+                </div>
+                <h4 className="font-semibold text-white mb-2">Validação IA</h4>
+                <p className="text-blue-100 text-sm">Análise automática de documentos em minutos</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-white/10 backdrop-blur-lg border border-white/20 text-center">
+              <CardContent className="p-6">
+                <div className="bg-white/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CreditCard className="h-8 w-8 text-white" />
+                </div>
+                <h4 className="font-semibold text-white mb-2">Pagamento PIX</h4>
+                <p className="text-blue-100 text-sm">Pagamento rápido e seguro com confirmação automática</p>
+              </CardContent>
+            </Card>
           </div>
           
-          <div className="text-center mb-12">
-            <h3 className="text-4xl font-bold text-white mb-4">🚀 Comece Sua Jornada Agora</h3>
-            <p className="text-xl text-blue-100 mb-2">
-              Complete seu cadastro e prossiga para o pagamento PIX
-            </p>
-            <p className="text-lg text-blue-200">
-              ⚡ Processo rápido e seguro - Acesso liberado automaticamente!
-            </p>
-          </div>
-
-          <Card className="max-w-3xl mx-auto shadow-2xl border-0">
-            <CardHeader className="text-center bg-gradient-to-r from-slate-50 to-blue-50 rounded-t-lg">
-              <CardTitle className="text-3xl font-bold text-gray-800">📝 Dados do Taxista</CardTitle>
-              <CardDescription className="text-lg text-gray-600">
-                Preencha seus dados para criar sua conta
-              </CardDescription>
-              <div className="mt-4 p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
-                <p className="text-sm text-red-700 font-medium">
-                  ⚠️ <strong>Todos os campos são obrigatórios</strong> - Preencha com seus dados reais
-                </p>
-              </div>
-            </CardHeader>
-            <CardContent className="p-8">
-              <form onSubmit={handleSubscription} className="space-y-8">
-                
-                {/* Seção Dados Pessoais */}
-                <div className="bg-slate-50 p-6 rounded-lg border-l-4 border-blue-500">
-                  <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                    👤 Dados Pessoais
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <Label htmlFor="name" className="text-sm font-semibold text-gray-700">Nome Completo *</Label>
-                      <Input
-                        id="name"
-                        type="text"
-                        value={name}
-                        onChange={(e) => {
-                          setName(e.target.value);
-                          // Limpar erro quando usuário digita
-                          if (validationErrors.name) {
-                            setValidationErrors(prev => ({...prev, name: ''}));
-                          }
-                        }}
-                        placeholder="Ex: João Silva Santos"
-                        required
-                        className={`mt-2 h-12 text-lg ${validationErrors.name ? 'border-red-500' : ''}`}
-                        maxLength="60"
-                      />
-                      {validationErrors.name && (
-                        <p className="text-red-500 text-xs mt-1">{validationErrors.name}</p>
-                      )}
-                      <p className="text-xs text-gray-500 mt-1">
-                        👤 Use seu nome real completo (mínimo: nome + sobrenome)
-                      </p>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="email" className="text-sm font-semibold text-gray-700">Email *</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={email}
-                        onChange={(e) => {
-                          setEmail(e.target.value.toLowerCase());
-                          // Limpar erro quando usuário digita
-                          if (validationErrors.email) {
-                            setValidationErrors(prev => ({...prev, email: ''}));
-                          }
-                        }}
-                        placeholder="exemplo@gmail.com"
-                        required
-                        className={`mt-2 h-12 text-lg ${validationErrors.email ? 'border-red-500' : ''}`}
-                      />
-                      {validationErrors.email && (
-                        <p className="text-red-500 text-xs mt-1">{validationErrors.email}</p>
-                      )}
-                      <p className="text-xs text-gray-500 mt-1">
-                        📧 Será usado para envio da senha e comunicações importantes
-                      </p>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="phone" className="text-sm font-semibold text-gray-700">Telefone/WhatsApp *</Label>
-                      <Input
-                        id="phone"
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => {
-                          setPhone(e.target.value);
-                          // Limpar erro quando usuário digita
-                          if (validationErrors.phone) {
-                            setValidationErrors(prev => ({...prev, phone: ''}));
-                          }
-                        }}
-                        placeholder="(27) 99999-9999"
-                        required
-                        className={`mt-2 h-12 text-lg ${validationErrors.phone ? 'border-red-500' : ''}`}
-                      />
-                      {validationErrors.phone && (
-                        <p className="text-red-500 text-xs mt-1">{validationErrors.phone}</p>
-                      )}
-                      <p className="text-xs text-gray-500 mt-1">
-                        📱 Será usado para suporte e WhatsApp
-                      </p>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="cpf" className="text-sm font-semibold text-gray-700">CPF *</Label>
-                      <Input
-                        id="cpf"
-                        type="text"
-                        value={cpf}
-                        onChange={(e) => {
-                          const formatted = formatCPF(e.target.value);
-                          setCpf(formatted);
-                          // Limpar erro quando usuário digita
-                          if (validationErrors.cpf) {
-                            setValidationErrors(prev => ({...prev, cpf: ''}));
-                          }
-                        }}
-                        placeholder="000.000.000-00"
-                        required
-                        className={`mt-2 h-12 text-lg font-mono ${validationErrors.cpf ? 'border-red-500' : ''}`}
-                        maxLength="14"
-                      />
-                      {validationErrors.cpf && (
-                        <p className="text-red-500 text-xs mt-1">{validationErrors.cpf}</p>
-                      )}
-                      <p className="text-xs text-gray-500 mt-1">
-                        🆔 Usado para validação de identidade e certificado
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Seção Dados Profissionais */}
-                <div className="bg-green-50 p-6 rounded-lg border-l-4 border-green-500">
-                  <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                    🚕 Dados do Taxista
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <Label htmlFor="carPlate" className="text-sm font-semibold text-gray-700">Placa do Veículo *</Label>
-                      <Input
-                        id="carPlate"
-                        type="text"
-                        value={carPlate}
-                        onChange={(e) => {
-                          setCarPlate(e.target.value.toUpperCase());
-                          // Limpar erro quando usuário digita
-                          if (validationErrors.carPlate) {
-                            setValidationErrors(prev => ({...prev, carPlate: ''}));
-                          }
-                        }}
-                        placeholder="ABC-1234-T, ABC1D23 ou ABC1234"
-                        required
-                        className={`mt-2 h-12 text-lg font-mono ${validationErrors.carPlate ? 'border-red-500' : ''}`}
-                        maxLength="10"
-                      />
-                      {validationErrors.carPlate && (
-                        <p className="text-red-500 text-xs mt-1">{validationErrors.carPlate}</p>
-                      )}
-                      <p className="text-xs text-gray-500 mt-1">
-                        Formatos aceitos: ABC-1234-T (táxi), ABC1D23 (Mercosul), ABC1234
-                      </p>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="licenseNumber" className="text-sm font-semibold text-gray-700">Número do Alvará *</Label>
-                      <Input
-                        id="licenseNumber"
-                        type="text"
-                        value={licenseNumber}
-                        onChange={(e) => {
-                          setLicenseNumber(e.target.value.toUpperCase());
-                          // Limpar erro quando usuário digita
-                          if (validationErrors.licenseNumber) {
-                            setValidationErrors(prev => ({...prev, licenseNumber: ''}));
-                          }
-                        }}
-                        placeholder="TA-12345, TAX-2023-1234, T-1234567"
-                        required
-                        className={`mt-2 h-12 text-lg ${validationErrors.licenseNumber ? 'border-red-500' : ''}`}
-                      />
-                      {validationErrors.licenseNumber && (
-                        <p className="text-red-500 text-xs mt-1">{validationErrors.licenseNumber}</p>
-                      )}
-                      <p className="text-xs text-gray-500 mt-1">
-                        Formatos aceitos: TA-12345, TAX-2023-1234, T-1234567 ou apenas números
-                      </p>
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <Label htmlFor="city" className="text-sm font-semibold text-gray-700">Cidade do Espírito Santo *</Label>
-                      <select
-                        id="city"
-                        value={city}
-                        onChange={(e) => {
-                          setCity(e.target.value);
-                          // Limpar cidade personalizada se não for "Outra"
-                          if (e.target.value !== "Outra") {
-                            setCustomCity("");
-                          }
-                          // Limpar erro quando usuário seleciona
-                          if (validationErrors.city) {
-                            setValidationErrors(prev => ({...prev, city: ''}));
-                          }
-                        }}
-                        required
-                        className={`mt-2 h-12 text-lg w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${validationErrors.city ? 'border-red-500' : ''}`}
-                      >
-                        <option value="">Selecione sua cidade</option>
-                        <option value="Vitória">Vitória</option>
-                        <option value="Vila Velha">Vila Velha</option>
-                        <option value="Serra">Serra</option>
-                        <option value="Cariacica">Cariacica</option>
-                        <option value="Viana">Viana</option>
-                        <option value="Guarapari">Guarapari</option>
-                        <option value="Cachoeiro de Itapemirim">Cachoeiro de Itapemirim</option>
-                        <option value="Linhares">Linhares</option>
-                        <option value="São Mateus">São Mateus</option>
-                        <option value="Colatina">Colatina</option>
-                        <option value="Aracruz">Aracruz</option>
-                        <option value="Nova Venécia">Nova Venécia</option>
-                        <option value="Domingos Martins">Domingos Martins</option>
-                        <option value="Santa Teresa">Santa Teresa</option>
-                        <option value="Castelo">Castelo</option>
-                        <option value="Venda Nova do Imigrante">Venda Nova do Imigrante</option>
-                        <option value="Iconha">Iconha</option>
-                        <option value="Piúma">Piúma</option>
-                        <option value="Anchieta">Anchieta</option>
-                        <option value="Outra">🏙️ Outra cidade do ES</option>
-                      </select>
-                      {validationErrors.city && (
-                        <p className="text-red-500 text-xs mt-1">{validationErrors.city}</p>
-                      )}
-                      
-                      {/* Campo adicional para cidade personalizada */}
-                      {city === "Outra" && (
-                        <div className="mt-4">
-                          <Label htmlFor="customCity" className="text-sm font-semibold text-gray-700">
-                            Qual sua cidade? *
-                          </Label>
-                          
-                          {/* Botão de geolocalização */}
-                          <div className="flex gap-2 mt-2">
-                            <Input
-                              id="customCity"
-                              type="text"
-                              value={customCity}
-                              onChange={(e) => {
-                                setCustomCity(e.target.value);
-                                // Limpar erro quando usuário digita
-                                if (validationErrors.customCity) {
-                                  setValidationErrors(prev => ({...prev, customCity: ''}));
-                                }
-                              }}
-                              placeholder="Digite o nome da sua cidade"
-                              required
-                              className={`h-12 text-lg flex-1 ${validationErrors.customCity ? 'border-red-500' : ''}`}
-                            />
-                            <Button
-                              type="button"
-                              onClick={detectUserLocation}
-                              disabled={isDetectingLocation}
-                              className="h-12 px-4 bg-blue-600 hover:bg-blue-700 text-white"
-                            >
-                              {isDetectingLocation ? (
-                                <div className="flex items-center">
-                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                  <MapPin className="h-4 w-4" />
-                                </div>
-                              ) : (
-                                <div className="flex items-center">
-                                  <MapPin className="h-4 w-4 mr-1" />
-                                  📍
-                                </div>
-                              )}
-                            </Button>
-                          </div>
-                          
-                          {validationErrors.customCity && (
-                            <p className="text-red-500 text-xs mt-1">{validationErrors.customCity}</p>
-                          )}
-                          <p className="text-xs text-gray-500 mt-1">
-                            📍 Digite sua cidade no ES ou clique no botão de localização para detectar automaticamente
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Informações importantes */}
-                <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
-                  <div className="flex items-start space-x-3">
-                    <div className="bg-blue-100 p-2 rounded-full">
-                      <span className="text-blue-600 text-xl">💡</span>
-                    </div>
-                    <div className="flex-1">
-                      <h5 className="font-semibold text-blue-800 mb-2">Importante:</h5>
-                      <ul className="text-sm text-blue-700 space-y-1">
-                        <li>• Use seus dados reais para garantir a validade do certificado</li>
-                        <li>• O certificado será emitido com o nome informado aqui</li>
-                        <li>• WhatsApp será usado para suporte e comunicações importantes</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Seção LGPD - Consentimento */}
-                <div className="bg-blue-50 p-6 rounded-xl border-l-4 border-blue-500 mb-6">
-                  <h4 className="text-lg font-semibold text-blue-800 mb-4 flex items-center">
-                    🔒 Proteção de Dados Pessoais - LGPD
-                  </h4>
-                  
-                  <div className="space-y-4 text-sm text-gray-700">
-                    <p>
-                      <strong>Finalidade:</strong> Seus dados serão utilizados exclusivamente para processamento da inscrição, 
-                      emissão de certificado e comunicações relacionadas ao curso EAD para taxistas.
-                    </p>
-                    
-                    <p>
-                      <strong>Base Legal:</strong> Consentimento (Art. 7º, I da LGPD) e cumprimento de obrigação legal.
-                    </p>
-                    
-                    <p>
-                      <strong>Seus Direitos:</strong> Acesso, correção, exclusão, portabilidade e revogação do consentimento. 
-                      Entre em contato: <a href="mailto:privacidade@sindtaxi-es.org" className="text-blue-600 underline">privacidade@sindtaxi-es.org</a>
-                    </p>
-                  </div>
-
-                  <div className="mt-4 space-y-3">
-                    <div className="flex items-start">
-                      <input
-                        type="checkbox"
-                        id="lgpdConsent"
-                        checked={lgpdConsent}
-                        onChange={(e) => {
-                          setLgpdConsent(e.target.checked);
-                          if (validationErrors.lgpdConsent) {
-                            setValidationErrors(prev => ({...prev, lgpdConsent: ''}));
-                          }
-                        }}
-                        className={`mt-1 mr-3 h-4 w-4 text-blue-600 ${validationErrors.lgpdConsent ? 'border-red-500' : ''}`}
-                        required
-                      />
-                      <label htmlFor="lgpdConsent" className="text-sm font-medium text-gray-800">
-                        ✅ Eu concordo com o tratamento dos meus dados pessoais conforme descrito e autorizo o 
-                        SINDTAXI-ES a processar minhas informações para as finalidades mencionadas.
-                      </label>
-                    </div>
-                    
-                    {validationErrors.lgpdConsent && (
-                      <p className="text-red-500 text-xs">{validationErrors.lgpdConsent}</p>
-                    )}
-                    
-                    <div className="flex justify-center">
-                      <Button
-                        type="button"
-                        onClick={() => setPrivacyPolicyModal(true)}
-                        variant="outline"
-                        className="text-sm text-blue-600 border-blue-300 hover:bg-blue-50"
-                      >
-                        📋 Ler Política de Privacidade Completa
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Botão de cadastro */}
-                <div className="text-center pt-4">
-                  <Button 
-                    type="submit" 
-                    className="w-full py-6 text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                  >
-                    <CreditCard className="mr-3 h-6 w-6" />
-                    💳 Finalizar Pagamento
-                  </Button>
-                  
-                  <div className="mt-4 flex items-center justify-center space-x-4 text-sm text-gray-600">
-                    <div className="flex items-center">
-                      <span className="text-green-600 mr-1">✅</span>
-                      Pagamento seguro
-                    </div>
-                    <div className="flex items-center">
-                      <span className="text-blue-600 mr-1">⚡</span>
-                      Aprovação instantânea
-                    </div>
-                    <div className="flex items-center">
-                      <span className="text-purple-600 mr-1">🔒</span>
-                      Dados protegidos
-                    </div>
-                  </div>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+          <Button 
+            onClick={() => setShowNewRegistration(true)}
+            className="px-12 py-4 text-xl bg-white text-blue-600 hover:bg-gray-100 font-bold rounded-lg shadow-lg transform transition hover:scale-105"
+          >
+            <Car className="mr-3 h-6 w-6" />
+            Iniciar Cadastro Completo
+            <ChevronRight className="ml-3 h-6 w-6" />
+          </Button>
+          
+          <p className="text-blue-200 text-sm mt-4">
+            💡 Processo 100% online • Certificado válido nacionalmente • Suporte 24h
+          </p>
         </div>
       </section>
 
