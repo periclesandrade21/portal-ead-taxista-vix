@@ -1288,52 +1288,64 @@ async def asaas_webhook(request: dict):
             logging.info(f"Pagamento {event} via Asaas: {payment_id} - Email: {customer_email} - Customer ID: {customer_id} - R$ {value}")
             
             # Buscar inscrição por email ou customer ID
-            query_filter = {}
+            subscription_filter = None
             if customer_email:
-                query_filter = {"email": customer_email}
+                subscription_filter = {"email": customer_email}
             elif customer_id:
-                # Buscar por customer_id (se existir) ou tentar encontrar por algum outro critério
-                # Para agora, vou buscar por payment_id se existir, ou tentar por valor aproximado
-                query_filter = {"$or": [
+                # Primeiro tentar buscar por asaas_customer_id ou payment_id
+                subscription_filter = {"$or": [
                     {"asaas_customer_id": customer_id},
                     {"payment_id": payment_id}
                 ]}
                 
-                # Se não encontrar por customer_id, buscar por critérios alternativos
-                existing_subscription = await db.subscriptions.find_one(query_filter)
+                # Se não encontrar, buscar qualquer inscrição pendente como fallback
+                existing_subscription = await db.subscriptions.find_one(subscription_filter)
                 if not existing_subscription:
-                    # Buscar qualquer inscrição pendente com valor próximo (margem de ±10%)
-                    min_value = value * 0.9 if value else 0
-                    max_value = value * 1.1 if value else 0
-                    
-                    # Para agora, vou buscar qualquer inscrição pendente - isso pode ser refinado
-                    query_filter = {"status": "pending"}
-                    
-                    logging.info(f"Buscando inscrição pendente para processar pagamento {payment_id}")
+                    # Buscar qualquer inscrição pendente
+                    pending_subscriptions = await db.subscriptions.find({"status": "pending"}).to_list(100)
+                    if pending_subscriptions:
+                        # Usar a primeira inscrição pendente como fallback
+                        subscription_filter = {"_id": pending_subscriptions[0]["_id"]}
+                        logging.info(f"Usando inscrição pendente como fallback para Customer ID {customer_id}")
+                    else:
+                        logging.warning(f"Nenhuma inscrição pendente encontrada para Customer ID {customer_id}")
+                        subscription_filter = None
             
-            if query_filter:
-                result = await db.subscriptions.update_one(
-                    query_filter,
-                    {
-                        "$set": {
-                            "status": "paid",
-                            "payment_id": payment_id,
-                            "asaas_customer_id": customer_id,
-                            "payment_value": value,
-                            "payment_confirmed_at": datetime.now(timezone.utc).isoformat(),
-                            "course_access": "granted"
-                        }
+            if subscription_filter:
+                # Atualizar a inscrição com todos os dados do webhook
+                update_data = {
+                    "$set": {
+                        "status": "paid",
+                        "payment_id": payment_id,
+                        "payment_value": value,
+                        "payment_confirmed_at": datetime.now(timezone.utc).isoformat(),
+                        "course_access": "granted"
                     }
-                )
+                }
+                
+                # Adicionar customer_id se disponível
+                if customer_id:
+                    update_data["$set"]["asaas_customer_id"] = customer_id
+                
+                result = await db.subscriptions.update_one(subscription_filter, update_data)
                 
                 if result.matched_count > 0:
                     # Buscar o usuário atualizado para log
-                    updated_user = await db.subscriptions.find_one(query_filter)
+                    updated_user = await db.subscriptions.find_one(subscription_filter)
                     user_email = updated_user.get('email', 'N/A') if updated_user else 'N/A'
+                    user_name = updated_user.get('name', 'N/A') if updated_user else 'N/A'
                     
-                    logging.info(f"Curso liberado para: {user_email} (Customer: {customer_id}, Payment: {payment_id})")
+                    logging.info(f"Curso liberado para: {user_name} ({user_email}) - Customer: {customer_id}, Payment: {payment_id}, Valor: R$ {value}")
                     
-                    return {"message": "Pagamento processado e curso liberado", "status": "success", "email": user_email}
+                    return {
+                        "message": "Pagamento processado e curso liberado", 
+                        "status": "success", 
+                        "email": user_email,
+                        "user_name": user_name,
+                        "payment_id": payment_id,
+                        "customer_id": customer_id,
+                        "value": value
+                    }
                 else:
                     logging.warning(f"Inscrição não encontrada para Customer: {customer_id} ou Email: {customer_email}")
                     return {"message": "Inscrição não encontrada", "status": "warning"}
