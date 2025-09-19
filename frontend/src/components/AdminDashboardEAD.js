@@ -911,6 +911,16 @@ const AdminDashboardEAD = () => {
             </Card>
           </TabsContent>
 
+          {/* Aba de Inscrições */}
+          <SubscriptionsTab 
+            subscriptions={subscriptions}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            dateFilter={dateFilter}
+            setDateFilter={setDateFilter}
+            handleDeleteUser={handleDeleteUser}
+          />
+
           {/* Gestão de Motoristas */}
           <DriversTab 
             drivers={drivers}
@@ -927,15 +937,39 @@ const AdminDashboardEAD = () => {
             setSelectedDrivers={setSelectedDrivers}
           />
 
-          {/* Gestão de Cursos */}
-          <CoursesTab courses={courses} setCourses={setCourses} />
+          {/* Aba de Pagamentos */}
+          <PaymentsTab 
+            paymentStats={paymentStats}
+            adminStats={adminStats}
+            dateFilter={dateFilter}
+            setDateFilter={setDateFilter}
+          />
 
-          {/* Gestão de Turmas */}
-          <ClassesTab 
-            classes={classes}
-            setClassModal={setClassModal}
-            classModal={classModal}
-            setClasses={setClasses}
+          {/* Aba de Gráficos */}
+          <ChartsTab cityStatsData={cityStatsData} />
+
+          {/* Aba de Cidades */}
+          <CitiesTab cities={cities} />
+
+          {/* Gestão de Cursos com Preços */}
+          <CoursesWithPricesTab 
+            coursesWithPrices={coursesWithPrices}
+            setEditPriceModal={setEditPriceModal}
+            setDeleteCourseModal={setDeleteCourseModal}
+          />
+
+          {/* Gestão de Vídeos */}
+          <VideosTab 
+            modules={modules}
+            selectedModule={selectedModule}
+            setSelectedModule={setSelectedModule}
+            videos={videos}
+            fetchModuleVideos={fetchModuleVideos}
+            videoLoadingStates={videoLoadingStates}
+            setVideoModal={setVideoModal}
+            setModuleModal={setModuleModal}
+            setDeleteVideoModal={setDeleteVideoModal}
+            formatDuration={formatDuration}
           />
 
           {/* Certificados */}
@@ -945,11 +979,12 @@ const AdminDashboardEAD = () => {
             handleGenerateCertificate={handleGenerateCertificate}
           />
 
-          {/* Relatórios */}
-          <ReportsTab 
-            reportFilters={reportFilters}
-            setReportFilters={setReportFilters}
-            exportReport={exportReport}
+          {/* Usuários Administrativos */}
+          <AdminUsersTab 
+            adminUsers={adminUsers}
+            setAdminUserModal={setAdminUserModal}
+            setAdminPasswordModal={setAdminPasswordModal}
+            setDeleteUserModal={setDeleteUserModal}
           />
 
           {/* Comunicação */}
@@ -1078,6 +1113,156 @@ const AdminDashboardEAD = () => {
                   </Button>
                   <Button onClick={handleCreateDriver}>
                     Cadastrar Motorista
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Modais adicionais do sistema antigo */}
+          {adminUserModal.show && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                <h3 className="text-lg font-semibold mb-4">Novo Usuário Admin</h3>
+                <div className="space-y-4">
+                  <div>
+                    <Label>Nome Completo</Label>
+                    <Input placeholder="Nome do usuário" />
+                  </div>
+                  <div>
+                    <Label>Username</Label>
+                    <Input placeholder="username" />
+                  </div>
+                  <div>
+                    <Label>Senha</Label>
+                    <Input type="password" placeholder="senha123" />
+                  </div>
+                  <div>
+                    <Label>Função</Label>
+                    <select className="w-full p-2 border rounded-lg">
+                      <option value="admin">Administrador</option>
+                      <option value="coordinator">Coordenador</option>
+                      <option value="support">Suporte</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2 mt-6">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setAdminUserModal({ show: false, user: null, isEdit: false })}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button onClick={handleCreateAdminUser}>
+                    Criar Usuário
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {adminPasswordModal.show && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                <h3 className="text-lg font-semibold mb-4">Redefinir Senha</h3>
+                <p className="text-gray-600 mb-4">
+                  Usuário: <strong>{adminPasswordModal.username}</strong>
+                </p>
+                <div className="space-y-4">
+                  <div>
+                    <Label>Nova Senha</Label>
+                    <div className="relative">
+                      <Input
+                        type={adminPasswordModal.showPassword ? "text" : "password"}
+                        value={adminPasswordModal.newPassword}
+                        onChange={(e) => setAdminPasswordModal(prev => ({
+                          ...prev,
+                          newPassword: e.target.value
+                        }))}
+                        placeholder="Nova senha"
+                        className="pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setAdminPasswordModal(prev => ({
+                          ...prev,
+                          showPassword: !prev.showPassword
+                        }))}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        {adminPasswordModal.showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2 mt-6">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setAdminPasswordModal({ show: false, userId: null, username: '', newPassword: '', showPassword: false })}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button onClick={handleResetAdminPassword}>
+                    Redefinir Senha
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {deleteUserModal.show && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                <h3 className="text-lg font-semibold mb-4 text-red-600">Confirmar Exclusão</h3>
+                <p className="mb-6">
+                  Tem certeza que deseja excluir o usuário <strong>{deleteUserModal.username}</strong>? 
+                  Esta ação não pode ser desfeita.
+                </p>
+                <div className="flex justify-end gap-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setDeleteUserModal({ show: false, userId: null, username: '' })}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button 
+                    variant="destructive" 
+                    onClick={handleDeleteAdminUser}
+                  >
+                    Excluir Usuário
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {editPriceModal.show && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                <h3 className="text-lg font-semibold mb-4">Editar Preço do Curso</h3>
+                <div className="space-y-4">
+                  <div>
+                    <Label>Novo Preço (R$)</Label>
+                    <Input
+                      type="number"
+                      value={editPriceModal.currentPrice}
+                      onChange={(e) => setEditPriceModal(prev => ({
+                        ...prev,
+                        currentPrice: parseFloat(e.target.value) || 0
+                      }))}
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2 mt-6">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setEditPriceModal({ show: false, courseId: null, currentPrice: 0 })}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button onClick={handleEditPrice}>
+                    Salvar Preço
                   </Button>
                 </div>
               </div>
