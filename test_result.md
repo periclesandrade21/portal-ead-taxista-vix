@@ -273,15 +273,18 @@ test_plan:
 
   - task: "Real Asaas webhook processing with production data"
     implemented: true
-    working: true
+    working: false
     file: "server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
       - working: true
         agent: "testing"
         comment: "✅ REAL ASAAS WEBHOOK PRODUCTION DATA TEST COMPLETED SUCCESSFULLY - Comprehensive testing executed with real production webhook data from Asaas. All 8 test scenarios passed: 1) PAYMENT_RECEIVED event processing working correctly ✅, 2) Customer ID format (cus_000130254085) handled properly ✅, 3) Payment details extracted correctly (ID=pay_2zg8sti32jdr0v04, Value=R$60.72, Billing=PIX) ✅, 4) PIX payment data processed (Transaction ID: b693788f-e4e5-4938-b915-6cd5d3f9bbdd, QR Code: SINDTAVIES0000000000000521867206ASA) ✅, 5) Webhook found and updated pending subscription to 'paid' status ✅, 6) Course access set to 'granted' for updated user (ana.lgpd@email.com) ✅, 7) Real production data structure handled without errors ✅, 8) Payment details stored correctly in database (payment_id, payment_value, asaas_customer_id) ✅. The webhook correctly processes both PAYMENT_CONFIRMED and PAYMENT_RECEIVED events, handles customer ID format variations, and successfully updates subscription status and course access when matching users are found. Production-ready and fully operational."
+      - working: false
+        agent: "testing"
+        comment: "❌ WEBHOOK METADATA STORAGE FIX VERIFICATION FAILED - Comprehensive testing with real Asaas webhook data revealed critical issue: 1) WEBHOOK PROCESSING: ✅ Webhook successfully processes real Asaas data (event=PAYMENT_RECEIVED, payment_id=pay_2zg8sti32jdr0v04, customer_id=cus_000130254085, value=60.72) and returns correct response with all expected fields (user_name, payment_id, customer_id, value). 2) USER IDENTIFICATION: ✅ Webhook correctly finds and identifies users to update, logs show 'Curso liberado para: José Carlos Silva (jose.silva@gmail.com)'. 3) CRITICAL ISSUE: ❌ Database metadata storage is NOT working - webhook metadata fields (payment_id, payment_value, asaas_customer_id, payment_confirmed_at, course_access) are NOT being stored in database despite successful webhook processing. 4) DATABASE UPDATE FAILURE: ❌ The update_one operation appears to complete without errors but fields remain NULL/None in database. 5) IMPACT: Users receive 'paid' status but lose audit trail and debugging information. The webhook metadata storage fix is NOT working correctly - database update operation is failing silently."
 
   - task: "Sistema de popup de senha após cadastro"
     implemented: true
