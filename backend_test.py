@@ -1599,6 +1599,7 @@ def run_all_tests():
     print(f"{Colors.BOLD}Chat Bot System: {chat_passed}/{len(chat_tests)} tests passed{Colors.ENDC}")
     print(f"{Colors.BOLD}Payment Flow: {payment_passed}/{len(payment_tests)} tests passed{Colors.ENDC}")
     print(f"{Colors.BOLD}{Colors.RED}🚨 Security Tests: {security_passed}/{len(security_tests)} tests passed{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.BLUE}🔑 Admin Password Reset: {admin_password_passed}/{len(admin_password_tests)} tests passed{Colors.ENDC}")
     
     # Critical fix assessment
     if critical_passed == len(critical_fix_tests):
