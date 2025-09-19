@@ -4976,7 +4976,8 @@ def test_video_creation_with_youtube():
         )
         
         if response.status_code == 200:
-            created_video = response.json()
+            data = response.json()
+            created_video = data.get('video', {}) if isinstance(data, dict) else data
             print_success("✅ Video created successfully")
             print_info(f"Video ID: {created_video.get('id')}")
             print_info(f"Title: {created_video.get('title')}")
