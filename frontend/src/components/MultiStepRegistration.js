@@ -135,17 +135,10 @@ const MultiStepRegistration = ({ onRegistrationComplete }) => {
     },
     {
       id: 6,
-      title: 'Pagamento',
-      description: 'Finalização do pagamento do curso',
+      title: 'Finalizar Inscrição',
+      description: 'Finalização e redirecionamento para pagamento',
       icon: CreditCard,
       component: PaymentStep
-    },
-    {
-      id: 7,
-      title: 'Validação IA',
-      description: 'Aguardar validação automática dos documentos',
-      icon: CheckCircle,
-      component: DocumentValidationStep
     }
   ];
 
