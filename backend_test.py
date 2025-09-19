@@ -5106,15 +5106,15 @@ def run_video_management_tests():
     results = []
     
     # 1. Verify available modules
-    modules_success, modules = test_modules_available()
+    modules_success, modules_data = test_modules_available()
     results.append(("📚 Available Modules", modules_success))
     
     # 2. Verify videos by module (test at least 2 modules)
-    if modules:
-        results.append(("🎬 Videos by Module", test_videos_by_module(modules)))
+    if modules_data:
+        results.append(("🎬 Videos by Module", test_videos_by_module(modules_data)))
         
         # 3. Verify questions organized by difficulty
-        results.append(("❓ Questions by Module", test_questions_by_module_difficulty(modules)))
+        results.append(("❓ Questions by Module", test_questions_by_module_difficulty(modules_data)))
     else:
         results.append(("🎬 Videos by Module", False))
         results.append(("❓ Questions by Module", False))
