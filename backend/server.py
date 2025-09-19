@@ -200,10 +200,30 @@ def parse_from_mongo(item):
     return item
 
 # Chat Bot Helper Functions
-def generate_password(length=8):
-    """Gera uma senha aleatória"""
-    characters = string.ascii_letters + string.digits
-    return ''.join(secrets.choice(characters) for _ in range(length))
+def generate_password(length=10):
+    """Gera uma senha segura e legível"""
+    # Usar caracteres mais legíveis, evitando confusão (0/O, 1/l, etc.)
+    uppercase = "ABCDEFGHJKLMNPQRSTUVWXYZ"  # Removido I, O
+    lowercase = "abcdefghjkmnpqrstuvwxyz"   # Removido i, l, o
+    numbers = "23456789"                    # Removido 0, 1
+    symbols = "@#$%*"                       # Símbolos simples
+    
+    # Garantir pelo menos um de cada tipo
+    password = []
+    password.append(secrets.choice(uppercase))
+    password.append(secrets.choice(lowercase))
+    password.append(secrets.choice(numbers))
+    password.append(secrets.choice(symbols))
+    
+    # Preencher o resto com caracteres aleatórios
+    all_chars = uppercase + lowercase + numbers + symbols
+    for _ in range(length - 4):
+        password.append(secrets.choice(all_chars))
+    
+    # Embaralhar a senha
+    secrets.SystemRandom().shuffle(password)
+    
+    return ''.join(password)
 
 def validate_taxi_plate(plate: str) -> bool:
     """Valida formato de placa de táxi do Espírito Santo"""
