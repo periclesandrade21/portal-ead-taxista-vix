@@ -16,6 +16,15 @@ import {
   Calendar as CalendarIcon, Briefcase, Database, Zap, Globe, UserPlus, FileX, Plus
 } from 'lucide-react';
 import axios from 'axios';
+import { 
+  DriversTab, 
+  CoursesTab, 
+  ClassesTab, 
+  CertificatesTab, 
+  ReportsTab, 
+  CommunicationTab, 
+  SettingsTab 
+} from './AdminEADTabs';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
