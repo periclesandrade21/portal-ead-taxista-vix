@@ -1207,7 +1207,7 @@ async def request_password_reset(request: StudentPasswordResetRequest):
         # Tentar enviar por WhatsApp (se disponível)
         whatsapp_sent = False
         if user.get('phone'):
-            whatsapp_sent = await send_password_whatsapp(user.get('name', 'Usuário'), user.get('phone'), new_password)
+            whatsapp_sent = await send_password_whatsapp(user.get('phone'), user.get('name', 'Usuário'), new_password)
         
         logging.info(f"Reset de senha solicitado para: {request.email}")
         
