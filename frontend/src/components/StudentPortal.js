@@ -26,6 +26,7 @@ const StudentPortal = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [loginError, setLoginError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   
   // URL do backend
   const API = process.env.REACT_APP_BACKEND_URL;
