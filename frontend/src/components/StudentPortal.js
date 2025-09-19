@@ -336,6 +336,94 @@ const StudentPortal = () => {
             </div>
           </div>
         )}
+
+        {/* Password Reset Modal */}
+        {showResetModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg max-w-md w-full p-6">
+              <div className="text-center">
+                <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Key className="h-8 w-8 text-blue-600" />
+                </div>
+                
+                <h3 className="text-xl font-semibold mb-3">🔑 Reset de Senha</h3>
+                <p className="text-gray-600 mb-6">
+                  Digite seu email para receber uma nova senha temporária
+                </p>
+                
+                {!resetSuccess ? (
+                  <div className="space-y-4">
+                    <Input
+                      type="email"
+                      placeholder="seu@email.com"
+                      value={resetEmail}
+                      onChange={(e) => setResetEmail(e.target.value)}
+                      className="w-full"
+                    />
+                    
+                    <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+                      <p className="text-sm text-yellow-800">
+                        💡 A nova senha será enviada por email
+                      </p>
+                    </div>
+                    
+                    <div className="flex gap-3">
+                      <Button 
+                        onClick={handlePasswordReset}
+                        disabled={resetLoading}
+                        className="flex-1"
+                      >
+                        {resetLoading ? "Enviando..." : "📧 Enviar Nova Senha"}
+                      </Button>
+                      <Button 
+                        variant="outline"
+                        onClick={() => {
+                          setShowResetModal(false);
+                          setResetEmail('');
+                          setResetSuccess(false);
+                        }}
+                        className="flex-1"
+                      >
+                        Cancelar
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                      <div className="flex items-center gap-3">
+                        <CheckCircle className="h-6 w-6 text-green-600" />
+                        <div className="text-left">
+                          <p className="font-semibold text-green-800">Senha Enviada!</p>
+                          <p className="text-sm text-green-700">
+                            Uma nova senha foi enviada para {resetEmail}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                      <p className="text-sm text-blue-800">
+                        📬 Verifique sua caixa de entrada e spam
+                      </p>
+                    </div>
+                    
+                    <Button 
+                      onClick={() => {
+                        setShowResetModal(false);
+                        setResetEmail('');
+                        setResetSuccess(false);
+                      }}
+                      className="w-full"
+                    >
+                      ✅ Entendi, Vou Verificar
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
