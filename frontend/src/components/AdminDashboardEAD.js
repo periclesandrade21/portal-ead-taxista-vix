@@ -915,6 +915,27 @@ const AdminDashboardEAD = () => {
             handleDeleteUser={handleDeleteUser}
           />
 
+          {/* Aba de Pagamentos */}
+          <PaymentsTab 
+            paymentStats={paymentStats}
+            adminStats={adminStats}
+            dateFilter={dateFilter}
+            setDateFilter={setDateFilter}
+          />
+
+          {/* Aba de Gráficos */}
+          <ChartsTab cityStatsData={cityStatsData} />
+
+          {/* Aba de Cidades */}
+          <CitiesTab cities={cities} />
+
+          {/* Gestão de Cursos com Preços */}
+          <CoursesWithPricesTab 
+            coursesWithPrices={coursesWithPrices}
+            setEditPriceModal={setEditPriceModal}
+            setDeleteCourseModal={setDeleteCourseModal}
+          />
+
           {/* Gestão de Vídeos */}
           <VideosTab 
             modules={modules}
