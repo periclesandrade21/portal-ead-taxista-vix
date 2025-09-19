@@ -1234,3 +1234,251 @@ export const ReportsTab = ({
     </Card>
   </TabsContent>
 );
+
+// Aba de Documentos - Nova funcionalidade
+export const DocumentsTab = ({ 
+  subscriptions = [],
+  searchTerm = '',
+  setSearchTerm,
+  handleViewDocuments,
+  handleValidateDocument,
+  handleRejectDocument
+}) => (
+  <TabsContent value="documents" className="space-y-4">
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <FileCheck className="h-5 w-5" />
+          Gestão de Documentos dos Alunos
+        </CardTitle>
+        <CardDescription>
+          Visualização, validação e gerenciamento de todos os documentos enviados pelos alunos
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {/* Filtros */}
+        <div className="flex flex-col md:flex-row gap-4 mb-6">
+          <div className="flex-1">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Buscar por nome, CPF ou email..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm && setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm">
+              📄 Todos
+            </Button>
+            <Button variant="outline" size="sm">
+              ⏳ Pendentes
+            </Button>
+            <Button variant="outline" size="sm">
+              ✅ Aprovados
+            </Button>
+            <Button variant="outline" size="sm">
+              ❌ Rejeitados
+            </Button>
+          </div>
+        </div>
+
+        {/* Lista de Alunos com Documentos */}
+        <div className="space-y-4">
+          {subscriptions.map((student) => (
+            <Card key={student.id} className="border-l-4 border-l-blue-500">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
+                      <span className="text-white font-medium">{student.name?.charAt(0) || 'A'}</span>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg">{student.name}</h3>
+                      <div className="flex items-center space-x-4 text-sm text-gray-600">
+                        <span>📧 {student.email}</span>
+                        <span>📞 {student.phone}</span>
+                        <span>🆔 {student.cpf}</span>
+                        <span>🏙️ {student.city}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Badge 
+                      variant={student.payment_status === 'paid' ? 'default' : 'secondary'}
+                      className={student.payment_status === 'paid' ? 'bg-green-600' : 'bg-yellow-600'}
+                    >
+                      {student.payment_status === 'paid' ? '💳 Pago' : '⏳ Pendente'}
+                    </Badge>
+                    <Badge variant="outline">
+                      📚 {student.course_progress || 0}% Concluído
+                    </Badge>
+                  </div>
+                </div>
+
+                {/* Documentos do Aluno */}
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="font-semibold mb-3 flex items-center gap-2">
+                    <FileCheck className="h-4 w-4" />
+                    📄 Documentos Enviados
+                  </h4>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {/* CNH */}
+                    <div className="bg-white p-3 rounded border">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium text-sm">🚗 CNH</span>
+                        <Badge className="bg-green-100 text-green-800 text-xs">
+                          ✅ Enviado
+                        </Badge>
+                      </div>
+                      <div className="text-xs text-gray-600 space-y-1">
+                        <p>Arquivo: cnh_joao_silva.pdf</p>
+                        <p>Tamanho: 2.3 MB</p>
+                        <p>Enviado: 19/09/2024</p>
+                      </div>
+                      <div className="flex gap-1 mt-2">
+                        <Button size="sm" variant="outline" className="text-xs">
+                          <Eye className="h-3 w-3 mr-1" />
+                          Ver
+                        </Button>
+                        <Button size="sm" variant="outline" className="text-xs text-green-600">
+                          <CheckCircle className="h-3 w-3 mr-1" />
+                          Aprovar
+                        </Button>
+                        <Button size="sm" variant="outline" className="text-xs text-red-600">
+                          <X className="h-3 w-3 mr-1" />
+                          Rejeitar
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Comprovante de Residência */}
+                    <div className="bg-white p-3 rounded border">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium text-sm">🏠 Comprovante</span>
+                        <Badge className="bg-yellow-100 text-yellow-800 text-xs">
+                          ⏳ Pendente
+                        </Badge>
+                      </div>
+                      <div className="text-xs text-gray-600 space-y-1">
+                        <p>Arquivo: conta_luz_joao.pdf</p>
+                        <p>Tamanho: 1.8 MB</p>
+                        <p>Enviado: 19/09/2024</p>
+                      </div>
+                      <div className="flex gap-1 mt-2">
+                        <Button size="sm" variant="outline" className="text-xs">
+                          <Eye className="h-3 w-3 mr-1" />
+                          Ver
+                        </Button>
+                        <Button size="sm" variant="outline" className="text-xs text-green-600">
+                          <CheckCircle className="h-3 w-3 mr-1" />
+                          Aprovar
+                        </Button>
+                        <Button size="sm" variant="outline" className="text-xs text-red-600">
+                          <X className="h-3 w-3 mr-1" />
+                          Rejeitar
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Foto */}
+                    <div className="bg-white p-3 rounded border">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium text-sm">📷 Foto</span>
+                        <Badge className="bg-red-100 text-red-800 text-xs">
+                          ❌ Rejeitado
+                        </Badge>
+                      </div>
+                      <div className="text-xs text-gray-600 space-y-1">
+                        <p>Arquivo: foto_joao.jpg</p>
+                        <p>Tamanho: 0.8 MB</p>
+                        <p>Enviado: 18/09/2024</p>
+                        <p className="text-red-600">Motivo: Baixa qualidade</p>
+                      </div>
+                      <div className="flex gap-1 mt-2">
+                        <Button size="sm" variant="outline" className="text-xs">
+                          <Eye className="h-3 w-3 mr-1" />
+                          Ver
+                        </Button>
+                        <Button size="sm" variant="outline" className="text-xs text-blue-600">
+                          <Mail className="h-3 w-3 mr-1" />
+                          Solicitar
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Dados Completos do Aluno */}
+                <div className="mt-4 bg-blue-50 p-4 rounded-lg">
+                  <h4 className="font-semibold mb-3 flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    👤 Dados Completos do Aluno
+                  </h4>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <p><strong>Nome Completo:</strong> {student.name}</p>
+                      <p><strong>CPF:</strong> {student.cpf}</p>
+                      <p><strong>Email:</strong> {student.email}</p>
+                    </div>
+                    <div>
+                      <p><strong>Telefone:</strong> {student.phone}</p>
+                      <p><strong>Cidade:</strong> {student.city}</p>
+                      <p><strong>Placa:</strong> {student.car_plate || 'Não informado'}</p>
+                    </div>
+                    <div>
+                      <p><strong>Alvará:</strong> {student.license_number || 'Não informado'}</p>
+                      <p><strong>Status:</strong> {student.status || 'Ativo'}</p>
+                      <p><strong>Cadastro:</strong> {student.created_at ? new Date(student.created_at).toLocaleDateString() : 'N/A'}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Ações do Aluno */}
+                <div className="flex justify-end space-x-2 mt-4 pt-4 border-t">
+                  <Button size="sm" variant="outline">
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    Enviar Mensagem
+                  </Button>
+                  <Button size="sm" variant="outline">
+                    <Download className="h-4 w-4 mr-2" />
+                    Baixar Documentos
+                  </Button>
+                  <Button size="sm" variant="outline">
+                    <Edit className="h-4 w-4 mr-2" />
+                    Editar Dados
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Estatísticas de Documentos */}
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="p-4 text-center">
+            <div className="text-2xl font-bold text-blue-600">124</div>
+            <div className="text-sm text-gray-600">Total de Documentos</div>
+          </Card>
+          <Card className="p-4 text-center">
+            <div className="text-2xl font-bold text-yellow-600">23</div>
+            <div className="text-sm text-gray-600">Pendentes Validação</div>
+          </Card>
+          <Card className="p-4 text-center">
+            <div className="text-2xl font-bold text-green-600">89</div>
+            <div className="text-sm text-gray-600">Aprovados</div>
+          </Card>
+          <Card className="p-4 text-center">
+            <div className="text-2xl font-bold text-red-600">12</div>
+            <div className="text-sm text-gray-600">Rejeitados</div>
+          </Card>
+        </div>
+      </CardContent>
+    </Card>
+  </TabsContent>
+);
