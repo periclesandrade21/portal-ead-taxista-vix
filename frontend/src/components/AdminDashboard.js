@@ -830,6 +830,328 @@ const AdminDashboard = () => {
             </div>
           </TabsContent>
 
+          {/* Aba Cidades */}
+          <TabsContent value="cities" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Estatísticas por Cidades do ES</CardTitle>
+                <CardDescription>
+                  Análise de pagamentos por cidade do Espírito Santo
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {/* Filtro de cidades */}
+                  <div className="flex gap-2 items-center">
+                    <Input
+                      placeholder="Filtrar por cidade..."
+                      value={cityFilter === 'all' ? '' : cityFilter}
+                      onChange={(e) => setCityFilter(e.target.value || 'all')}
+                      className="max-w-xs"
+                    />
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setCityFilter('all')}
+                      size="sm"
+                    >
+                      Limpar
+                    </Button>
+                  </div>
+
+                  {/* Gráfico de cidades com status de pagamento */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Lista de cidades com estatísticas */}
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold">Cidades do ES - Status de Pagamento</h3>
+                      <div className="space-y-3">
+                        {getFilteredCityStats().map((cityData, index) => {
+                          const totalUsers = cityData.total || 0;
+                          const paidUsers = cityData.paid || 0;
+                          const pendingUsers = cityData.pending || 0;
+                          const paidPercentage = totalUsers > 0 ? (paidUsers / totalUsers * 100) : 0;
+                          
+                          return (
+                            <div key={cityData.city} className="p-4 border rounded-lg bg-gray-50">
+                              <div className="flex justify-between items-center mb-2">
+                                <h4 className="font-medium">{cityData.city}</h4>
+                                <span className="text-sm text-gray-500">Total: {totalUsers}</span>
+                              </div>
+                              
+                              {/* Barra de progresso visual */}
+                              <div className="flex gap-1 h-4 rounded-full overflow-hidden bg-gray-200">
+                                <div 
+                                  className="bg-green-500"
+                                  style={{ width: `${(paidUsers / totalUsers * 100)}%` }}
+                                  title={`Pagos: ${paidUsers}`}
+                                ></div>
+                                <div 
+                                  className="bg-red-500"
+                                  style={{ width: `${(pendingUsers / totalUsers * 100)}%` }}
+                                  title={`Pendentes: ${pendingUsers}`}
+                                ></div>
+                              </div>
+                              
+                              {/* Estatísticas detalhadas */}
+                              <div className="flex justify-between mt-2 text-sm">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-3 h-3 bg-green-500 rounded"></div>
+                                  <span>Pagos: {paidUsers} ({paidPercentage.toFixed(1)}%)</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-3 h-3 bg-red-500 rounded"></div>
+                                  <span>Pendentes: {pendingUsers}</span>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Resumo geral */}
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold">Resumo Geral</h3>
+                      
+                      {/* Cards de resumo */}
+                      <div className="grid grid-cols-1 gap-4">
+                        <Card className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm text-gray-600">Total de Cidades</p>
+                              <p className="text-2xl font-bold">{cityStats.length}</p>
+                            </div>
+                            <div className="text-blue-600">
+                              <BarChart3 className="h-8 w-8" />
+                            </div>
+                          </div>
+                        </Card>
+
+                        <Card className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm text-gray-600">Total Usuários</p>
+                              <p className="text-2xl font-bold">
+                                {cityStats.reduce((sum, city) => sum + (city.total || 0), 0)}
+                              </p>
+                            </div>
+                            <div className="text-green-600">
+                              <Users className="h-8 w-8" />
+                            </div>
+                          </div>
+                        </Card>
+
+                        <Card className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm text-gray-600">Pagamentos Confirmados</p>
+                              <p className="text-2xl font-bold text-green-600">
+                                {cityStats.reduce((sum, city) => sum + (city.paid || 0), 0)}
+                              </p>
+                            </div>
+                            <div className="text-green-600">
+                              <CheckCircle className="h-8 w-8" />
+                            </div>
+                          </div>
+                        </Card>
+
+                        <Card className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm text-gray-600">Pagamentos Pendentes</p>
+                              <p className="text-2xl font-bold text-red-600">
+                                {cityStats.reduce((sum, city) => sum + (city.pending || 0), 0)}
+                              </p>
+                            </div>
+                            <div className="text-red-600">
+                              <Clock className="h-8 w-8" />
+                            </div>
+                          </div>
+                        </Card>
+
+                        <Card className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm text-gray-600">Taxa de Conversão</p>
+                              <p className="text-2xl font-bold text-purple-600">
+                                {(() => {
+                                  const totalUsers = cityStats.reduce((sum, city) => sum + (city.total || 0), 0);
+                                  const paidUsers = cityStats.reduce((sum, city) => sum + (city.paid || 0), 0);
+                                  return totalUsers > 0 ? `${(paidUsers / totalUsers * 100).toFixed(1)}%` : '0%';
+                                })()}
+                              </p>
+                            </div>
+                            <div className="text-purple-600">
+                              <TrendingUp className="h-8 w-8" />
+                            </div>
+                          </div>
+                        </Card>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Aba Cursos */}
+          <TabsContent value="courses" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle>Gestão de Cursos</CardTitle>
+                    <CardDescription>
+                      Gerencie cursos disponíveis e seus valores
+                    </CardDescription>
+                  </div>
+                  <Button 
+                    onClick={() => setCourseModal({ 
+                      show: true, 
+                      course: { name: '', description: '', price: 150, duration_hours: 28, category: 'obrigatorio' } 
+                    })}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Novo Curso
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {/* Curso padrão do EAD Taxista */}
+                  <div className="border rounded-lg p-6 bg-blue-50 border-blue-200">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="bg-blue-600 p-2 rounded-lg">
+                            <BookOpen className="h-6 w-6 text-white" />
+                          </div>
+                          <div>
+                            <h3 className="text-xl font-bold text-blue-900">EAD Taxista ES - Curso Completo</h3>
+                            <p className="text-blue-700">Curso obrigatório para taxistas do Espírito Santo</p>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                          <div className="bg-white p-3 rounded-lg border border-blue-200">
+                            <div className="flex items-center gap-2">
+                              <DollarSign className="h-5 w-5 text-green-600" />
+                              <div>
+                                <p className="text-sm text-gray-600">Valor do Curso</p>
+                                <p className="text-xl font-bold text-green-600">R$ 150,00</p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="bg-white p-3 rounded-lg border border-blue-200">
+                            <div className="flex items-center gap-2">
+                              <Clock className="h-5 w-5 text-orange-600" />
+                              <div>
+                                <p className="text-sm text-gray-600">Carga Horária</p>
+                                <p className="text-xl font-bold text-orange-600">28h</p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="bg-white p-3 rounded-lg border border-blue-200">
+                            <div className="flex items-center gap-2">
+                              <Users className="h-5 w-5 text-blue-600" />
+                              <div>
+                                <p className="text-sm text-gray-600">Inscritos</p>
+                                <p className="text-xl font-bold text-blue-600">{stats.total_subscriptions || 0}</p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="bg-white p-3 rounded-lg border border-blue-200">
+                            <div className="flex items-center gap-2">
+                              <Award className="h-5 w-5 text-purple-600" />
+                              <div>
+                                <p className="text-sm text-gray-600">Concluídos</p>
+                                <p className="text-xl font-bold text-purple-600">{stats.paid_subscriptions || 0}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="bg-white p-4 rounded-lg border border-blue-200">
+                          <h4 className="font-semibold mb-2 text-blue-900">Módulos do Curso:</h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                              <span className="text-sm">Relações Humanas (14h)</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                              <span className="text-sm">Direção Defensiva (8h)</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                              <span className="text-sm">Primeiros Socorros (2h)</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                              <span className="text-sm">Mecânica Básica (4h)</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Estatísticas financeiras do curso */}
+                    <div className="mt-4 pt-4 border-t border-blue-200">
+                      <h4 className="font-semibold mb-3 text-blue-900">💰 Estatísticas Financeiras:</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="bg-green-50 p-3 rounded-lg border border-green-200">
+                          <p className="text-sm text-green-700">Receita Total</p>
+                          <p className="text-xl font-bold text-green-800">
+                            R$ {((stats.paid_subscriptions || 0) * 150).toLocaleString('pt-BR')}
+                          </p>
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                          <p className="text-sm text-blue-700">Receita Potencial</p>
+                          <p className="text-xl font-bold text-blue-800">
+                            R$ {((stats.total_subscriptions || 0) * 150).toLocaleString('pt-BR')}
+                          </p>
+                        </div>
+                        <div className="bg-orange-50 p-3 rounded-lg border border-orange-200">
+                          <p className="text-sm text-orange-700">Receita Pendente</p>
+                          <p className="text-xl font-bold text-orange-800">
+                            R$ {(((stats.total_subscriptions || 0) - (stats.paid_subscriptions || 0)) * 150).toLocaleString('pt-BR')}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Lista de cursos adicionais (se houver) */}
+                  {courses.length > 0 && (
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold">Cursos Adicionais</h3>
+                      {courses.map((course) => (
+                        <div key={course.id} className="border rounded-lg p-4">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h4 className="font-semibold">{course.name}</h4>
+                              <p className="text-gray-600 text-sm">{course.description}</p>
+                              <div className="flex gap-4 mt-2 text-sm text-gray-500">
+                                <span>💰 R$ {course.price}</span>
+                                <span>⏱️ {course.duration_hours}h</span>
+                                <span>📚 {course.category}</span>
+                              </div>
+                            </div>
+                            <Badge variant={course.active ? 'default' : 'secondary'}>
+                              {course.active ? 'Ativo' : 'Inativo'}
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           <TabsContent value="discounts">
             <Card>
               <CardHeader>
