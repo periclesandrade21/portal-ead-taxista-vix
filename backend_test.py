@@ -569,10 +569,13 @@ def create_test_user_for_auth():
     """Create a test user for authentication testing"""
     print_test_header("Creating Test User for Authentication")
     
-    # Create test user with known credentials
+    # Create test user with known credentials - use timestamp to avoid conflicts
+    import time
+    timestamp = str(int(time.time()))
+    
     test_data = {
         "name": "Teste Segurança Silva",
-        "email": "teste.seguranca@email.com",
+        "email": f"teste.seguranca.{timestamp}@email.com",
         "phone": "27999888777",
         "cpf": "12345678901",
         "carPlate": "TST-1234",
@@ -593,7 +596,6 @@ def create_test_user_for_auth():
             print_success("Test user created successfully")
             print_info(f"Email: {test_data['email']}")
             print_info(f"Temporary Password: {data.get('temporary_password')}")
-            print_info(f"Status: {data.get('status', 'pending')}")
             
             return {
                 "email": test_data["email"],
@@ -601,13 +603,8 @@ def create_test_user_for_auth():
                 "status": "pending"
             }
         else:
-            # User might already exist, try to get existing user info
-            print_warning("User creation failed, might already exist")
-            return {
-                "email": test_data["email"],
-                "password": "TesteSeg123",  # Default test password
-                "status": "pending"
-            }
+            print_error(f"Test user creation failed: {response.status_code} - {response.text}")
+            return None
             
     except requests.exceptions.RequestException as e:
         print_error(f"Test user creation failed: {str(e)}")
