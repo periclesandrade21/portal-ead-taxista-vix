@@ -559,6 +559,113 @@ const AdminDashboard = () => {
     );
   }
 
+  // Funções para gestão de vídeos e módulos
+  const fetchModules = async () => {
+    try {
+      const response = await axios.get(`${API}/modules`);
+      setModules(response.data.modules || []);
+    } catch (error) {
+      console.error('Erro ao carregar módulos:', error);
+    }
+  };
+
+  const fetchModuleVideos = async (moduleId) => {
+    if (!moduleId) return;
+    try {
+      setVideoLoadingStates(prev => ({ ...prev, [moduleId]: true }));
+      const response = await axios.get(`${API}/modules/${moduleId}/videos`);
+      setVideos(response.data.videos || []);
+    } catch (error) {
+      console.error('Erro ao carregar vídeos:', error);
+    } finally {
+      setVideoLoadingStates(prev => ({ ...prev, [moduleId]: false }));
+    }
+  };
+
+  const handleCreateModule = async () => {
+    try {
+      await axios.post(`${API}/modules`, moduleModal.module);
+      setModuleModal({ show: false, module: { name: '', description: '', duration_hours: 0, color: '#3b82f6' } });
+      fetchModules();
+    } catch (error) {
+      console.error('Erro ao criar módulo:', error);
+      alert('Erro ao criar módulo');
+    }
+  };
+
+  const handleCreateVideo = async () => {
+    try {
+      if (!videoModal.video.youtube_url || !videoModal.video.title || !videoModal.video.module_id) {
+        alert('Por favor, preencha todos os campos obrigatórios');
+        return;
+      }
+      
+      await axios.post(`${API}/videos`, videoModal.video);
+      setVideoModal({ 
+        show: false, 
+        video: { title: '', description: '', youtube_url: '', module_id: '', duration_minutes: 0 } 
+      });
+      
+      if (selectedModule) {
+        fetchModuleVideos(selectedModule);
+      }
+    } catch (error) {
+      console.error('Erro ao criar vídeo:', error);
+      alert(error.response?.data?.detail || 'Erro ao criar vídeo');
+    }
+  };
+
+  const handleDeleteVideo = async () => {
+    try {
+      await axios.delete(`${API}/videos/${deleteVideoModal.videoId}`);
+      setDeleteVideoModal({ show: false, videoId: null, videoTitle: '' });
+      
+      if (selectedModule) {
+        fetchModuleVideos(selectedModule);
+      }
+    } catch (error) {
+      console.error('Erro ao excluir vídeo:', error);
+      alert('Erro ao excluir vídeo');
+    }
+  };
+
+  const extractYouTubeId = (url) => {
+    const patterns = [
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&\n]+)/,
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([^&\n]+)/,
+      /(?:https?:\/\/)?(?:www\.)?youtu\.be\/([^&\n]+)/,
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/v\/([^&\n]+)/
+    ];
+    
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) return match[1];
+    }
+    return '';
+  };
+
+  const formatDuration = (minutes) => {
+    if (!minutes) return '';
+    if (minutes < 60) return `${minutes}min`;
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}min` : `${hours}h`;
+  };
+
+  // Carregar módulos quando component monta
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchModules();
+    }
+  }, [isAuthenticated]);
+
+  // Carregar vídeos quando módulo é selecionado
+  useEffect(() => {
+    if (selectedModule) {
+      fetchModuleVideos(selectedModule);
+    }
+  }, [selectedModule]);
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
