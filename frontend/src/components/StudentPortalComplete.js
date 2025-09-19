@@ -661,6 +661,138 @@ const StudentPortalComplete = () => {
               </CardContent>
             </Card>
           </TabsContent>
+
+          {/* Conteúdo */}
+          <ContentTab 
+            selectedModule={selectedModule}
+            moduleVideos={moduleVideos}
+            handleVideoSelect={handleVideoSelect}
+            handleStartQuiz={handleStartQuiz}
+            userProgress={userProgress}
+            formatDuration={formatDuration}
+          />
+
+          {/* Notas */}
+          <GradesTab modules={modules} userProgress={userProgress} />
+
+          {/* Calendário */}
+          <CalendarTab />
+
+          {/* Suporte */}
+          <SupportTab 
+            chatMessages={chatMessages}
+            newMessage={newMessage}
+            setNewMessage={setNewMessage}
+            handleSendMessage={handleSendMessage}
+          />
+
+          {/* Financeiro */}
+          <FinancialTab user={user} />
+
+          {/* Perfil */}
+          <ProfileTab profileData={profileData} user={user} />
+
+          {/* Modal de Quiz */}
+          {quizModal.show && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                {quizModal.score !== null ? (
+                  // Resultado do Quiz
+                  <div className="text-center">
+                    <Trophy className="h-16 w-16 mx-auto mb-4 text-yellow-500" />
+                    <h3 className="text-2xl font-bold mb-2">Quiz Finalizado!</h3>
+                    <div className="text-6xl font-bold mb-4 text-blue-600">{quizModal.score}%</div>
+                    <p className="text-lg mb-6">
+                      {quizModal.score >= 70 ? (
+                        <span className="text-green-600">🎉 Parabéns! Você foi aprovado!</span>
+                      ) : (
+                        <span className="text-red-600">😔 Você precisa de pelo menos 70% para ser aprovado.</span>
+                      )}
+                    </p>
+                    <Button onClick={() => setQuizModal({ show: false, questions: [], currentQuestion: 0, answers: [], score: null, moduleId: null })}>
+                      Fechar
+                    </Button>
+                  </div>
+                ) : (
+                  // Quiz em Andamento
+                  <>
+                    <div className="flex justify-between items-center mb-6">
+                      <h3 className="text-xl font-bold">
+                        Questão {quizModal.currentQuestion + 1} de {quizModal.questions.length}
+                      </h3>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setQuizModal({ show: false, questions: [], currentQuestion: 0, answers: [], score: null, moduleId: null })}
+                      >
+                        Cancelar
+                      </Button>
+                    </div>
+                    
+                    <div className="mb-6">
+                      <Progress value={(quizModal.currentQuestion / quizModal.questions.length) * 100} className="mb-4" />
+                    </div>
+
+                    {quizModal.questions[quizModal.currentQuestion] && (
+                      <>
+                        <div className="mb-6">
+                          <h4 className="text-lg font-semibold mb-4">
+                            {quizModal.questions[quizModal.currentQuestion].question}
+                          </h4>
+                          
+                          <div className="space-y-3">
+                            {quizModal.questions[quizModal.currentQuestion].options.map((option, index) => (
+                              <label 
+                                key={index}
+                                className={`block p-4 border rounded-lg cursor-pointer transition-colors ${
+                                  quizModal.answers[quizModal.currentQuestion] === index 
+                                    ? 'border-blue-500 bg-blue-50' 
+                                    : 'border-gray-200 hover:border-gray-300'
+                                }`}
+                              >
+                                <input
+                                  type="radio"
+                                  name="quiz-answer"
+                                  value={index}
+                                  checked={quizModal.answers[quizModal.currentQuestion] === index}
+                                  onChange={() => handleQuizAnswer(index)}
+                                  className="sr-only"
+                                />
+                                <span className="flex items-center">
+                                  <span className="mr-3 font-semibold">{String.fromCharCode(65 + index)}.</span>
+                                  {option}
+                                </span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between">
+                          <Button 
+                            variant="outline"
+                            disabled={quizModal.currentQuestion === 0}
+                            onClick={() => setQuizModal(prev => ({ ...prev, currentQuestion: prev.currentQuestion - 1 }))}
+                          >
+                            <ChevronLeft className="h-4 w-4 mr-2" />
+                            Anterior
+                          </Button>
+                          
+                          <Button 
+                            onClick={handleNextQuestion}
+                            disabled={quizModal.answers[quizModal.currentQuestion] === undefined}
+                          >
+                            {quizModal.currentQuestion === quizModal.questions.length - 1 ? 'Finalizar' : 'Próxima'}
+                            {quizModal.currentQuestion !== quizModal.questions.length - 1 && (
+                              <ChevronRight className="h-4 w-4 ml-2" />
+                            )}
+                          </Button>
+                        </div>
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          )}
         </Tabs>
       </div>
     </div>
