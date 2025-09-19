@@ -608,6 +608,69 @@ async def get_status_checks():
     return [StatusCheck(**parse_from_mongo(status_check)) for status_check in status_checks]
 
 # Subscription routes
+@api_router.post("/auth/login", response_model=LoginResponse)
+async def login_student(login_request: LoginRequest):
+    """Autenticar aluno no portal"""
+    try:
+        # Normalizar email
+        email_normalized = login_request.email.strip().lower()
+        
+        # Buscar usuário no banco
+        user = await db.subscriptions.find_one({
+            "email": {"$regex": f"^{re.escape(email_normalized)}$", "$options": "i"}
+        })
+        
+        if not user:
+            raise HTTPException(
+                status_code=401, 
+                detail="Email não encontrado no sistema"
+            )
+        
+        # Verificar senha temporária
+        if not user.get("temporary_password"):
+            raise HTTPException(
+                status_code=401, 
+                detail="Senha não configurada. Entre em contato com o suporte."
+            )
+        
+        if user["temporary_password"] != login_request.password:
+            raise HTTPException(
+                status_code=401, 
+                detail="Senha incorreta"
+            )
+        
+        # Verificar se pagamento foi confirmado
+        if user.get("status") != "paid":
+            raise HTTPException(
+                status_code=403, 
+                detail="Acesso liberado apenas após confirmação do pagamento"
+            )
+        
+        # Retornar dados do usuário (sem informações sensíveis)
+        user_data = {
+            "id": user.get("id"),
+            "name": user.get("name"),
+            "email": user.get("email"),
+            "status": user.get("status"),
+            "course_access": user.get("course_access", "denied"),
+            "created_at": user.get("created_at")
+        }
+        
+        logging.info(f"Login realizado com sucesso: {email_normalized}")
+        
+        return LoginResponse(
+            success=True,
+            message="Login realizado com sucesso",
+            user=user_data
+        )
+        
+    except HTTPException:
+        # Re-raise HTTPException para manter status code correto
+        raise
+    except Exception as e:
+        logging.error(f"Erro no login: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro interno do servidor")
+
 @api_router.post("/subscribe", response_model=PasswordSentResponse)
 async def create_subscription(subscription: UserSubscriptionCreate):
     """Create a new subscription and send password"""
