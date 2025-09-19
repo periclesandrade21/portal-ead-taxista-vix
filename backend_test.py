@@ -1200,13 +1200,28 @@ def run_all_tests():
     print_test_header("TEST SUMMARY")
     
     # Separate test categories
+    critical_fix_tests = ['improved_password', 'email_transparency', 'whatsapp_honesty', 'complete_endpoint_fixes']
     chat_tests = ['health_check', 'existing_endpoints', 'chat_normal', 'chat_values', 'chat_password_reset', 
                   'chat_history', 'password_reset_endpoint', 'llm_integration', 'session_isolation']
     payment_tests = ['subscription_creation', 'asaas_webhook', 'payment_verification', 'subscription_status_check']
     security_tests = ['auth_endpoint_exists', 'auth_invalid_email', 'auth_incorrect_password', 
                      'auth_pending_payment', 'auth_valid_paid_user']
     
-    print(f"{Colors.BOLD}CHAT BOT SYSTEM TESTS:{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.YELLOW}🔧 CRITICAL FIX TESTS (PASSWORD & NOTIFICATIONS):{Colors.ENDC}")
+    critical_passed = 0
+    critical_failed = []
+    for test_name in critical_fix_tests:
+        if test_name in test_results:
+            result = test_results[test_name]
+            status = "PASS" if result else "FAIL"
+            color = Colors.GREEN if result else Colors.RED
+            print(f"{color}{status:>6}{Colors.ENDC} - {test_name.replace('_', ' ').title()}")
+            if result:
+                critical_passed += 1
+            else:
+                critical_failed.append(test_name)
+    
+    print(f"\n{Colors.BOLD}CHAT BOT SYSTEM TESTS:{Colors.ENDC}")
     chat_passed = 0
     for test_name in chat_tests:
         if test_name in test_results:
@@ -1246,9 +1261,21 @@ def run_all_tests():
     total_tests = len(test_results)
     
     print(f"\n{Colors.BOLD}OVERALL RESULT: {total_passed}/{total_tests} tests passed{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.YELLOW}🔧 Critical Fixes: {critical_passed}/{len(critical_fix_tests)} tests passed{Colors.ENDC}")
     print(f"{Colors.BOLD}Chat Bot System: {chat_passed}/{len(chat_tests)} tests passed{Colors.ENDC}")
     print(f"{Colors.BOLD}Payment Flow: {payment_passed}/{len(payment_tests)} tests passed{Colors.ENDC}")
     print(f"{Colors.BOLD}{Colors.RED}🚨 Security Tests: {security_passed}/{len(security_tests)} tests passed{Colors.ENDC}")
+    
+    # Critical fix assessment
+    if critical_passed == len(critical_fix_tests):
+        print_success("🔧 CRITICAL FIXES ASSESSMENT: ALL FIXES VERIFIED!")
+        print_success("✅ Password improvements, email transparency, and WhatsApp honesty working correctly")
+    else:
+        print_error("🚨 CRITICAL FIX ISSUES DETECTED!")
+        print_error(f"❌ {len(critical_failed)} critical fix tests failed:")
+        for failed_test in critical_failed:
+            print_error(f"   - {failed_test.replace('_', ' ').title()}")
+        print_error("⚠️  USER REPORTED ISSUES MAY NOT BE FULLY RESOLVED!")
     
     # Critical security assessment
     if security_passed == len(security_tests):
