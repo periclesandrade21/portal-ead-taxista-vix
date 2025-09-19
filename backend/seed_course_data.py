@@ -9,8 +9,8 @@ from datetime import datetime, timezone
 import uuid
 
 # Configuração do banco
-mongo_url = "mongodb://localhost:27017"
-db_name = "test_database"
+mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+db_name = os.environ.get('DB_NAME', 'test_database')
 
 # Dados dos módulos
 MODULES_DATA = [
