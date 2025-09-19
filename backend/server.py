@@ -853,6 +853,13 @@ async def check_duplicates(subscription: UserSubscriptionCreate):
 async def create_subscription(subscription: UserSubscriptionCreate):
     """Create a new subscription and send password"""
     try:
+        # Validar consentimento LGPD
+        if not subscription.lgpd_consent:
+            raise HTTPException(
+                status_code=400, 
+                detail="É necessário aceitar os termos de privacidade e proteção de dados (LGPD)"
+            )
+        
         # Validar formato de CPF
         if not validate_cpf_format(subscription.cpf):
             raise HTTPException(
@@ -946,6 +953,8 @@ async def create_subscription(subscription: UserSubscriptionCreate):
             "status": "pending",
             "course_access": "denied",
             "temporary_password": temporary_password,
+            "lgpd_consent": subscription.lgpd_consent,
+            "lgpd_consent_date": datetime.now(timezone.utc),
             "created_at": datetime.now(timezone.utc)
         }
         
@@ -959,7 +968,7 @@ async def create_subscription(subscription: UserSubscriptionCreate):
         email_sent = await send_password_email(subscription.email, normalized_name, temporary_password)
         whatsapp_sent = await send_password_whatsapp(subscription.phone, normalized_name, temporary_password)
         
-        logging.info(f"Inscrição criada: {normalized_email} - Nome: {normalized_name} - CPF: {clean_cpf}")
+        logging.info(f"Inscrição criada: {normalized_email} - Nome: {normalized_name} - CPF: {clean_cpf} - LGPD: {subscription.lgpd_consent}")
         logging.info(f"Email enviado: {email_sent}, WhatsApp enviado: {whatsapp_sent}")
         
         return PasswordSentResponse(
