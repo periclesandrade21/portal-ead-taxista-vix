@@ -373,12 +373,6 @@ const Home = () => {
       return;
     }
     
-    // Verificar duplicatas primeiro
-    await checkDuplicates();
-    if (duplicatePopup) {
-      return; // Para se houver duplicatas
-    }
-    
     try {
       const finalCity = city === "Outra" ? customCity : city;
       
