@@ -71,6 +71,9 @@ const AdminDashboard = () => {
   const [discountModal, setDiscountModal] = useState({ show: false, userId: null, discount: 0 });
   const [bonusModal, setBonusModal] = useState({ show: false, userId: null });
   const [resetPasswordModal, setResetPasswordModal] = useState({ show: false, userId: null, newPassword: '', showPassword: false });
+  const [coursePrice, setCoursePrice] = useState(150);
+  const [editPriceModal, setEditPriceModal] = useState({ show: false });
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState({ show: false, courseId: null, courseName: '' });
 
   useEffect(() => {
     if (isAuthenticated) {
