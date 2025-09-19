@@ -317,6 +317,60 @@ const StudentPortalComplete = () => {
     }, 1000);
   };
 
+  const handleChangePassword = async () => {
+    if (changePasswordModal.newPassword !== changePasswordModal.confirmPassword) {
+      alert('Nova senha e confirmação não coincidem!');
+      return;
+    }
+
+    if (changePasswordModal.newPassword.length < 6) {
+      alert('Nova senha deve ter pelo menos 6 caracteres!');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Simular chamada API para trocar senha
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      alert('✅ Senha alterada com sucesso!');
+      setChangePasswordModal({ 
+        show: false, 
+        currentPassword: '', 
+        newPassword: '', 
+        confirmPassword: '',
+        showCurrentPassword: false,
+        showNewPassword: false,
+        showConfirmPassword: false
+      });
+    } catch (error) {
+      console.error('Erro ao alterar senha:', error);
+      alert('Erro ao alterar senha. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePhotoUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        alert('Arquivo muito grande! Máximo 5MB.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setProfileData(prev => ({
+          ...prev,
+          photo: e.target.result
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 flex items-center justify-center p-4">
