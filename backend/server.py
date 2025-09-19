@@ -74,6 +74,28 @@ class LoginResponse(BaseModel):
     message: str
     user: Optional[dict] = None
 
+class CourseCreate(BaseModel):
+    name: str
+    description: str
+    price: float
+    duration_hours: int
+    category: str = "obrigatorio"  # obrigatorio, opcional
+    active: bool = True
+
+class Course(BaseModel):
+    id: str
+    name: str
+    description: str
+    price: float
+    duration_hours: int
+    category: str
+    active: bool
+    created_at: datetime
+
+class DuplicateCheckResponse(BaseModel):
+    has_duplicates: bool
+    duplicates: dict
+
 class PasswordSentResponse(BaseModel):
     message: str
     password_sent_email: bool
