@@ -7,7 +7,7 @@ import { Progress } from './ui/progress';
 import { TabsContent } from './ui/tabs';
 import {
   Play, Download, Calendar, MessageCircle, CreditCard, User, 
-  FileText, Trophy, Clock, CheckCircle, AlertCircle
+  FileText, Trophy, Clock, CheckCircle, AlertCircle, Camera, Key
 } from 'lucide-react';
 
 export const ContentTab = ({ 
