@@ -902,6 +902,16 @@ async def create_course(course: CourseCreate):
         logging.error(f"Erro ao criar curso: {str(e)}")
         raise HTTPException(status_code=500, detail="Erro ao criar curso")
 
+@api_router.get("/courses")
+async def get_courses():
+    """Listar todos os cursos"""
+    try:
+        courses = await db.courses.find().to_list(length=None)
+        return [parse_from_mongo(course) for course in courses]
+    except Exception as e:
+        logging.error(f"Erro ao buscar cursos: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro ao buscar cursos")
+
 @api_router.delete("/courses/{course_id}")
 async def delete_course(course_id: str):
     """Excluir curso"""
