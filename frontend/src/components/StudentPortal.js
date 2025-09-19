@@ -1,27 +1,61 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Progress } from './ui/progress';
 import { 
+  Users, 
   BookOpen, 
-  Play, 
-  CheckCircle, 
-  Clock, 
-  Award,
-  User,
-  Lock,
-  Eye,
+  Award, 
+  TrendingUp, 
+  Eye, 
   EyeOff,
+  Edit, 
+  Play,
   Download,
-  Video,
-  FileText,
+  Search,
+  Filter,
+  Mail,
+  Phone,
+  Calendar,
+  DollarSign,
   BarChart3,
+  PieChart,
+  Activity,
+  Lock,
+  Unlock,
+  Gift,
+  Percent,
+  RefreshCw,
+  Key,
+  User,
+  AlertCircle,
+  CheckCircle,
+  Clock,
   ChevronLeft,
-  Key
+  ChevronRight,
+  MessageCircle,
+  FileText,
+  HelpCircle,
+  Star,
+  Trophy,
+  Target,
+  Bookmark,
+  Volume2,
+  Settings,
+  CreditCard,
+  Receipt,
+  GraduationCap,
+  Shield,
+  Bell,
+  Home,
+  LogOut,
+  Camera
 } from 'lucide-react';
+import axios from 'axios';
 
 const StudentPortal = () => {
   const [loginData, setLoginData] = useState({ email: '', password: '' });
