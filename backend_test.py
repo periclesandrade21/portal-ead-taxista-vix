@@ -2817,11 +2817,18 @@ def test_dynamic_price_system_complete():
 
 def run_all_tests():
     """Run all tests and provide summary"""
+def run_all_tests():
+    """Run all tests and provide summary"""
     print(f"{Colors.BOLD}EAD TAXISTA ES - COMPLETE SYSTEM TESTING{Colors.ENDC}")
     print(f"Backend URL: {BACKEND_URL}")
     print(f"Test started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
     test_results = {}
+    
+    # === DYNAMIC PRICE SYSTEM TESTS (PRIORITY) ===
+    print(f"\n{Colors.BOLD}{Colors.BLUE}🎯 DYNAMIC COURSE PRICE SYSTEM TESTING{Colors.ENDC}")
+    price_passed, price_failed = test_dynamic_price_system_complete()
+    test_results['dynamic_price_system'] = price_passed > 0 and price_failed == 0
     
     # PRIORITY: MongoDB webhook metadata storage debug (as requested in review)
     print(f"\n{Colors.BOLD}{Colors.RED}{'='*60}{Colors.ENDC}")
@@ -2934,6 +2941,7 @@ def run_all_tests():
     print_test_header("TEST SUMMARY")
     
     # Separate test categories
+    dynamic_price_tests = ['dynamic_price_system']
     critical_fix_tests = ['improved_password', 'email_transparency', 'whatsapp_honesty', 'complete_endpoint_fixes']
     chat_tests = ['health_check', 'existing_endpoints', 'chat_normal', 'chat_values', 'chat_password_reset', 
                   'chat_history', 'password_reset_endpoint', 'llm_integration', 'session_isolation']
@@ -2943,7 +2951,21 @@ def run_all_tests():
     admin_password_tests = ['admin_reset_valid_user', 'admin_reset_invalid_user', 'admin_reset_malformed_request',
                            'student_login_new_password', 'student_login_old_password_fails']
     
-    print(f"{Colors.BOLD}{Colors.YELLOW}🔧 CRITICAL FIX TESTS (PASSWORD & NOTIFICATIONS):{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.BLUE}🎯 DYNAMIC PRICE SYSTEM TESTS:{Colors.ENDC}")
+    price_system_passed = 0
+    price_system_failed = []
+    for test_name in dynamic_price_tests:
+        if test_name in test_results:
+            result = test_results[test_name]
+            status = "PASS" if result else "FAIL"
+            color = Colors.GREEN if result else Colors.RED
+            print(f"{color}{status:>6}{Colors.ENDC} - {test_name.replace('_', ' ').title()}")
+            if result:
+                price_system_passed += 1
+            else:
+                price_system_failed.append(test_name)
+    
+    print(f"\n{Colors.BOLD}{Colors.YELLOW}🔧 CRITICAL FIX TESTS (PASSWORD & NOTIFICATIONS):{Colors.ENDC}")
     critical_passed = 0
     critical_failed = []
     for test_name in critical_fix_tests:
@@ -3011,11 +3033,25 @@ def run_all_tests():
     total_tests = len(test_results)
     
     print(f"\n{Colors.BOLD}OVERALL RESULT: {total_passed}/{total_tests} tests passed{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.BLUE}🎯 Dynamic Price System: {price_system_passed}/{len(dynamic_price_tests)} tests passed{Colors.ENDC}")
     print(f"{Colors.BOLD}{Colors.YELLOW}🔧 Critical Fixes: {critical_passed}/{len(critical_fix_tests)} tests passed{Colors.ENDC}")
     print(f"{Colors.BOLD}Chat Bot System: {chat_passed}/{len(chat_tests)} tests passed{Colors.ENDC}")
     print(f"{Colors.BOLD}Payment Flow: {payment_passed}/{len(payment_tests)} tests passed{Colors.ENDC}")
     print(f"{Colors.BOLD}{Colors.RED}🚨 Security Tests: {security_passed}/{len(security_tests)} tests passed{Colors.ENDC}")
     print(f"{Colors.BOLD}{Colors.BLUE}🔑 Admin Password Reset: {admin_password_passed}/{len(admin_password_tests)} tests passed{Colors.ENDC}")
+    
+    # Dynamic price system assessment
+    if price_system_passed == len(dynamic_price_tests):
+        print_success("🎯 DYNAMIC PRICE SYSTEM ASSESSMENT: ALL TESTS PASSED!")
+        print_success("✅ Default price API, set price API, and price consistency working correctly")
+        print_success("✅ Course management (create/delete) operational")
+        print_success("✅ Bot integration may need updates for dynamic pricing")
+    else:
+        print_error("🚨 DYNAMIC PRICE SYSTEM ISSUES DETECTED!")
+        print_error(f"❌ {len(price_system_failed)} dynamic price system tests failed:")
+        for failed_test in price_system_failed:
+            print_error(f"   - {failed_test.replace('_', ' ').title()}")
+        print_error("⚠️  DYNAMIC PRICING FUNCTIONALITY NEEDS ATTENTION!")
     
     # Critical fix assessment
     if critical_passed == len(critical_fix_tests):
