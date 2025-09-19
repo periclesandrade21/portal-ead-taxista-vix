@@ -555,14 +555,14 @@ async def seed_database():
     
     try:
         # Limpar collections existentes
-        await db.modules.delete_many({})
-        await db.videos.delete_many({})
+        await db.course_modules.delete_many({})
+        await db.course_videos.delete_many({})
         await db.questions.delete_many({})
         
         print("✅ Collections limpas")
         
         # Inserir módulos
-        await db.modules.insert_many(MODULES_DATA)
+        await db.course_modules.insert_many(MODULES_DATA)
         print(f"✅ {len(MODULES_DATA)} módulos inseridos")
         
         # Mapear nomes de módulos para IDs
