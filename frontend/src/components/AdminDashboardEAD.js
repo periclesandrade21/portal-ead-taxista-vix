@@ -350,3 +350,230 @@ const AdminDashboardEAD = () => {
       </div>
     );
   }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-4">
+              <div className="bg-blue-600 p-2 rounded-lg">
+                <Car className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-semibold text-gray-900">Admin EAD Taxistas</h1>
+                <p className="text-sm text-gray-500">Sistema de Gestão Completo</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <Button variant="ghost" size="sm" className="relative">
+                <Bell className="h-5 w-5" />
+                {notifications.length > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {notifications.length}
+                  </span>
+                )}
+              </Button>
+              
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                  <span className="text-white text-sm font-medium">A</span>
+                </div>
+                <span className="text-sm font-medium text-gray-700">Administrador</span>
+              </div>
+              
+              <Button variant="outline" size="sm" onClick={handleLogout}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Sair
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          {/* Navigation */}
+          <TabsList className="grid w-full grid-cols-8">
+            <TabsTrigger value="dashboard">
+              <Home className="h-4 w-4 mr-2" />
+              Dashboard
+            </TabsTrigger>
+            <TabsTrigger value="drivers">
+              <Users className="h-4 w-4 mr-2" />
+              Motoristas
+            </TabsTrigger>
+            <TabsTrigger value="courses">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Cursos
+            </TabsTrigger>
+            <TabsTrigger value="classes">
+              <CalendarIcon className="h-4 w-4 mr-2" />
+              Turmas
+            </TabsTrigger>
+            <TabsTrigger value="certificates">
+              <Award className="h-4 w-4 mr-2" />
+              Certificados
+            </TabsTrigger>
+            <TabsTrigger value="reports">
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Relatórios
+            </TabsTrigger>
+            <TabsTrigger value="communication">
+              <MessageCircle className="h-4 w-4 mr-2" />
+              Comunicação
+            </TabsTrigger>
+            <TabsTrigger value="settings">
+              <Settings className="h-4 w-4 mr-2" />
+              Configurações
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Dashboard Geral */}
+          <TabsContent value="dashboard" className="space-y-6">
+            {/* Cards de Estatísticas */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total de Taxistas</CardTitle>
+                  <Users className="h-4 w-4 text-blue-600" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{dashboardStats.totalDrivers.toLocaleString()}</div>
+                  <p className="text-xs text-muted-foreground">
+                    +{dashboardStats.lastMonthGrowth}% do mês passado
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Certificados</CardTitle>
+                  <Award className="h-4 w-4 text-green-600" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{dashboardStats.certifiedDrivers.toLocaleString()}</div>
+                  <p className="text-xs text-muted-foreground">
+                    {Math.round((dashboardStats.certifiedDrivers / dashboardStats.totalDrivers) * 100)}% do total
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Progresso Médio</CardTitle>
+                  <TrendingUp className="h-4 w-4 text-yellow-600" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{dashboardStats.avgProgress}%</div>
+                  <p className="text-xs text-muted-foreground">
+                    Taxa de aprovação: {dashboardStats.approvalRate}%
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Alertas</CardTitle>
+                  <AlertCircle className="h-4 w-4 text-red-600" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{dashboardStats.pendingCertifications}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Certificações vencendo
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Gráficos e Alertas */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Progresso por Cidade</CardTitle>
+                  <CardDescription>Distribuição de taxistas certificados por município</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {['Vitória', 'Vila Velha', 'Serra', 'Cariacica', 'Viana'].map((city, index) => {
+                      const progress = [87, 76, 82, 69, 55][index];
+                      return (
+                        <div key={city} className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="font-medium">{city}</span>
+                            <span className="text-sm text-gray-500">{progress}%</span>
+                          </div>
+                          <Progress value={progress} className="h-2" />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Alertas e Notificações</CardTitle>
+                  <CardDescription>Itens que precisam de atenção</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {notifications.map((notification) => (
+                    <div key={notification.id} className="flex items-start space-x-3">
+                      <div className={`p-2 rounded-full ${
+                        notification.type === 'alert' ? 'bg-red-100' :
+                        notification.type === 'warning' ? 'bg-yellow-100' : 'bg-blue-100'
+                      }`}>
+                        {notification.type === 'alert' ? <AlertCircle className="h-4 w-4 text-red-600" /> :
+                         notification.type === 'warning' ? <AlertCircle className="h-4 w-4 text-yellow-600" /> :
+                         <Bell className="h-4 w-4 text-blue-600" />}
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm">{notification.message}</p>
+                        <p className="text-xs text-gray-500">{notification.time}</p>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Últimos Acessos */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Últimos Acessos</CardTitle>
+                <CardDescription>Atividade recente dos taxistas</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {drivers.slice(0, 5).map((driver) => (
+                    <div key={driver.id} className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs font-medium">
+                            {driver.name.charAt(0)}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="font-medium">{driver.name}</p>
+                          <p className="text-sm text-gray-500">{driver.city} • {driver.license_number}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm">{driver.last_access}</p>
+                        {getStatusBadge(driver.status)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+};
+
+export default AdminDashboardEAD;
