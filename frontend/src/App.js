@@ -1696,7 +1696,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/student-portal" element={<StudentPortal />} />
+          <Route path="/student-portal" element={<StudentPortalComplete />} />
           <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </BrowserRouter>
