@@ -790,6 +790,12 @@ const Home = () => {
                     Portal Admin
                   </Button>
                 </Link>
+                <Link to="/admin-ead">
+                  <Button className="px-8 py-4 text-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                    <Car className="mr-2 h-5 w-5" />
+                    Admin EAD
+                  </Button>
+                </Link>
               </div>
             </div>
             <div className="relative">
