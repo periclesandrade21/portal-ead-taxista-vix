@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend Test Suite for EAD Taxista ES - Chat Bot System
-Testing the new chat bot implementation and related endpoints
+Backend Test Suite for EAD Taxista ES - Video Management System
+Testing the complete video management system implementation including modules, videos, and questions
 """
 
 import requests
