@@ -127,9 +127,13 @@ const StudentPortal = () => {
                   id="email"
                   type="email"
                   value={loginData.email}
-                  onChange={(e) => setLoginData({...loginData, email: e.target.value})}
+                  onChange={(e) => {
+                    setLoginData({...loginData, email: e.target.value});
+                    setLoginError(''); // Limpar erro ao digitar
+                  }}
                   placeholder="seu@email.com"
                   required
+                  className={loginError ? 'border-red-500' : ''}
                 />
               </div>
               
@@ -139,14 +143,38 @@ const StudentPortal = () => {
                   id="password"
                   type="password"
                   value={loginData.password}
-                  onChange={(e) => setLoginData({...loginData, password: e.target.value})}
-                  placeholder="Sua senha"
+                  onChange={(e) => {
+                    setLoginData({...loginData, password: e.target.value});
+                    setLoginError(''); // Limpar erro ao digitar
+                  }}
+                  placeholder="Sua senha temporária"
                   required
+                  className={loginError ? 'border-red-500' : ''}
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  Use a senha enviada por email após seu cadastro
+                </p>
               </div>
               
-              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
-                Entrar
+              {loginError && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                  <p className="text-red-700 text-sm">{loginError}</p>
+                </div>
+              )}
+              
+              <Button 
+                type="submit" 
+                className="w-full bg-blue-600 hover:bg-blue-700"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Verificando...
+                  </div>
+                ) : (
+                  'Entrar'
+                )}
               </Button>
               
               <div className="text-center text-sm text-gray-600">
