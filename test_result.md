@@ -172,23 +172,53 @@ backend:
         comment: "✅ ASAAS PAYMENT FLOW FULLY OPERATIONAL - Comprehensive testing completed successfully. All 4 payment flow tests passed: 1) Subscription creation (/api/subscribe) working perfectly with test data (João Silva Teste), creates subscription with status 'pending' correctly. 2) Asaas webhook (/api/webhook/asaas-payment) processes PAYMENT_CONFIRMED events correctly, updates subscription status to 'paid' and grants course access. 3) Payment verification endpoint (/api/payment/verify-status) working correctly, returns proper status and course access information. 4) Backend logs confirm complete flow: subscription created → payment confirmed via webhook → course access granted. Integration with Asaas sandbox link is ready for production use."
 
 frontend:
-  - task: "Interface do Bot IA"
+  - task: "Remoção do botão Portal Admin"
     implemented: true
     working: true
-    file: "ChatBot.js"
+    file: "App.js"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
-      - working: "NA"
-        agent: "main"
-        comment: "Criar componente de chat para bot IA"
-      - working: "NA"
-        agent: "main"
-        comment: "✅ Componente ChatBot.js criado com interface completa, integrado no App.js. Inclui chat flutuante, histórico, sugestões rápidas, detecção de status, envio de mensagens, integração com backend /api/chat"
       - working: true
-        agent: "testing"
-        comment: "✅ TAXIBOT CHAT FULLY FUNCTIONAL - Comprehensive testing completed successfully. Chat window opens/closes properly, all UI components render correctly, message sending/receiving works perfectly, backend API integration operational (3 successful POST requests with 200 responses). Tested value questions (correct 'valores serão divulgados em breve' response), password reset (appropriate email instructions), and general course questions (detailed EAD information). React state management working correctly. The user's reported issue was likely temporary - chat functionality is completely operational."
+        agent: "main"
+        comment: "✅ BOTÃO PORTAL ADMIN REMOVIDO COM SUCESSO - Removido o link 'Portal Admin' da página principal, mantendo apenas 'Portal do Aluno' e 'Admin EAD'. Interface agora mais limpa e focada nos portais essenciais."
+
+  - task: "Remoção da aba duplicada Gestão de Motoristas"
+    implemented: true
+    working: true
+    file: "AdminDashboardEAD.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ ABA DUPLICADA REMOVIDA - Aba 'Gestão de Motoristas' removida do painel administrativo, mantendo apenas 'Inscrições' que já contém toda funcionalidade necessária. Navegação otimizada de 12 para 11 abas, removendo duplicação e confusão."
+
+  - task: "Interface melhorada da Gestão de Inscrições"
+    implemented: true
+    working: true
+    file: "AdminEADCompleteabs.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ INTERFACE DE INSCRIÇÕES COMPLETAMENTE RENOVADA - Funcionalidades adicionadas: 1) Novos botões com cores específicas (Verde=Desconto, Azul=Reset Senha, Roxo=Limpar Campos, Vermelho=Excluir), 2) Badges visuais para descontos aplicados, 3) Visualização de preço original vs preço final, 4) Tooltips informativos para cada ação, 5) Layout responsivo e organizado."
+
+  - task: "Sistema completo de Relatórios - 9 tipos"
+    implemented: true
+    working: true
+    file: "AdminEADCompleteabs.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ SISTEMA COMPLETO DE RELATÓRIOS IMPLEMENTADO - 9 tipos de relatórios essenciais criados: 1) Inscrições, 2) Progresso, 3) Certificados Emitidos, 4) Pagamentos, 5) Documentação, 6) Por Município, 7) Descontos e Doações, 8) Reprovações, 9) Acessos. Cada relatório com: filtros globais (cidade, curso, período, status), exportação em 3 formatos (Excel, CSV, PDF), descrições detalhadas dos campos, design profissional com cores distintas, casos de uso específicos para gestão."
 
   - task: "Autoplay do vídeo na landing"
     implemented: true
