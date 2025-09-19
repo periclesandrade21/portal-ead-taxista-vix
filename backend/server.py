@@ -1879,31 +1879,6 @@ async def verify_payment_status(request: dict):
         logging.error(f"Erro ao verificar pagamento: {str(e)}")
         raise HTTPException(status_code=500, detail="Erro ao verificar pagamento")
 
-# Module routes
-@api_router.post("/modules", response_model=Module)
-async def create_module(module_data: Module):
-    """Create a new course module"""
-    prepared_data = prepare_for_mongo(module_data.dict())
-    await db.modules.insert_one(prepared_data)
-    
-    logging.info(f"Novo módulo criado: {module_data.title}")
-    
-    return module_data
-
-@api_router.get("/modules", response_model=List[Module])
-async def get_modules():
-    """Get all course modules"""
-    modules = await db.modules.find().sort("order", 1).to_list(1000)
-    return [Module(**parse_from_mongo(module)) for module in modules]
-
-@api_router.get("/modules/{module_id}", response_model=Module)
-async def get_module(module_id: str):
-    """Get module by ID"""
-    module = await db.modules.find_one({"id": module_id})
-    if not module:
-        raise HTTPException(status_code=404, detail="Módulo não encontrado")
-    return Module(**parse_from_mongo(module))
-
 # Exam routes
 @api_router.post("/exams", response_model=Exam)
 async def create_exam(exam_data: Exam):
