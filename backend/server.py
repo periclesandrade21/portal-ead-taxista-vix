@@ -250,6 +250,139 @@ def validate_email_format(email: str) -> bool:
     
     return re.match(email_pattern, email) is not None
 
+def validate_name_format(name: str) -> dict:
+    """Valida formato e estrutura do nome brasileiro"""
+    result = {"valid": False, "errors": []}
+    
+    if not name or not name.strip():
+        result["errors"].append("Nome é obrigatório")
+        return result
+    
+    name = name.strip()
+    
+    # Verificações básicas
+    if len(name) < 2:
+        result["errors"].append("Nome muito curto")
+        return result
+    
+    if len(name) > 60:
+        result["errors"].append("Nome muito longo (máximo 60 caracteres)")
+        return result
+    
+    # Verificar se contém apenas letras, espaços, hífens e acentos
+    if not re.match(r'^[A-Za-zÀ-ÿ\s\'-]+$', name):
+        result["errors"].append("Nome contém caracteres inválidos")
+        return result
+    
+    # Verificar se tem pelo menos nome e sobrenome
+    parts = name.split()
+    if len(parts) < 2:
+        result["errors"].append("Informe nome e sobrenome completos")
+        return result
+    
+    # Verificar se não é apenas uma letra por parte
+    for part in parts:
+        if len(part) < 2:
+            result["errors"].append("Cada parte do nome deve ter pelo menos 2 caracteres")
+            return result
+    
+    # Lista de palavras proibidas/suspeitas
+    forbidden_words = [
+        "teste", "test", "admin", "administrador", "usuario", "user", 
+        "fake", "falso", "exemplo", "example", "aaa", "bbb", "ccc",
+        "123", "abc", "xyz", "qwerty", "asdf", "null", "undefined"
+    ]
+    
+    name_lower = name.lower()
+    for word in forbidden_words:
+        if word in name_lower:
+            result["errors"].append("Nome parece ser fictício ou de teste")
+            return result
+    
+    # Verificar repetições excessivas
+    if re.search(r'(.)\1{3,}', name):  # 4 ou mais caracteres iguais seguidos
+        result["errors"].append("Nome contém repetições suspeitas")
+        return result
+    
+    result["valid"] = True
+    return result
+
+async def validate_name_with_api(name: str) -> dict:
+    """Valida nome usando Gender-API (gratuita - 50 req/mês)"""
+    result = {"valid": True, "api_used": False, "gender": None, "confidence": None}
+    
+    try:
+        # Pegar apenas o primeiro nome para validação de gênero
+        first_name = name.strip().split()[0]
+        
+        # API Gender-API (gratuita)
+        api_url = f"https://gender-api.com/get?name={first_name}&key=FREE"
+        
+        response = requests.get(api_url, timeout=5)
+        
+        if response.status_code == 200:
+            data = response.json()
+            
+            result["api_used"] = True
+            result["gender"] = data.get("gender")
+            result["confidence"] = data.get("accuracy", 0)
+            
+            # Se a API não conseguiu determinar o gênero com confiança mínima
+            if result["confidence"] < 60:  # Menos de 60% de confiança
+                result["valid"] = False
+                result["error"] = "Nome não reconhecido como comum"
+            
+        else:
+            # API falhou, mas não invalidamos o nome por isso
+            logging.warning(f"Gender API falhou: {response.status_code}")
+            
+    except Exception as e:
+        # Falha na API não deve invalidar o cadastro
+        logging.warning(f"Erro na validação de nome via API: {str(e)}")
+    
+    return result
+
+def get_common_brazilian_names():
+    """Lista de nomes brasileiros comuns para validação offline"""
+    return {
+        "primeiro_nomes": [
+            "joão", "maria", "josé", "ana", "antonio", "francisca", "carlos", "paulo", 
+            "pedro", "lucas", "luiz", "marcos", "luis", "gabriel", "rafael", "daniel",
+            "marcelo", "bruno", "eduardo", "felipe", "raimundo", "rodrigo", "manoel",
+            "fernando", "gustavo", "jorge", "mateus", "ricardo", "andré", "adriano",
+            "francisca", "antonia", "adriana", "juliana", "márcia", "fernanda", "patrícia",
+            "aline", "sandra", "monica", "débora", "carolina", "amanda", "bruna", "jessica",
+            "leticia", "camila", "carla", "roberta", "simone", "priscila", "vanessa"
+        ],
+        "sobrenomes": [
+            "silva", "santos", "oliveira", "souza", "rodrigues", "ferreira", "alves",
+            "pereira", "lima", "gomes", "ribeiro", "carvalho", "barbosa", "martins",
+            "araújo", "costa", "fernandes", "rocha", "soares", "dias", "nascimento",
+            "correia", "moreira", "mendes", "freitas", "ramos", "cardoso", "campos",
+            "teixeira", "miranda", "pinto", "moura", "cavalcanti", "monteiro", "nunes"
+        ]
+    }
+
+def validate_name_offline(name: str) -> dict:
+    """Validação offline usando lista de nomes brasileiros comuns"""
+    result = {"valid": False, "found_names": []}
+    
+    name_parts = [part.lower() for part in name.strip().split()]
+    common_names = get_common_brazilian_names()
+    
+    # Verificar se pelo menos o primeiro nome é comum
+    first_name = name_parts[0] if name_parts else ""
+    if first_name in common_names["primeiro_nomes"]:
+        result["found_names"].append(first_name)
+        result["valid"] = True
+    
+    # Verificar sobrenomes
+    for part in name_parts[1:]:
+        if part in common_names["sobrenomes"] or part in common_names["primeiro_nomes"]:
+            result["found_names"].append(part)
+    
+    return result
+
 async def send_password_email(email: str, name: str, password: str):
     """Envia senha por email"""
     try:
