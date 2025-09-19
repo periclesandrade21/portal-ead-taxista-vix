@@ -122,15 +122,46 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
               
               {paymentStatus === "pending" && (
                 <div>
-                  <div className="animate-spin mb-6 mx-auto">
-                    <Clock className="h-16 w-16 text-blue-600" />
+                  <div className="mb-6 mx-auto">
+                    <QrCode className="h-16 w-16 text-blue-600 mx-auto" />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                    🚀 Redirecionando para pagamento...
+                    💳 Finalizar Pagamento
                   </h3>
-                  <p className="text-gray-600">
-                    Você será redirecionado automaticamente para a página de pagamento segura.
+                  <p className="text-gray-600 mb-6">
+                    Clique no botão abaixo para acessar a página de pagamento segura via PIX.
                   </p>
+                  
+                  <div className="space-y-4">
+                    <Button
+                      onClick={() => window.open('https://sandbox.asaas.com/i/bsnw3pmz2yiacw1w', '_blank')}
+                      className="w-full py-4 text-lg font-bold bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-300"
+                    >
+                      🚀 Ir para Pagamento PIX
+                    </Button>
+                    
+                    <Button
+                      onClick={checkPaymentStatus}
+                      variant="outline"
+                      className="w-full py-3 border-2 border-blue-600 text-blue-600 hover:bg-blue-50"
+                    >
+                      ✅ Já Paguei - Verificar Status
+                    </Button>
+                  </div>
+                  
+                  <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                      <div className="text-sm">
+                        <p className="font-semibold text-yellow-800">💡 Instruções:</p>
+                        <ul className="text-yellow-700 mt-2 space-y-1">
+                          <li>• O pagamento abrirá em uma nova aba</li>  
+                          <li>• Após pagar, volte aqui e clique "Já Paguei"</li>
+                          <li>• O acesso será liberado automaticamente</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
 
