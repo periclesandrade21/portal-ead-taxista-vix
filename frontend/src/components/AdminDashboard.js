@@ -650,6 +650,7 @@ const AdminDashboard = () => {
             <TabsTrigger value="charts">Gráficos</TabsTrigger>
             <TabsTrigger value="cities">Cidades</TabsTrigger>
             <TabsTrigger value="courses">Cursos</TabsTrigger>
+            <TabsTrigger value="admin-users">Usuários Admin</TabsTrigger>
             <TabsTrigger value="discounts">Descontos & Bônus</TabsTrigger>
             <TabsTrigger value="reports">Relatórios</TabsTrigger>
           </TabsList>
