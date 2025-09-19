@@ -1552,7 +1552,7 @@ const AdminDashboard = () => {
                   <Input
                     type="number"
                     step="0.01"
-                    value={courseModal.course?.price || 150}
+                    value={courseModal.course?.price || coursePrice}
                     onChange={(e) => setCourseModal({
                       ...courseModal, 
                       course: {...courseModal.course, price: parseFloat(e.target.value) || 0}
