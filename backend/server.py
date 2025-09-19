@@ -2599,6 +2599,156 @@ async def get_registration(registration_id: str):
         logger.error(f"Error getting registration: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# Admin Dashboard Endpoints
+@app.get("/api/subscriptions")
+async def get_all_subscriptions():
+    """Get all subscriptions for admin dashboard"""
+    try:
+        # In a real app, this would fetch from database
+        # For now, return mock data to demonstrate
+        mock_subscriptions = [
+            {
+                "id": "1",
+                "name": "João Silva Santos",
+                "email": "joao@email.com",
+                "phone": "(27) 99999-0001",
+                "cpf": "123.456.789-00",
+                "car_plate": "ABC-1234",
+                "license_number": "TAX001",
+                "city": "Vitória",
+                "payment_status": "paid",
+                "payment_value": 150,
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "course_progress": 100,
+                "status": "certified"
+            },
+            {
+                "id": "2", 
+                "name": "Maria Oliveira",
+                "email": "maria@email.com",
+                "phone": "(27) 99999-0002",
+                "cpf": "987.654.321-00",
+                "car_plate": "DEF-5678",
+                "license_number": "TAX002",
+                "city": "Vila Velha",
+                "payment_status": "paid",
+                "payment_value": 150,
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "course_progress": 75,
+                "status": "in_progress"
+            }
+        ]
+        
+        return mock_subscriptions
+        
+    except Exception as e:
+        logger.error(f"Error getting subscriptions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/users")
+async def get_all_users():
+    """Get all users for admin dashboard"""
+    try:
+        # Return same data as subscriptions for compatibility
+        subscriptions = await get_all_subscriptions()
+        return subscriptions
+        
+    except Exception as e:
+        logger.error(f"Error getting users: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/payments")
+async def get_all_payments():
+    """Get all payments for admin dashboard"""
+    try:
+        mock_payments = [
+            {
+                "id": "pay_1",
+                "user_name": "João Silva Santos",
+                "amount": 150,
+                "status": "completed",
+                "method": "pix",
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "asaas_id": "pay_12345"
+            },
+            {
+                "id": "pay_2",
+                "user_name": "Maria Oliveira", 
+                "amount": 150,
+                "status": "completed",
+                "method": "pix",
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "asaas_id": "pay_67890"
+            }
+        ]
+        
+        return mock_payments
+        
+    except Exception as e:
+        logger.error(f"Error getting payments: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/courses")
+async def get_all_courses():
+    """Get all courses for admin dashboard"""
+    try:
+        mock_courses = [
+            {
+                "id": "course_1",
+                "name": "Curso Completo EAD Taxista",
+                "description": "Curso completo de capacitação para taxistas",
+                "price": 150,
+                "duration_hours": 28,
+                "active": True,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+        ]
+        
+        return mock_courses
+        
+    except Exception as e:
+        logger.error(f"Error getting courses: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/cities")
+async def get_all_cities():
+    """Get city statistics for admin dashboard"""
+    try:
+        mock_cities = [
+            {"city": "Vitória", "count": 150, "percentage": 35},
+            {"city": "Vila Velha", "count": 120, "percentage": 28},
+            {"city": "Serra", "count": 90, "percentage": 21},
+            {"city": "Cariacica", "count": 68, "percentage": 16}
+        ]
+        
+        return mock_cities
+        
+    except Exception as e:
+        logger.error(f"Error getting cities: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/admin-users")
+async def get_admin_users():
+    """Get admin users for admin dashboard"""
+    try:
+        mock_admin_users = [
+            {
+                "id": "admin_1",
+                "username": "admin",
+                "email": "admin@sindtaxi-es.org",
+                "role": "super_admin",
+                "active": True,
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "last_login": datetime.now(timezone.utc).isoformat()
+            }
+        ]
+        
+        return mock_admin_users
+        
+    except Exception as e:
+        logger.error(f"Error getting admin users: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Health check
 @api_router.get("/health")
 async def health_check():
