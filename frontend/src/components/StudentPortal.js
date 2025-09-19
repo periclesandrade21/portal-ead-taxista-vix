@@ -18,7 +18,8 @@ import {
   Download,
   Video,
   FileText,
-  BarChart3
+  BarChart3,
+  ChevronLeft
 } from 'lucide-react';
 
 const StudentPortal = () => {
