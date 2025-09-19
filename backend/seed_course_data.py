@@ -583,7 +583,7 @@ async def seed_database():
             }
             videos_to_insert.append(video)
         
-        await db.course_videos.insert_many(videos_to_insert)
+        await db.videos.insert_many(videos_to_insert)
         print(f"✅ {len(videos_to_insert)} vídeos inseridos")
         
         # Inserir questões
