@@ -107,11 +107,44 @@ const StudentPortal = () => {
       if (error.response) {
         // Erro do servidor
         if (error.response.status === 401) {
-          setLoginError('Email ou senha incorretos');
+          const errorMessage = error.response.data?.detail || 'Credenciais inválidas';
+          
+          if (errorMessage.includes('Email não encontrado')) {
+            setErrorModal({
+              show: true,
+              type: 'email_not_found',
+              title: '❌ Email Não Encontrado',
+              message: 'Este email não está cadastrado em nosso sistema. Verifique se você já realizou seu cadastro ou entre em contato conosco.'
+            });
+          } else if (errorMessage.includes('Senha incorreta')) {
+            setErrorModal({
+              show: true,
+              type: 'wrong_password',
+              title: '🔑 Senha Incorreta',
+              message: 'A senha informada está incorreta. Verifique a senha enviada por email ou WhatsApp após seu cadastro.'
+            });
+          } else {
+            setErrorModal({
+              show: true,
+              type: 'login_error',
+              title: '❌ Erro de Login',
+              message: errorMessage
+            });
+          }
         } else if (error.response.status === 403) {
-          setLoginError('Acesso negado. Verifique se seu pagamento foi confirmado.');
+          setErrorModal({
+            show: true,
+            type: 'payment_pending',
+            title: '⏳ Pagamento Pendente',
+            message: 'Seu acesso será liberado após a confirmação do pagamento. Finalize seu pagamento via PIX e tente novamente em alguns minutos.'
+          });
         } else {
-          setLoginError('Erro no servidor. Tente novamente.');
+          setErrorModal({
+            show: true,
+            type: 'server_error',
+            title: '🔧 Erro no Servidor',
+            message: 'Erro no servidor. Tente novamente em alguns instantes.'
+          });
         }
       } else {
         // Erro de conexão
