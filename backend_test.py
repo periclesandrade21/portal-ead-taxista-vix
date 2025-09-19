@@ -1524,6 +1524,8 @@ def run_all_tests():
     payment_tests = ['subscription_creation', 'asaas_webhook', 'payment_verification', 'subscription_status_check']
     security_tests = ['auth_endpoint_exists', 'auth_invalid_email', 'auth_incorrect_password', 
                      'auth_pending_payment', 'auth_valid_paid_user']
+    admin_password_tests = ['admin_reset_valid_user', 'admin_reset_invalid_user', 'admin_reset_malformed_request',
+                           'student_login_new_password', 'student_login_old_password_fails']
     
     print(f"{Colors.BOLD}{Colors.YELLOW}🔧 CRITICAL FIX TESTS (PASSWORD & NOTIFICATIONS):{Colors.ENDC}")
     critical_passed = 0
