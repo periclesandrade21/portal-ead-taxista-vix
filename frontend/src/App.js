@@ -53,6 +53,8 @@ const Home = () => {
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [passwordSentInfo, setPasswordSentInfo] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
+  const [duplicatePopup, setDuplicatePopup] = useState(null);
+  const [isCheckingDuplicates, setIsCheckingDuplicates] = useState(false);
 
   // Função de geolocalização
   const detectUserLocation = async () => {
