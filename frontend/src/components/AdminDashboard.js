@@ -1099,7 +1099,18 @@ const AdminDashboard = () => {
                               <DollarSign className="h-5 w-5 text-green-600" />
                               <div>
                                 <p className="text-sm text-gray-600">Valor do Curso</p>
-                                <p className="text-xl font-bold text-green-600">R$ 150,00</p>
+                                <div className="flex items-center gap-2">
+                                  <p className="text-xl font-bold text-green-600">R$ {coursePrice.toFixed(2)}</p>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => setEditPriceModal({ show: true })}
+                                    className="text-xs"
+                                  >
+                                    <Edit className="h-3 w-3 mr-1" />
+                                    Editar
+                                  </Button>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -1166,19 +1177,19 @@ const AdminDashboard = () => {
                         <div className="bg-green-50 p-3 rounded-lg border border-green-200">
                           <p className="text-sm text-green-700">Receita Total</p>
                           <p className="text-xl font-bold text-green-800">
-                            R$ {((stats.paid_subscriptions || 0) * 150).toLocaleString('pt-BR')}
+                            R$ {((stats.paid_subscriptions || 0) * coursePrice).toLocaleString('pt-BR')}
                           </p>
                         </div>
                         <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
                           <p className="text-sm text-blue-700">Receita Potencial</p>
                           <p className="text-xl font-bold text-blue-800">
-                            R$ {((stats.total_subscriptions || 0) * 150).toLocaleString('pt-BR')}
+                            R$ {((stats.total_subscriptions || 0) * coursePrice).toLocaleString('pt-BR')}
                           </p>
                         </div>
                         <div className="bg-orange-50 p-3 rounded-lg border border-orange-200">
                           <p className="text-sm text-orange-700">Receita Pendente</p>
                           <p className="text-xl font-bold text-orange-800">
-                            R$ {(((stats.total_subscriptions || 0) - (stats.paid_subscriptions || 0)) * 150).toLocaleString('pt-BR')}
+                            R$ {(((stats.total_subscriptions || 0) - (stats.paid_subscriptions || 0)) * coursePrice).toLocaleString('pt-BR')}
                           </p>
                         </div>
                       </div>
