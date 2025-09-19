@@ -209,6 +209,7 @@ const StudentPortal = () => {
                     onChange={(e) => {
                       setLoginData({...loginData, password: e.target.value});
                       setLoginError(''); // Limpar erro ao digitar
+                      setErrorModal({ show: false, type: '', message: '', title: '' }); // Limpar modal de erro
                     }}
                     placeholder="Sua senha temporária"
                     required
