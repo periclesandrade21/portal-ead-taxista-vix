@@ -375,34 +375,94 @@ const StudentPortal = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-3">
-              <div className="bg-gradient-to-r from-blue-600 to-green-600 p-2 rounded-lg">
-                <BookOpen className="h-6 w-6 text-white" />
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-4">
+              <div className="bg-blue-600 p-2 rounded-lg">
+                <GraduationCap className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Portal do Aluno</h1>
-                <p className="text-sm text-gray-600">
-                  Bem-vindo, {userInfo?.name || 'Aluno'}
-                </p>
+                <h1 className="text-xl font-semibold text-gray-900">Portal EAD</h1>
+                <p className="text-sm text-gray-500">Taxista ES</p>
               </div>
             </div>
-            <Button 
-              variant="outline"
-              onClick={() => {
-                setIsLoggedIn(false);
-                setUserInfo(null);
-                setLoginData({ email: '', password: '' });
-                setLoginError('');
-              }}
-            >
-              Sair
-            </Button>
+            
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="relative"
+              >
+                <Bell className="h-5 w-5" />
+                {notifications.length > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {notifications.length}
+                  </span>
+                )}
+              </Button>
+              
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                  <span className="text-white text-sm font-medium">
+                    {user?.name?.charAt(0)?.toUpperCase() || 'A'}
+                  </span>
+                </div>
+                <span className="text-sm font-medium text-gray-700">
+                  {user?.name || 'Aluno'}
+                </span>
+              </div>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Sair
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          {/* Navigation */}
+          <TabsList className="grid w-full grid-cols-8">
+            <TabsTrigger value="dashboard" className="flex items-center gap-2">
+              <Home className="h-4 w-4" />
+              <span className="hidden sm:inline">Dashboard</span>
+            </TabsTrigger>
+            <TabsTrigger value="modules" className="flex items-center gap-2">
+              <BookOpen className="h-4 w-4" />
+              <span className="hidden sm:inline">Disciplinas</span>
+            </TabsTrigger>
+            <TabsTrigger value="content" className="flex items-center gap-2">
+              <Play className="h-4 w-4" />
+              <span className="hidden sm:inline">Conteúdo</span>
+            </TabsTrigger>
+            <TabsTrigger value="grades" className="flex items-center gap-2">
+              <Trophy className="h-4 w-4" />
+              <span className="hidden sm:inline">Notas</span>
+            </TabsTrigger>
+            <TabsTrigger value="calendar" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              <span className="hidden sm:inline">Calendário</span>
+            </TabsTrigger>
+            <TabsTrigger value="support" className="flex items-center gap-2">
+              <MessageCircle className="h-4 w-4" />
+              <span className="hidden sm:inline">Suporte</span>
+            </TabsTrigger>
+            <TabsTrigger value="financial" className="flex items-center gap-2">
+              <CreditCard className="h-4 w-4" />
+              <span className="hidden sm:inline">Financeiro</span>
+            </TabsTrigger>
+            <TabsTrigger value="profile" className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              <span className="hidden sm:inline">Perfil</span>
+            </TabsTrigger>
+          </TabsList>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Dashboard Cards */}
