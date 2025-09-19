@@ -1671,6 +1671,12 @@ async def asaas_webhook(request: dict):
                                             "enrolled": False,
                                             "error": str(moodle_error)
                                         }
+                                else:
+                                    # Moodle integration not configured
+                                    moodle_enrollment_result = {
+                                        "success": False,
+                                        "error": "Moodle integration not configured"
+                                    }
                                 
                                 response_data = {
                                     "message": "Pagamento processado e curso liberado",
