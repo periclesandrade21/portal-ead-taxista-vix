@@ -4215,6 +4215,20 @@ def run_all_tests():
             else:
                 price_system_failed.append(test_name)
     
+    print(f"\n{Colors.BOLD}{Colors.BLUE}🔌 MOODLE INTEGRATION TESTS:{Colors.ENDC}")
+    moodle_passed = 0
+    moodle_failed = []
+    for test_name in moodle_integration_tests:
+        if test_name in test_results:
+            result = test_results[test_name]
+            status = "PASS" if result else "FAIL"
+            color = Colors.GREEN if result else Colors.RED
+            print(f"{color}{status:>6}{Colors.ENDC} - {test_name.replace('_', ' ').title()}")
+            if result:
+                moodle_passed += 1
+            else:
+                moodle_failed.append(test_name)
+    
     print(f"\n{Colors.BOLD}{Colors.YELLOW}🔧 CRITICAL FIX TESTS (PASSWORD & NOTIFICATIONS):{Colors.ENDC}")
     critical_passed = 0
     critical_failed = []
