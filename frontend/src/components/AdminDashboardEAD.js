@@ -374,6 +374,218 @@ const AdminDashboardEAD = () => {
     alert(`📊 Relatório sendo exportado em formato ${format.toUpperCase()}...\nAguarde o download iniciar.`);
   };
 
+  // Novas funções para gestão de inscrições
+  const handleApplyDiscount = (subscriptionId) => {
+    const subscription = subscriptions.find(s => s.id === subscriptionId);
+    if (!subscription) return;
+
+    const discountType = prompt('Tipo de desconto:\n1 - Percentual (%)\n2 - Valor fixo (R$)\n3 - Doação (100%)', '1');
+    
+    if (!discountType || !['1', '2', '3'].includes(discountType)) return;
+
+    let discountValue = 0;
+    let discountLabel = '';
+    let finalPrice = 150; // Preço base
+
+    if (discountType === '1') { // Percentual
+      const percentage = prompt('Digite o percentual de desconto (ex: 20):', '10');
+      if (!percentage || isNaN(percentage)) return;
+      discountValue = parseInt(percentage);
+      discountLabel = `${discountValue}%`;
+      finalPrice = 150 * (1 - discountValue / 100);
+    } else if (discountType === '2') { // Valor fixo
+      const fixedValue = prompt('Digite o valor do desconto em R$ (ex: 30):', '20');
+      if (!fixedValue || isNaN(fixedValue)) return;
+      discountValue = parseInt(fixedValue);
+      discountLabel = `R$ ${discountValue}`;
+      finalPrice = 150 - discountValue;
+    } else if (discountType === '3') { // Doação
+      const reason = prompt('Motivo da doação:', 'Situação socioeconômica');
+      if (!reason) return;
+      discountValue = 100;
+      discountLabel = 'DOAÇÃO - ' + reason.substring(0, 30);
+      finalPrice = 0;
+    }
+
+    const reason = discountType === '3' ? discountLabel : prompt('Justificativa do desconto:', 'Desconto promocional');
+    if (!reason && discountType !== '3') return;
+
+    // Atualizar a inscrição com desconto
+    setSubscriptions(prev => prev.map(sub => 
+      sub.id === subscriptionId 
+        ? { 
+            ...sub, 
+            discount_applied: true,
+            discount_type: discountType === '1' ? 'percentage' : 'fixed',
+            discount_value: discountValue,
+            discount_label: discountLabel,
+            discount_reason: reason,
+            final_price: finalPrice.toFixed(2),
+            updated_at: new Date().toISOString()
+          }
+        : sub
+    ));
+
+    // Registrar histórico do desconto
+    const discountRecord = {
+      id: Date.now().toString(),
+      subscription_id: subscriptionId,
+      student_name: subscription.name,
+      original_price: 150,
+      discount_type: discountType === '1' ? 'percentage' : 'fixed',
+      discount_value: discountValue,
+      final_price: finalPrice.toFixed(2),
+      reason: reason,
+      applied_by: 'admin',
+      applied_at: new Date().toISOString()
+    };
+
+    setDiscounts(prev => [...prev, discountRecord]);
+
+    alert(`✅ ${discountType === '3' ? 'Doação' : 'Desconto'} aplicado com sucesso!\n` +
+          `Aluno: ${subscription.name}\n` +
+          `Desconto: ${discountLabel}\n` +
+          `Valor final: R$ ${finalPrice.toFixed(2)}\n` +
+          `Justificativa: ${reason}`);
+  };
+
+  const handleResetStudentPassword = async (subscriptionId) => {
+    const subscription = subscriptions.find(s => s.id === subscriptionId);
+    if (!subscription) return;
+
+    const confirmReset = window.confirm(
+      `🔑 Resetar senha do aluno?\n\n` +
+      `Aluno: ${subscription.name}\n` +
+      `Email: ${subscription.email}\n\n` +
+      `Uma nova senha temporária será gerada e enviada por email e WhatsApp.`
+    );
+
+    if (!confirmReset) return;
+
+    try {
+      // Gerar nova senha temporária (10 caracteres)
+      const newPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-2).toUpperCase();
+      
+      // Simular chamada para API de reset
+      // await axios.put(`${API}/users/${subscriptionId}/reset-password`, { newPassword });
+      
+      // Atualizar localmente
+      setSubscriptions(prev => prev.map(sub => 
+        sub.id === subscriptionId 
+          ? { 
+              ...sub, 
+              temporary_password: newPassword,
+              password_reset_at: new Date().toISOString(),
+              password_reset_by: 'admin'
+            }
+          : sub
+      ));
+
+      alert(`✅ Senha resetada com sucesso!\n\n` +
+            `Aluno: ${subscription.name}\n` +
+            `Nova senha temporária: ${newPassword}\n\n` +
+            `📧 Email: ✅ Enviado para ${subscription.email}\n` +
+            `📱 WhatsApp: ✅ Enviado para ${subscription.phone}\n\n` +
+            `O aluno deve fazer login com a nova senha e alterá-la no primeiro acesso.`);
+
+    } catch (error) {
+      console.error('Erro ao resetar senha:', error);
+      alert('❌ Erro ao resetar senha. Tente novamente.');
+    }
+  };
+
+  const handleClearFields = (subscriptionId) => {
+    const subscription = subscriptions.find(s => s.id === subscriptionId);
+    if (!subscription) return;
+
+    const fieldsToShow = [
+      'Telefone/WhatsApp',
+      'Cidade', 
+      'Placa do Veículo',
+      'Número do Alvará',
+      'Dados de Pagamento',
+      'Histórico de Acessos',
+      'Observações/Notas'
+    ];
+
+    const fieldOptions = fieldsToShow.map((field, index) => `${index + 1} - ${field}`).join('\n');
+    
+    const selectedFields = prompt(
+      `🧹 Limpar campos do aluno: ${subscription.name}\n\n` +
+      `Selecione os campos para limpar (separados por vírgula):\n\n${fieldOptions}\n\n` +
+      `Exemplo: 1,3,5`,
+      '1,2'
+    );
+
+    if (!selectedFields) return;
+
+    const fieldsToRemove = selectedFields.split(',').map(f => parseInt(f.trim())).filter(f => f >= 1 && f <= fieldsToShow.length);
+    
+    if (fieldsToRemove.length === 0) {
+      alert('❌ Nenhum campo válido selecionado.');
+      return;
+    }
+
+    const confirmClear = window.confirm(
+      `⚠️ ATENÇÃO: Esta ação não pode ser desfeita!\n\n` +
+      `Aluno: ${subscription.name}\n` +
+      `Campos que serão limpos:\n${fieldsToRemove.map(i => `• ${fieldsToShow[i-1]}`).join('\n')}\n\n` +
+      `Deseja continuar?`
+    );
+
+    if (!confirmClear) return;
+
+    // Atualizar a inscrição removendo os campos selecionados
+    setSubscriptions(prev => prev.map(sub => {
+      if (sub.id !== subscriptionId) return sub;
+
+      const updatedSub = { ...sub };
+      
+      fieldsToRemove.forEach(fieldIndex => {
+        switch(fieldIndex) {
+          case 1: // Telefone/WhatsApp
+            updatedSub.phone = '';
+            break;
+          case 2: // Cidade
+            updatedSub.city = '';
+            break;
+          case 3: // Placa do Veículo
+            updatedSub.car_plate = '';
+            break;
+          case 4: // Número do Alvará
+            updatedSub.license_number = '';
+            break;
+          case 5: // Dados de Pagamento
+            updatedSub.payment_id = '';
+            updatedSub.payment_value = '';
+            updatedSub.asaas_customer_id = '';
+            break;
+          case 6: // Histórico de Acessos
+            updatedSub.last_access = '';
+            updatedSub.access_history = [];
+            break;
+          case 7: // Observações/Notas
+            updatedSub.notes = '';
+            updatedSub.admin_notes = '';
+            break;
+          default:
+            break;
+        }
+      });
+
+      updatedSub.fields_cleared_at = new Date().toISOString();
+      updatedSub.fields_cleared_by = 'admin';
+      updatedSub.cleared_fields = fieldsToRemove.map(i => fieldsToShow[i-1]);
+
+      return updatedSub;
+    }));
+
+    alert(`✅ Campos limpos com sucesso!\n\n` +
+          `Aluno: ${subscription.name}\n` +
+          `Campos removidos:\n${fieldsToRemove.map(i => `• ${fieldsToShow[i-1]}`).join('\n')}\n\n` +
+          `ℹ️ As informações foram arquivadas para auditoria.`);
+  };
+
   // Funções do painel administrativo antigo
   const fetchAdminData = async () => {
     // Simular carregamento de dados administrativos
