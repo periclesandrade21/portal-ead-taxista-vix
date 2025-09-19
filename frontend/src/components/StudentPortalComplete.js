@@ -487,38 +487,94 @@ const StudentPortalComplete = () => {
           </div>
         </div>
 
-        {/* Modal de Reset de Senha */}
+        {/* Modal de Reset de Senha - Melhorado */}
         {showResetModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg p-6 w-full max-w-md">
-              <h3 className="text-lg font-semibold mb-4">Redefinir Senha</h3>
-              <p className="text-gray-600 mb-4">
-                Digite seu email para receber instruções de redefinição de senha.
-              </p>
+              <div className="text-center mb-4">
+                <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Key className="h-8 w-8 text-blue-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900">🔑 Solicitar Nova Senha</h3>
+              </div>
+              
+              <div className="bg-blue-50 p-4 rounded-lg mb-4">
+                <h4 className="font-semibold text-blue-900 mb-2 flex items-center">
+                  <Mail className="h-4 w-4 mr-2" />
+                  Como funciona?
+                </h4>
+                <ul className="text-sm text-blue-800 space-y-1">
+                  <li>• 📧 Nova senha será enviada por <strong>email</strong></li>
+                  <li>• 📱 Também tentaremos enviar por <strong>WhatsApp</strong> (se cadastrado)</li>
+                  <li>• ⚡ Processo automático e instantâneo</li>
+                  <li>• 🔒 Senha temporária segura gerada automaticamente</li>
+                </ul>
+              </div>
+              
               <div className="space-y-4">
-                <Input
-                  type="email"
-                  value={resetEmail}
-                  onChange={(e) => setResetEmail(e.target.value)}
-                  placeholder="seu@email.com"
-                  required
-                />
+                <div>
+                  <Label htmlFor="resetEmail" className="text-sm font-semibold text-gray-700">
+                    Email cadastrado *
+                  </Label>
+                  <Input
+                    id="resetEmail"
+                    type="email"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    placeholder="exemplo@email.com"
+                    required
+                    className="mt-1 h-12 text-lg"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    📧 Digite o email usado no seu cadastro
+                  </p>
+                </div>
+                
+                <div className="bg-yellow-50 p-3 rounded-lg">
+                  <p className="text-xs text-yellow-800">
+                    <strong>💡 Dica:</strong> Verifique sua caixa de entrada e pasta de spam após enviar a solicitação.
+                  </p>
+                </div>
+                
                 <div className="flex gap-2">
                   <Button 
                     variant="outline" 
-                    onClick={() => setShowResetModal(false)}
+                    onClick={() => {
+                      setShowResetModal(false);
+                      setResetEmail('');
+                    }}
                     className="flex-1"
+                    disabled={loading}
                   >
                     Cancelar
                   </Button>
                   <Button 
                     onClick={handleResetPassword}
-                    disabled={loading}
-                    className="flex-1"
+                    disabled={loading || !resetEmail.trim()}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700"
                   >
-                    {loading ? 'Enviando...' : 'Enviar'}
+                    {loading ? (
+                      <div className="flex items-center">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Enviando...
+                      </div>
+                    ) : (
+                      <div className="flex items-center">
+                        <Mail className="h-4 w-4 mr-2" />
+                        Enviar Nova Senha
+                      </div>
+                    )}
                   </Button>
                 </div>
+              </div>
+              
+              <div className="mt-4 pt-4 border-t text-center">
+                <p className="text-xs text-gray-500">
+                  🆘 Problemas? Entre em contato: 
+                  <a href="mailto:suporte@sindtaxi-es.org" className="text-blue-600 hover:underline ml-1">
+                    suporte@sindtaxi-es.org
+                  </a>
+                </p>
               </div>
             </div>
           </div>
