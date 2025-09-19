@@ -160,6 +160,19 @@ class PasswordResetRequest(BaseModel):
 class ResetPasswordAdminRequest(BaseModel):
     newPassword: str
 
+class StudentPasswordResetRequest(BaseModel):
+    email: EmailStr
+
+class AdminUserCreate(BaseModel):
+    username: str
+    password: str
+    full_name: str
+    role: str = "admin"
+
+class AdminPasswordReset(BaseModel):
+    username: str
+    new_password: str
+
 class PasswordResetResponse(BaseModel):
     message: str
     status: str
