@@ -4191,12 +4191,12 @@ def test_create_video():
         modules_response = requests.get(f"{BACKEND_URL}/modules", timeout=10)
         if modules_response.status_code != 200:
             print_error("Cannot get modules for video creation test")
-            return False
+            return False, None
         
         modules = modules_response.json()
         if not modules:
             print_error("No modules available for video creation test")
-            return False
+            return False, None
         
         test_module_id = modules[0].get('id')
         
