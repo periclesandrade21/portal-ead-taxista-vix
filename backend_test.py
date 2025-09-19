@@ -4088,6 +4088,17 @@ def run_all_tests():
     test_results['health_check'] = test_health_check()
     test_results['existing_endpoints'] = test_existing_endpoints()
     
+    # === MOODLE INTEGRATION TESTS (PRIORITY) ===
+    print(f"\n{Colors.BOLD}{Colors.BLUE}🔌 MOODLE INTEGRATION TESTING{Colors.ENDC}")
+    test_results['moodle_status'] = test_moodle_status_endpoint()
+    test_results['health_check_enhanced'] = test_health_check_enhanced()
+    test_results['moodle_sync_user'] = test_moodle_sync_user_endpoint()
+    test_results['moodle_enroll_user'] = test_moodle_enroll_user_endpoint()
+    test_results['moodle_user_progress'] = test_moodle_user_progress_endpoint()
+    test_results['moodle_payment_webhook'] = test_moodle_payment_webhook_endpoint()
+    test_results['environment_variables'] = test_environment_variables()
+    test_results['asaas_webhook_enhanced'] = test_asaas_webhook_enhanced_with_moodle()
+    
     # Run PAYMENT SYNCHRONIZATION FIX TEST (as requested in review)
     print(f"\n{Colors.BOLD}{Colors.BLUE}{'='*60}{Colors.ENDC}")
     print(f"{Colors.BOLD}{Colors.BLUE}🔄 PAYMENT SYNCHRONIZATION FIX TEST{Colors.ENDC}")
