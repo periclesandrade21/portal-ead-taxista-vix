@@ -55,6 +55,10 @@ const Home = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [duplicatePopup, setDuplicatePopup] = useState(null);
   const [isCheckingDuplicates, setIsCheckingDuplicates] = useState(false);
+  
+  // Estados para LGPD
+  const [lgpdConsent, setLgpdConsent] = useState(false);
+  const [privacyPolicyModal, setPrivacyPolicyModal] = useState(false);
 
   // Função de geolocalização
   const detectUserLocation = async () => {
