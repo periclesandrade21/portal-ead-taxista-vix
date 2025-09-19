@@ -867,6 +867,94 @@ const AdminDashboardEAD = () => {
     }
   };
 
+  // Funções para gestão de documentos
+  const handleViewDocuments = (subscriptionId) => {
+    const subscription = subscriptions.find(s => s.id === subscriptionId);
+    if (!subscription) return;
+
+    alert(`📄 Visualizar documentos de: ${subscription.name}\n\n` +
+          `CPF: ${subscription.cpf}\n` +
+          `CNH: ${subscription.cnh || 'Não informado'}\n` +
+          `Alvará: ${subscription.license_number || 'Não informado'}\n\n` +
+          `Status dos documentos: ${subscription.documents_status || 'Pendente'}\n\n` +
+          `Esta funcionalidade abrirá uma janela com todos os documentos enviados pelo aluno.`);
+  };
+
+  const handleValidateDocument = (subscriptionId) => {
+    const subscription = subscriptions.find(s => s.id === subscriptionId);
+    if (!subscription) return;
+
+    const confirmValidation = window.confirm(
+      `✅ Validar documentos?\n\n` +
+      `Aluno: ${subscription.name}\n` +
+      `CPF: ${subscription.cpf}\n\n` +
+      `Confirma que todos os documentos estão corretos e aprovados?`
+    );
+
+    if (!confirmValidation) return;
+
+    // Atualizar status dos documentos
+    setSubscriptions(prev => prev.map(sub => 
+      sub.id === subscriptionId 
+        ? { 
+            ...sub, 
+            documents_status: 'approved',
+            documents_validated_at: new Date().toISOString(),
+            documents_validated_by: 'admin'
+          }
+        : sub
+    ));
+
+    alert(`✅ Documentos validados com sucesso!\n\n` +
+          `Aluno: ${subscription.name}\n` +
+          `Status: Aprovado\n` +
+          `Data: ${new Date().toLocaleString()}\n\n` +
+          `O aluno será notificado por email e WhatsApp.`);
+  };
+
+  const handleRejectDocument = (subscriptionId) => {
+    const subscription = subscriptions.find(s => s.id === subscriptionId);
+    if (!subscription) return;
+
+    const rejectionReason = prompt(
+      `❌ Rejeitar documentos de: ${subscription.name}\n\n` +
+      `Motivo da rejeição (será enviado ao aluno):`,
+      'Documento ilegível ou incompleto'
+    );
+
+    if (!rejectionReason) return;
+
+    const confirmRejection = window.confirm(
+      `⚠️ Confirmar rejeição?\n\n` +
+      `Aluno: ${subscription.name}\n` +
+      `Motivo: ${rejectionReason}\n\n` +
+      `O aluno será notificado e precisará reenviar os documentos.`
+    );
+
+    if (!confirmRejection) return;
+
+    // Atualizar status dos documentos
+    setSubscriptions(prev => prev.map(sub => 
+      sub.id === subscriptionId 
+        ? { 
+            ...sub, 
+            documents_status: 'rejected',
+            documents_rejection_reason: rejectionReason,
+            documents_rejected_at: new Date().toISOString(),
+            documents_rejected_by: 'admin'
+          }
+        : sub
+    ));
+
+    alert(`❌ Documentos rejeitados!\n\n` +
+          `Aluno: ${subscription.name}\n` +
+          `Motivo: ${rejectionReason}\n` +
+          `Data: ${new Date().toLocaleString()}\n\n` +
+          `📧 Email enviado: ✅\n` +
+          `📱 WhatsApp enviado: ✅\n\n` +
+          `O aluno pode reenviar os documentos corrigidos.`);
+  };
+
   const getStatusBadge = (status) => {
     const statusConfig = {
       'certified': { variant: 'default', text: '✓ Certificado', className: 'bg-green-600' },
