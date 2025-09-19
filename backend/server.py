@@ -530,6 +530,25 @@ async def get_status_checks():
 async def create_subscription(subscription: UserSubscriptionCreate):
     """Create a new subscription and send password"""
     try:
+        # Validar formato de nome
+        name_validation = validate_name_format(subscription.name)
+        if not name_validation["valid"]:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Nome inválido: {', '.join(name_validation['errors'])}"
+            )
+        
+        # Validar nome com APIs e lista offline
+        name_offline_check = validate_name_offline(subscription.name)
+        if not name_offline_check["valid"]:
+            # Tentar com API se a validação offline falhar
+            name_api_check = await validate_name_with_api(subscription.name)
+            if not name_api_check["valid"] and name_api_check["api_used"]:
+                raise HTTPException(
+                    status_code=400, 
+                    detail="Nome não reconhecido como comum brasileiro. Use seu nome real completo."
+                )
+        
         # Validar formato de email
         if not validate_email_format(subscription.email):
             raise HTTPException(
@@ -569,13 +588,16 @@ async def create_subscription(subscription: UserSubscriptionCreate):
         # Normalizar email para salvar (sempre em lowercase)
         normalized_email = subscription.email.strip().lower()
         
+        # Normalizar nome (Title Case)
+        normalized_name = " ".join([part.capitalize() for part in subscription.name.strip().split()])
+        
         # Gerar senha temporária
         temporary_password = generate_password()
         
         # Criar dados da inscrição
         subscription_data = UserSubscription(
-            name=subscription.name,
-            email=normalized_email,  # Salvar email normalizado
+            name=normalized_name,  # Nome normalizado
+            email=normalized_email,  # Email normalizado
             phone=subscription.phone,
             car_plate=subscription.carPlate,
             license_number=subscription.licenseNumber,
@@ -589,11 +611,11 @@ async def create_subscription(subscription: UserSubscriptionCreate):
         # Salvar no banco
         result = await db.subscriptions.insert_one(prepared_data)
         
-        # Enviar senha por email e WhatsApp (usar email original para envio)
-        email_sent = await send_password_email(subscription.email, subscription.name, temporary_password)
-        whatsapp_sent = await send_password_whatsapp(subscription.phone, subscription.name, temporary_password)
+        # Enviar senha por email e WhatsApp (usar dados originais para envio)
+        email_sent = await send_password_email(subscription.email, normalized_name, temporary_password)
+        whatsapp_sent = await send_password_whatsapp(subscription.phone, normalized_name, temporary_password)
         
-        logging.info(f"Inscrição criada: {normalized_email} - Senha: {temporary_password}")
+        logging.info(f"Inscrição criada: {normalized_email} - Nome: {normalized_name}")
         logging.info(f"Email enviado: {email_sent}, WhatsApp enviado: {whatsapp_sent}")
         
         return PasswordSentResponse(
