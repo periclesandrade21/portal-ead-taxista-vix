@@ -512,6 +512,39 @@ test_plan:
         agent: "testing"
         comment: "❌ PASSWORD SENDING STATUS POPUP STILL NOT APPEARING - Comprehensive retesting with unique data confirmed that the password status popup is not showing after registration. Multiple attempts with different unique emails (test.complete.flow.648067@email.com, etc.) show that form submission goes directly to payment page without displaying the expected '🎉 Cadastro Realizado!' popup with email/WhatsApp status and temporary password. The registration process completes but skips the password status popup entirely."
 
+  - task: "Sistema de reset de senha no Portal do Aluno"
+    implemented: true
+    working: "NA"
+    file: "StudentPortal.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Sistema de reset de senha implementado no Portal do Aluno com modal, validação de email e integração com backend /api/auth/reset-password"
+
+  - task: "Sistema de gestão de usuários administrativos"
+    implemented: true
+    working: "NA"
+    file: "AdminDashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Sistema completo de gestão de usuários admin implementado: criação, listagem, reset de senha, exclusão. Integração com endpoints /api/admin/users"
+
+test_plan:
+  current_focus:
+    - "Sistema de reset de senha no Portal do Aluno"
+    - "Sistema de gestão de usuários administrativos"
+  stuck_tasks: 
+    - "Real Asaas webhook processing with production data"
+  test_all: false
+  test_priority: "high_first"
+
 agent_communication:
   - agent: "main"
     message: "Iniciando implementação do bot IA. Prioridades: 1) Bot IA funcional, 2) Ajustes no formulário, 3) Autoplay video, 4) Preparar estrutura para fluxo cadastro+pagamento"
