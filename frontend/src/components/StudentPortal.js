@@ -357,10 +357,10 @@ const StudentPortal = () => {
                   </div>
                   <Badge variant={
                     module.status === 'locked' ? 'secondary' :
-                    module.status === 'active' ? 'default' : 'default'
+                    module.status === 'available' ? 'default' : 'default'
                   }>
                     {module.status === 'locked' ? 'Bloqueado' :
-                     module.status === 'active' ? 'Disponível' : 'Concluído'}
+                     module.status === 'available' ? 'Disponível' : 'Concluído'}
                   </Badge>
                 </div>
               </CardHeader>
