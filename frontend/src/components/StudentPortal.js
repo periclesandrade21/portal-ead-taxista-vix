@@ -340,11 +340,11 @@ const StudentPortal = () => {
                   <div className="flex items-center gap-3">
                     <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
                       module.status === 'locked' ? 'bg-gray-100' : 
-                      module.status === 'active' ? 'bg-blue-100' : 'bg-green-100'
+                      module.status === 'available' ? 'bg-blue-100' : 'bg-green-100'
                     }`}>
                       {module.status === 'locked' ? (
                         <Lock className="h-6 w-6 text-gray-400" />
-                      ) : module.status === 'active' ? (
+                      ) : module.status === 'available' ? (
                         <Play className="h-6 w-6 text-blue-600" />
                       ) : (
                         <CheckCircle className="h-6 w-6 text-green-600" />
