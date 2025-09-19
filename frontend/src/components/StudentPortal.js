@@ -140,18 +140,33 @@ const StudentPortal = () => {
               
               <div>
                 <Label htmlFor="password">Senha</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={loginData.password}
-                  onChange={(e) => {
-                    setLoginData({...loginData, password: e.target.value});
-                    setLoginError(''); // Limpar erro ao digitar
-                  }}
-                  placeholder="Sua senha temporária"
-                  required
-                  className={loginError ? 'border-red-500' : ''}
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={loginData.password}
+                    onChange={(e) => {
+                      setLoginData({...loginData, password: e.target.value});
+                      setLoginError(''); // Limpar erro ao digitar
+                    }}
+                    placeholder="Sua senha temporária"
+                    required
+                    className={loginError ? 'border-red-500 pr-10' : 'pr-10'}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <Eye className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                    )}
+                  </Button>
+                </div>
                 <p className="text-xs text-gray-500 mt-1">
                   Use a senha enviada por email após seu cadastro
                 </p>
