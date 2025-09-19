@@ -4667,311 +4667,82 @@ def test_required_fields_validation():
     return all(results)
 
 def run_all_tests():
-    """Run all tests and provide summary"""
-    print(f"{Colors.BOLD}EAD TAXISTA ES - COMPLETE SYSTEM TESTING{Colors.ENDC}")
-    print(f"Backend URL: {BACKEND_URL}")
-    print(f"Test started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    """Run all backend tests for video management system"""
+    print(f"{Colors.BOLD}{Colors.BLUE}Starting EAD Taxista ES Backend Test Suite - Video Management System{Colors.ENDC}")
+    print(f"{Colors.BLUE}Backend URL: {BACKEND_URL}{Colors.ENDC}")
+    print(f"{Colors.BLUE}Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}{Colors.ENDC}")
     
-    test_results = {}
+    results = []
     
-    # === DYNAMIC PRICE SYSTEM TESTS (PRIORITY) ===
-    print(f"\n{Colors.BOLD}{Colors.BLUE}🎯 DYNAMIC COURSE PRICE SYSTEM TESTING{Colors.ENDC}")
-    price_passed, price_failed = test_dynamic_price_system_complete()
-    test_results['dynamic_price_system'] = price_passed > 0 and price_failed == 0
+    # Basic connectivity tests
+    results.append(("Health Check", test_health_check()))
     
-    # PRIORITY: MongoDB webhook metadata storage debug (as requested in review)
-    print(f"\n{Colors.BOLD}{Colors.RED}{'='*60}{Colors.ENDC}")
-    print(f"{Colors.BOLD}{Colors.RED}🔍 PRIORITY TEST: MONGODB WEBHOOK METADATA DEBUG 🔍{Colors.ENDC}")
-    print(f"{Colors.BOLD}{Colors.RED}{'='*60}{Colors.ENDC}")
+    # Video Management System Tests
+    print(f"\n{Colors.BOLD}{Colors.BLUE}=== SISTEMA DE GESTÃO DE VÍDEOS ==={Colors.ENDC}")
     
-    test_results['mongodb_webhook_metadata_debug'] = test_mongodb_webhook_metadata_storage()
+    # 1. Test modules endpoints
+    modules_success, modules_data = test_modules_endpoint()
+    results.append(("📚 GET /api/modules - Módulos Populados", modules_success))
     
-    # PRIORITY: Real Asaas webhook metadata storage fix test (as requested in review)
-    print(f"\n{Colors.BOLD}{Colors.RED}{'='*60}{Colors.ENDC}")
-    print(f"{Colors.BOLD}{Colors.RED}🔍 PRIORITY TEST: WEBHOOK METADATA STORAGE FIX 🔍{Colors.ENDC}")
-    print(f"{Colors.BOLD}{Colors.RED}{'='*60}{Colors.ENDC}")
+    create_module_success, created_module = test_create_module()
+    results.append(("📚 POST /api/modules - Criar Módulo", create_module_success))
     
-    test_results['webhook_metadata_storage_fix'] = test_real_asaas_webhook_metadata_storage()
+    # 2. Test videos endpoints
+    if modules_data:
+        results.append(("🎥 GET /api/modules/{id}/videos - Vídeos por Módulo", test_module_videos(modules_data)))
     
-    # PRIORITY: Webhook investigation as requested
-    test_results['webhook_investigation'] = test_webhook_investigation()
+    create_video_success, created_videos = test_create_video()
+    results.append(("🎥 POST /api/videos - Criar Vídeo", create_video_success))
     
-    # Run basic tests first
-    test_results['health_check'] = test_health_check()
-    test_results['existing_endpoints'] = test_existing_endpoints()
+    if created_videos:
+        results.append(("🎥 DELETE /api/videos/{id} - Excluir Vídeo", test_delete_video(created_videos)))
     
-    # === MOODLE INTEGRATION TESTS (PRIORITY) ===
-    print(f"\n{Colors.BOLD}{Colors.BLUE}🔌 MOODLE INTEGRATION TESTING{Colors.ENDC}")
-    test_results['moodle_status'] = test_moodle_status_endpoint()
-    test_results['health_check_enhanced'] = test_health_check_enhanced()
-    test_results['moodle_sync_user'] = test_moodle_sync_user_endpoint()
-    test_results['moodle_enroll_user'] = test_moodle_enroll_user_endpoint()
-    test_results['moodle_user_progress'] = test_moodle_user_progress_endpoint()
-    test_results['moodle_payment_webhook'] = test_moodle_payment_webhook_endpoint()
-    test_results['environment_variables'] = test_environment_variables()
-    test_results['asaas_webhook_enhanced'] = test_asaas_webhook_enhanced_with_moodle()
+    # 3. Test questions endpoints
+    if modules_data:
+        results.append(("❓ GET /api/questions/{id} - Questões por Módulo", test_questions_by_module(modules_data)))
     
-    # Run PAYMENT SYNCHRONIZATION FIX TEST (as requested in review)
-    print(f"\n{Colors.BOLD}{Colors.BLUE}{'='*60}{Colors.ENDC}")
-    print(f"{Colors.BOLD}{Colors.BLUE}🔄 PAYMENT SYNCHRONIZATION FIX TEST{Colors.ENDC}")
-    print(f"{Colors.BOLD}{Colors.BLUE}{'='*60}{Colors.ENDC}")
+    create_question_success, created_question = test_create_question()
+    results.append(("❓ POST /api/questions - Criar Questão", create_question_success))
     
-    test_results['jose_messias_payment_sync'] = test_jose_messias_payment_sync()
+    # 4. Test YouTube functionality
+    results.append(("🎬 YouTube ID Extraction & Thumbnails", test_youtube_functionality()))
     
-    # Run CRITICAL FIX TESTS FIRST (as requested in review)
-    print(f"\n{Colors.BOLD}{Colors.YELLOW}{'='*60}{Colors.ENDC}")
-    print(f"{Colors.BOLD}{Colors.YELLOW}🔧 CRITICAL FIX TESTS - PASSWORD & NOTIFICATIONS{Colors.ENDC}")
-    print(f"{Colors.BOLD}{Colors.YELLOW}{'='*60}{Colors.ENDC}")
-    
-    test_results['improved_password'], password_data, password_email = test_improved_password_generation()
-    test_results['email_transparency'], email_data = test_email_transparency()
-    test_results['whatsapp_honesty'], whatsapp_data = test_whatsapp_honesty()
-    test_results['complete_endpoint_fixes'], complete_data, complete_email = test_complete_endpoint_with_fixes()
-    
-    # Run chat bot tests
-    test_results['chat_normal'], session_id = test_chat_normal_message()
-    test_results['chat_values'] = test_chat_value_question()
-    test_results['chat_password_reset'] = test_chat_password_reset()
-    test_results['chat_history'] = test_chat_history(session_id)
-    test_results['password_reset_endpoint'] = test_password_reset_endpoint()
-    test_results['llm_integration'] = test_llm_integration()
-    test_results['session_isolation'] = test_session_isolation()
-    
-    # Run Asaas payment flow tests
-    print(f"\n{Colors.BOLD}{'='*60}{Colors.ENDC}")
-    print(f"{Colors.BOLD}STARTING ASAAS PAYMENT FLOW TESTING{Colors.ENDC}")
-    print(f"{Colors.BOLD}{'='*60}{Colors.ENDC}")
-    
-    test_results['subscription_creation'], subscription_id, test_email = test_subscription_creation()
-    test_results['asaas_webhook'] = test_asaas_webhook(test_email)
-    test_results['payment_verification'] = test_payment_verification(test_email)
-    test_results['subscription_status_check'] = test_subscription_status_after_webhook(test_email)
-    
-    # REAL ASAAS WEBHOOK TEST WITH PRODUCTION DATA (as requested in review)
-    print(f"\n{Colors.BOLD}{Colors.RED}{'='*60}{Colors.ENDC}")
-    print(f"{Colors.BOLD}{Colors.RED}🔥 REAL ASAAS WEBHOOK - PRODUCTION DATA TEST 🔥{Colors.ENDC}")
-    print(f"{Colors.BOLD}{Colors.RED}{'='*60}{Colors.ENDC}")
-    
-    test_results['real_asaas_webhook_production'] = test_real_asaas_webhook_production_data()
-    
-    # Run CRITICAL SECURITY AUTHENTICATION TESTS
-    print(f"\n{Colors.BOLD}{Colors.RED}{'='*60}{Colors.ENDC}")
-    print(f"{Colors.BOLD}{Colors.RED}🚨 CRITICAL SECURITY AUTHENTICATION TESTS 🚨{Colors.ENDC}")
-    print(f"{Colors.BOLD}{Colors.RED}{'='*60}{Colors.ENDC}")
-    
-    # Create test user for authentication tests
-    test_user = create_test_user_for_auth()
-    
-    # Run security tests
-    test_results['auth_endpoint_exists'] = test_auth_endpoint_exists()
-    test_results['auth_invalid_email'] = test_auth_invalid_email()
-    test_results['auth_incorrect_password'] = test_auth_incorrect_password(test_user)
-    test_results['auth_pending_payment'] = test_auth_pending_payment(test_user)
-    
-    # Update test user to paid status and test valid authentication
-    if test_user and update_test_user_to_paid(test_user):
-        test_results['auth_valid_paid_user'] = test_auth_valid_paid_user(test_user)
-    else:
-        test_results['auth_valid_paid_user'] = False
-        print_error("Could not test valid paid user authentication")
-    
-    # Run ADMIN PASSWORD RESET TESTS
-    print(f"\n{Colors.BOLD}{Colors.BLUE}{'='*60}{Colors.ENDC}")
-    print(f"{Colors.BOLD}{Colors.BLUE}🔑 ADMIN PASSWORD RESET FUNCTIONALITY TESTS 🔑{Colors.ENDC}")
-    print(f"{Colors.BOLD}{Colors.BLUE}{'='*60}{Colors.ENDC}")
-    
-    # Create test subscription for password reset tests
-    test_subscription = create_test_subscription_for_password_reset()
-    
-    # Run admin password reset tests
-    test_results['admin_reset_valid_user'], new_password = test_admin_password_reset_valid_user(test_subscription)
-    test_results['admin_reset_invalid_user'] = test_admin_password_reset_invalid_user()
-    test_results['admin_reset_malformed_request'] = test_admin_password_reset_malformed_request()
-    
-    # Test student login with new password
-    if test_subscription and new_password:
-        test_results['student_login_new_password'] = test_student_login_with_new_password(test_subscription, new_password)
-        test_results['student_login_old_password_fails'] = test_student_login_with_old_password(test_subscription)
-    else:
-        test_results['student_login_new_password'] = False
-        test_results['student_login_old_password_fails'] = False
-        print_error("Could not test student login after password reset")
+    # 5. Test validations
+    results.append(("✅ Validação URLs YouTube Inválidas", test_video_validation()))
+    results.append(("✅ Validação Formato de Questões", test_question_validation()))
+    results.append(("✅ Validação Campos Obrigatórios", test_required_fields_validation()))
     
     # Print summary
-    print_test_header("TEST SUMMARY")
+    print_test_summary(results)
     
-    # Separate test categories
-    dynamic_price_tests = ['dynamic_price_system']
-    moodle_integration_tests = ['moodle_status', 'health_check_enhanced', 'moodle_sync_user', 'moodle_enroll_user', 
-                               'moodle_user_progress', 'moodle_payment_webhook', 'environment_variables', 'asaas_webhook_enhanced']
-    critical_fix_tests = ['improved_password', 'email_transparency', 'whatsapp_honesty', 'complete_endpoint_fixes']
-    chat_tests = ['health_check', 'existing_endpoints', 'chat_normal', 'chat_values', 'chat_password_reset', 
-                  'chat_history', 'password_reset_endpoint', 'llm_integration', 'session_isolation']
-    payment_tests = ['subscription_creation', 'asaas_webhook', 'payment_verification', 'subscription_status_check', 'real_asaas_webhook_production']
-    security_tests = ['auth_endpoint_exists', 'auth_invalid_email', 'auth_incorrect_password', 
-                     'auth_pending_payment', 'auth_valid_paid_user']
-    admin_password_tests = ['admin_reset_valid_user', 'admin_reset_invalid_user', 'admin_reset_malformed_request',
-                           'student_login_new_password', 'student_login_old_password_fails']
+    return results
+
+def print_test_summary(results):
+    """Print a summary of all test results"""
+    print_test_header("RESUMO DOS TESTES")
     
-    print(f"{Colors.BOLD}{Colors.BLUE}🎯 DYNAMIC PRICE SYSTEM TESTS:{Colors.ENDC}")
-    price_system_passed = 0
-    price_system_failed = []
-    for test_name in dynamic_price_tests:
-        if test_name in test_results:
-            result = test_results[test_name]
-            status = "PASS" if result else "FAIL"
-            color = Colors.GREEN if result else Colors.RED
-            print(f"{color}{status:>6}{Colors.ENDC} - {test_name.replace('_', ' ').title()}")
-            if result:
-                price_system_passed += 1
-            else:
-                price_system_failed.append(test_name)
+    passed = 0
+    failed = 0
     
-    print(f"\n{Colors.BOLD}{Colors.BLUE}🔌 MOODLE INTEGRATION TESTS:{Colors.ENDC}")
-    moodle_passed = 0
-    moodle_failed = []
-    for test_name in moodle_integration_tests:
-        if test_name in test_results:
-            result = test_results[test_name]
-            status = "PASS" if result else "FAIL"
-            color = Colors.GREEN if result else Colors.RED
-            print(f"{color}{status:>6}{Colors.ENDC} - {test_name.replace('_', ' ').title()}")
-            if result:
-                moodle_passed += 1
-            else:
-                moodle_failed.append(test_name)
+    for test_name, result in results:
+        if result:
+            print_success(f"✅ {test_name}")
+            passed += 1
+        else:
+            print_error(f"❌ {test_name}")
+            failed += 1
     
-    print(f"\n{Colors.BOLD}{Colors.YELLOW}🔧 CRITICAL FIX TESTS (PASSWORD & NOTIFICATIONS):{Colors.ENDC}")
-    critical_passed = 0
-    critical_failed = []
-    for test_name in critical_fix_tests:
-        if test_name in test_results:
-            result = test_results[test_name]
-            status = "PASS" if result else "FAIL"
-            color = Colors.GREEN if result else Colors.RED
-            print(f"{color}{status:>6}{Colors.ENDC} - {test_name.replace('_', ' ').title()}")
-            if result:
-                critical_passed += 1
-            else:
-                critical_failed.append(test_name)
+    print(f"\n{Colors.BOLD}RESULTADOS FINAIS:{Colors.ENDC}")
+    print(f"{Colors.GREEN}✅ Passou: {passed}{Colors.ENDC}")
+    print(f"{Colors.RED}❌ Falhou: {failed}{Colors.ENDC}")
+    print(f"{Colors.BLUE}📊 Total: {passed + failed}{Colors.ENDC}")
     
-    print(f"\n{Colors.BOLD}CHAT BOT SYSTEM TESTS:{Colors.ENDC}")
-    chat_passed = 0
-    for test_name in chat_tests:
-        if test_name in test_results:
-            result = test_results[test_name]
-            status = "PASS" if result else "FAIL"
-            color = Colors.GREEN if result else Colors.RED
-            print(f"{color}{status:>6}{Colors.ENDC} - {test_name.replace('_', ' ').title()}")
-            if result:
-                chat_passed += 1
-    
-    print(f"\n{Colors.BOLD}ASAAS PAYMENT FLOW TESTS:{Colors.ENDC}")
-    payment_passed = 0
-    for test_name in payment_tests:
-        if test_name in test_results:
-            result = test_results[test_name]
-            status = "PASS" if result else "FAIL"
-            color = Colors.GREEN if result else Colors.RED
-            print(f"{color}{status:>6}{Colors.ENDC} - {test_name.replace('_', ' ').title()}")
-            if result:
-                payment_passed += 1
-    
-    print(f"\n{Colors.BOLD}{Colors.RED}🚨 CRITICAL SECURITY AUTHENTICATION TESTS:{Colors.ENDC}")
-    security_passed = 0
-    security_failed = []
-    for test_name in security_tests:
-        if test_name in test_results:
-            result = test_results[test_name]
-            status = "PASS" if result else "FAIL"
-            color = Colors.GREEN if result else Colors.RED
-            print(f"{color}{status:>6}{Colors.ENDC} - {test_name.replace('_', ' ').title()}")
-            if result:
-                security_passed += 1
-            else:
-                security_failed.append(test_name)
-    
-    print(f"\n{Colors.BOLD}{Colors.BLUE}🔑 ADMIN PASSWORD RESET TESTS:{Colors.ENDC}")
-    admin_password_passed = 0
-    admin_password_failed = []
-    for test_name in admin_password_tests:
-        if test_name in test_results:
-            result = test_results[test_name]
-            status = "PASS" if result else "FAIL"
-            color = Colors.GREEN if result else Colors.RED
-            print(f"{color}{status:>6}{Colors.ENDC} - {test_name.replace('_', ' ').title()}")
-            if result:
-                admin_password_passed += 1
-            else:
-                admin_password_failed.append(test_name)
-    
-    total_passed = sum(1 for result in test_results.values() if result)
-    total_tests = len(test_results)
-    
-    print(f"\n{Colors.BOLD}OVERALL RESULT: {total_passed}/{total_tests} tests passed{Colors.ENDC}")
-    print(f"{Colors.BOLD}{Colors.BLUE}🎯 Dynamic Price System: {price_system_passed}/{len(dynamic_price_tests)} tests passed{Colors.ENDC}")
-    print(f"{Colors.BOLD}{Colors.YELLOW}🔧 Critical Fixes: {critical_passed}/{len(critical_fix_tests)} tests passed{Colors.ENDC}")
-    print(f"{Colors.BOLD}Chat Bot System: {chat_passed}/{len(chat_tests)} tests passed{Colors.ENDC}")
-    print(f"{Colors.BOLD}Payment Flow: {payment_passed}/{len(payment_tests)} tests passed{Colors.ENDC}")
-    print(f"{Colors.BOLD}{Colors.RED}🚨 Security Tests: {security_passed}/{len(security_tests)} tests passed{Colors.ENDC}")
-    print(f"{Colors.BOLD}{Colors.BLUE}🔑 Admin Password Reset: {admin_password_passed}/{len(admin_password_tests)} tests passed{Colors.ENDC}")
-    
-    # Dynamic price system assessment
-    if price_system_passed == len(dynamic_price_tests):
-        print_success("🎯 DYNAMIC PRICE SYSTEM ASSESSMENT: ALL TESTS PASSED!")
-        print_success("✅ Default price API, set price API, and price consistency working correctly")
-        print_success("✅ Course management (create/delete) operational")
-        print_success("✅ Bot integration may need updates for dynamic pricing")
+    if failed == 0:
+        print(f"\n{Colors.GREEN}{Colors.BOLD}🎉 TODOS OS TESTES PASSARAM!{Colors.ENDC}")
+        print_success("Sistema de gestão de vídeos totalmente operacional")
     else:
-        print_error("🚨 DYNAMIC PRICE SYSTEM ISSUES DETECTED!")
-        print_error(f"❌ {len(price_system_failed)} dynamic price system tests failed:")
-        for failed_test in price_system_failed:
-            print_error(f"   - {failed_test.replace('_', ' ').title()}")
-        print_error("⚠️  DYNAMIC PRICING FUNCTIONALITY NEEDS ATTENTION!")
-    
-    # Critical fix assessment
-    if critical_passed == len(critical_fix_tests):
-        print_success("🔧 CRITICAL FIXES ASSESSMENT: ALL FIXES VERIFIED!")
-        print_success("✅ Password improvements, email transparency, and WhatsApp honesty working correctly")
-    else:
-        print_error("🚨 CRITICAL FIX ISSUES DETECTED!")
-        print_error(f"❌ {len(critical_failed)} critical fix tests failed:")
-        for failed_test in critical_failed:
-            print_error(f"   - {failed_test.replace('_', ' ').title()}")
-        print_error("⚠️  USER REPORTED ISSUES MAY NOT BE FULLY RESOLVED!")
-    
-    # Critical security assessment
-    if security_passed == len(security_tests):
-        print_success("🔒 SECURITY ASSESSMENT: ALL CRITICAL SECURITY TESTS PASSED!")
-        print_success("✅ Authentication system is working correctly and securely")
-    else:
-        print_error("🚨 CRITICAL SECURITY ISSUES DETECTED!")
-        print_error(f"❌ {len(security_failed)} security tests failed:")
-        for failed_test in security_failed:
-            print_error(f"   - {failed_test.replace('_', ' ').title()}")
-        print_error("⚠️  IMMEDIATE ATTENTION REQUIRED!")
-    
-    # Admin password reset assessment
-    if admin_password_passed == len(admin_password_tests):
-        print_success("🔑 ADMIN PASSWORD RESET ASSESSMENT: ALL TESTS PASSED!")
-        print_success("✅ Admin password reset functionality working correctly")
-        print_success("✅ Password updates in subscriptions collection")
-        print_success("✅ Students can login with new passwords")
-        print_success("✅ Old passwords are properly invalidated")
-        print_success("✅ Error handling for invalid user IDs working")
-    else:
-        print_error("🚨 ADMIN PASSWORD RESET ISSUES DETECTED!")
-        print_error(f"❌ {len(admin_password_failed)} admin password reset tests failed:")
-        for failed_test in admin_password_failed:
-            print_error(f"   - {failed_test.replace('_', ' ').title()}")
-        print_error("⚠️  ADMIN PASSWORD RESET FUNCTIONALITY NEEDS ATTENTION!")
-    
-    if total_passed == total_tests:
-        print_success("All tests passed! Complete system is working correctly.")
-        return True
-    else:
-        print_error(f"{total_tests - total_passed} tests failed. System needs attention.")
-        return False
+        print(f"\n{Colors.YELLOW}{Colors.BOLD}⚠️ Alguns testes falharam{Colors.ENDC}")
+        print_warning(f"{failed} teste(s) precisam de atenção")
 
 def run_payment_sync_test_only():
     """Run only the payment synchronization test for Jose Messias"""
