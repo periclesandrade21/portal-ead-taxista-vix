@@ -1212,9 +1212,23 @@ const AdminDashboard = () => {
                                 <span>📚 {course.category}</span>
                               </div>
                             </div>
-                            <Badge variant={course.active ? 'default' : 'secondary'}>
-                              {course.active ? 'Ativo' : 'Inativo'}
-                            </Badge>
+                            <div className="flex items-center gap-2">
+                              <Badge variant={course.active ? 'default' : 'secondary'}>
+                                {course.active ? 'Ativo' : 'Inativo'}
+                              </Badge>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setDeleteConfirmModal({
+                                  show: true,
+                                  courseId: course.id,
+                                  courseName: course.name
+                                })}
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       ))}
