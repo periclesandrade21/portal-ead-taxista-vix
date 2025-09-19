@@ -414,6 +414,18 @@ const AdminDashboard = () => {
       <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-700 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
+            <div className="flex justify-between items-center mb-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.location.href = '/'}
+                className="flex items-center gap-2"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Voltar ao Portal
+              </Button>
+              <div></div> {/* Spacer para centralizar o ícone */}
+            </div>
             <div className="bg-red-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
               <Lock className="h-8 w-8 text-white" />
             </div>
