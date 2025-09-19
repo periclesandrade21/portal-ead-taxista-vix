@@ -17,6 +17,10 @@ from emergentintegrations.llm.chat import LlmChat, UserMessage
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import base64
+from io import BytesIO
+from PIL import Image
+import magic
 # Removed Moodle imports - replaced with video management utilities
 
 ROOT_DIR = Path(__file__).parent
