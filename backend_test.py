@@ -1577,6 +1577,20 @@ def run_all_tests():
             else:
                 security_failed.append(test_name)
     
+    print(f"\n{Colors.BOLD}{Colors.BLUE}🔑 ADMIN PASSWORD RESET TESTS:{Colors.ENDC}")
+    admin_password_passed = 0
+    admin_password_failed = []
+    for test_name in admin_password_tests:
+        if test_name in test_results:
+            result = test_results[test_name]
+            status = "PASS" if result else "FAIL"
+            color = Colors.GREEN if result else Colors.RED
+            print(f"{color}{status:>6}{Colors.ENDC} - {test_name.replace('_', ' ').title()}")
+            if result:
+                admin_password_passed += 1
+            else:
+                admin_password_failed.append(test_name)
+    
     total_passed = sum(1 for result in test_results.values() if result)
     total_tests = len(test_results)
     
