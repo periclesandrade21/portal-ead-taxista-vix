@@ -871,9 +871,10 @@ def create_test_user_for_auth():
         "email": f"carlos.eduardo.{timestamp}@email.com",
         "phone": "27999888777",
         "cpf": "11144477735",  # Valid CPF for testing
-        "carPlate": "TST-1234-T",
-        "licenseNumber": "TA-54321",
-        "city": "Vitória"
+        "carPlate": f"TST-{timestamp[-4:]}-T",
+        "licenseNumber": f"TA-{timestamp[-5:]}",
+        "city": "Vitória",
+        "lgpd_consent": True
     }
     
     try:
