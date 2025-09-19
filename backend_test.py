@@ -1880,6 +1880,49 @@ def run_all_tests():
         print_error(f"{total_tests - total_passed} tests failed. System needs attention.")
         return False
 
+def run_payment_sync_test_only():
+    """Run only the payment synchronization test for Jose Messias"""
+    print(f"{Colors.BOLD}EAD TAXISTA ES - PAYMENT SYNCHRONIZATION FIX TEST{Colors.ENDC}")
+    print(f"Backend URL: {BACKEND_URL}")
+    print(f"Test started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    
+    # Run health check first
+    health_ok = test_health_check()
+    if not health_ok:
+        print_error("Backend health check failed - cannot proceed with testing")
+        return False
+    
+    # Run the specific payment sync test
+    print(f"\n{Colors.BOLD}{Colors.BLUE}{'='*60}{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.BLUE}🔄 PAYMENT SYNCHRONIZATION FIX TEST{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.BLUE}{'='*60}{Colors.ENDC}")
+    
+    result = test_jose_messias_payment_sync()
+    
+    # Print summary
+    print_test_header("TEST SUMMARY")
+    
+    if result:
+        print_success("🎉 PAYMENT SYNCHRONIZATION FIX TEST PASSED!")
+        print_success("✅ Jose Messias Cezar De Souza can now login successfully")
+        print_success("✅ Backend returns correct user data with 'paid' status")
+        print_success("✅ Frontend should now show 'Acesso Liberado' instead of 'Acesso Pendente'")
+    else:
+        print_error("❌ PAYMENT SYNCHRONIZATION FIX TEST FAILED!")
+        print_error("❌ Issues found with user status or login functionality")
+        print_error("❌ Frontend may still show 'Acesso Pendente'")
+    
+    print(f"\nTest completed at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    return result
+
 if __name__ == "__main__":
-    success = run_all_tests()
-    sys.exit(0 if success else 1)
+    import sys
+    
+    if len(sys.argv) > 1 and sys.argv[1] == "--payment-sync-only":
+        # Run only payment sync test
+        success = run_payment_sync_test_only()
+        sys.exit(0 if success else 1)
+    else:
+        # Run all tests
+        success = run_all_tests()
+        sys.exit(0 if success else 1)
