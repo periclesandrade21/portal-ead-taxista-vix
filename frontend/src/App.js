@@ -1699,6 +1699,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/student-portal" element={<StudentPortalComplete />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin-ead" element={<AdminDashboardEAD />} />
         </Routes>
       </BrowserRouter>
     </div>
