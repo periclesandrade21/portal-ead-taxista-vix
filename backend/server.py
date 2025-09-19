@@ -17,6 +17,8 @@ from emergentintegrations.llm.chat import LlmChat, UserMessage
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from .moodle_client import create_moodle_client
+from .moodle_service import MoodleIntegrationService
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
