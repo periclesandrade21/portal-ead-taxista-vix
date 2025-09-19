@@ -209,7 +209,12 @@ const StudentPortal = () => {
             </div>
             <Button 
               variant="outline"
-              onClick={() => setIsLoggedIn(false)}
+              onClick={() => {
+                setIsLoggedIn(false);
+                setUserInfo(null);
+                setLoginData({ email: '', password: '' });
+                setLoginError('');
+              }}
             >
               Sair
             </Button>
