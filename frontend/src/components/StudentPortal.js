@@ -19,7 +19,8 @@ import {
   Video,
   FileText,
   BarChart3,
-  ChevronLeft
+  ChevronLeft,
+  Key
 } from 'lucide-react';
 
 const StudentPortal = () => {
