@@ -480,24 +480,42 @@ const StudentPortalComplete = () => {
             </Button>
           </form>
 
-          <div className="mt-6 text-center space-y-3">
-            <Button
-              variant="ghost"
-              onClick={() => setShowResetModal(true)}
-              className="text-blue-200 hover:text-white hover:bg-white/10"
-            >
-              <Key className="h-4 w-4 mr-2" />
-              Esqueci minha senha
-            </Button>
+          <div className="mt-6 space-y-4">
+            {/* Botões de ajuda */}
+            <div className="grid grid-cols-1 gap-3">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setShowResetModal(true)}
+                className="w-full text-blue-200 hover:text-white hover:bg-white/10 border border-blue-400/30"
+              >
+                <Key className="h-4 w-4 mr-2" />
+                🔑 Solicitar Nova Senha
+              </Button>
+              
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => window.history.back()}
+                className="w-full text-blue-200 hover:text-white hover:bg-white/10 border border-blue-400/30"
+              >
+                <ChevronLeft className="h-4 w-4 mr-2" />
+                ← Voltar ao Portal
+              </Button>
+            </div>
             
-            <Button
-              variant="ghost"
-              onClick={() => window.history.back()}
-              className="text-blue-200 hover:text-white hover:bg-white/10"
-            >
-              <ChevronLeft className="h-4 w-4 mr-2" />
-              Voltar ao Portal
-            </Button>
+            {/* Informações de suporte */}
+            <div className="text-center pt-2 border-t border-white/20">
+              <p className="text-blue-200 text-xs">
+                🆘 Problemas para acessar?
+              </p>
+              <a 
+                href="mailto:suporte@sindtaxi-es.org" 
+                className="text-blue-300 hover:text-white text-xs underline"
+              >
+                suporte@sindtaxi-es.org
+              </a>
+            </div>
           </div>
         </div>
 
