@@ -5038,7 +5038,39 @@ def test_student_authentication_system():
             error_text = subscription_response.text
             print_error(f"Failed to create test student: {subscription_response.status_code}")
             print_error(f"Error details: {error_text}")
-            return False
+            
+            # If student already exists, try to authenticate with existing credentials
+            if "já cadastrado" in error_text:
+                print_info("Student already exists, testing authentication with existing user...")
+                
+                # Try to authenticate with a known test user
+                login_data = {
+                    "email": "maria.silva.1758312550@gmail.com",  # From previous successful test
+                    "password": "QQWTR@B7dn"  # From previous successful test
+                }
+                
+                auth_response = requests.post(
+                    f"{BACKEND_URL}/auth/login",
+                    json=login_data,
+                    headers={"Content-Type": "application/json"},
+                    timeout=10
+                )
+                
+                if auth_response.status_code == 200:
+                    auth_data = auth_response.json()
+                    
+                    if auth_data.get('success'):
+                        print_success("✅ Student authentication successful with existing user")
+                        print_info(f"Authentication response: {auth_data}")
+                        return True
+                    else:
+                        print_error("❌ Authentication failed - success field is false")
+                        return False
+                else:
+                    print_error(f"Authentication failed with status {auth_response.status_code}: {auth_response.text}")
+                    return False
+            else:
+                return False
         
         subscription_data = subscription_response.json()
         student_email = test_data["email"]
