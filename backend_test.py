@@ -2508,6 +2508,13 @@ def run_all_tests():
     
     test_results = {}
     
+    # PRIORITY: MongoDB webhook metadata storage debug (as requested in review)
+    print(f"\n{Colors.BOLD}{Colors.RED}{'='*60}{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.RED}🔍 PRIORITY TEST: MONGODB WEBHOOK METADATA DEBUG 🔍{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.RED}{'='*60}{Colors.ENDC}")
+    
+    test_results['mongodb_webhook_metadata_debug'] = test_mongodb_webhook_metadata_storage()
+    
     # PRIORITY: Real Asaas webhook metadata storage fix test (as requested in review)
     print(f"\n{Colors.BOLD}{Colors.RED}{'='*60}{Colors.ENDC}")
     print(f"{Colors.BOLD}{Colors.RED}🔍 PRIORITY TEST: WEBHOOK METADATA STORAGE FIX 🔍{Colors.ENDC}")
