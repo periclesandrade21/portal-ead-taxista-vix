@@ -60,6 +60,7 @@ class UserSubscriptionCreate(BaseModel):
     name: str
     email: EmailStr
     phone: str
+    cpf: str
     carPlate: Optional[str] = None
     licenseNumber: Optional[str] = None
     city: Optional[str] = None
