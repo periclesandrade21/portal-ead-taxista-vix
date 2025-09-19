@@ -397,11 +397,11 @@ def test_improved_password_generation():
     timestamp = str(int(time.time()))
     
     test_data = {
-        "name": "João Teste Senha",
-        "email": f"joao.senha.{timestamp}@email.com",
+        "name": "João Silva Oliveira",
+        "email": f"joao.silva.{timestamp}@email.com",
         "phone": "27999888777",
         "cpf": "11144477735",  # Valid CPF
-        "carPlate": f"TST-{timestamp[-4:]}-T",
+        "carPlate": f"JSO-{timestamp[-4:]}-T",
         "licenseNumber": f"TA-{timestamp[-5:]}",
         "city": "Vitória",
         "lgpd_consent": True
@@ -499,11 +499,11 @@ def test_email_transparency():
     timestamp = str(int(time.time()))
     
     test_data = {
-        "name": "Maria Email Transparente",
-        "email": f"maria.email.{timestamp}@teste.com",
+        "name": "Maria Santos Costa",
+        "email": f"maria.santos.{timestamp}@email.com",
         "phone": "27999777666",
         "cpf": "98765432100",  # Valid CPF
-        "carPlate": f"EML-{timestamp[-4:]}-T",
+        "carPlate": f"MSC-{timestamp[-4:]}-T",
         "licenseNumber": f"TA-{timestamp[-5:]}",
         "city": "Vitória",
         "lgpd_consent": True
@@ -550,11 +550,11 @@ def test_whatsapp_honesty():
     timestamp = str(int(time.time()))
     
     test_data = {
-        "name": "Carlos WhatsApp Honesto",
-        "email": f"carlos.whatsapp.{timestamp}@teste.com",
+        "name": "Carlos Oliveira Silva",
+        "email": f"carlos.oliveira.{timestamp}@email.com",
         "phone": "27999555444",
         "cpf": "11122233344",  # Valid CPF
-        "carPlate": f"WPP-{timestamp[-4:]}-T",
+        "carPlate": f"COS-{timestamp[-4:]}-T",
         "licenseNumber": f"TA-{timestamp[-5:]}",
         "city": "Vitória",
         "lgpd_consent": True
@@ -602,11 +602,11 @@ def test_complete_endpoint_with_fixes():
     timestamp = str(int(time.time()))
     
     test_data = {
-        "name": "João Teste Senha Completo",
-        "email": f"joao.senha.completo.{timestamp}@email.com",
+        "name": "Pedro Santos Ferreira",
+        "email": f"pedro.santos.{timestamp}@email.com",
         "phone": "27999888777",
         "cpf": "11144477735",  # Valid CPF
-        "carPlate": f"TST-{timestamp[-4:]}-T",
+        "carPlate": f"PSF-{timestamp[-4:]}-T",
         "licenseNumber": f"TA-{timestamp[-5:]}",
         "city": "Vitória",
         "lgpd_consent": True
