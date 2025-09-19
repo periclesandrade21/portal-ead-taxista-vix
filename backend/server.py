@@ -2415,91 +2415,192 @@ async def validate_documents(request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 async def simulate_ai_validation(doc_type: str, doc_info: dict):
-    """Simulate AI document validation with realistic results"""
+    """Simulate AI document validation with more realistic and strict results"""
     
     # Simulate processing time
-    await asyncio.sleep(random.uniform(1, 3))
+    await asyncio.sleep(random.uniform(2, 5))
     
+    # Get filename and analyze for quality
+    filename = doc_info.get('name', '').lower()
+    file_size = doc_info.get('size', 0)
+    
+    # More realistic validation scenarios based on document type
     validation_scenarios = {
         'cnh': [
             {
                 'status': 'approved',
-                'confidence': random.uniform(0.90, 0.98),
-                'analysis': 'CNH válida identificada. Número, categoria e validade confirmados.',
-                'details': ['Documento legível', 'Dentro da validade', 'Categoria B confirmada', 'Dados consistentes'],
+                'confidence': random.uniform(0.92, 0.98),
+                'analysis': 'CNH válida identificada. Documento autêntico com todos os elementos de segurança presentes.',
+                'details': [
+                    'Holografia autêntica detectada',
+                    'Microimpressão verificada', 
+                    'Número de registro válido',
+                    'Categoria B confirmada',
+                    'Validade dentro do prazo',
+                    'Dados biométricos consistentes'
+                ],
                 'extracted_data': {
                     'number': f"{random.randint(10000000000, 99999999999)}",
-                    'category': 'B',
-                    'expiry': (datetime.now() + timedelta(days=random.randint(365, 1825))).strftime('%d/%m/%Y')
+                    'category': random.choice(['B', 'AB', 'AC']),
+                    'expiry': (datetime.now() + timedelta(days=random.randint(365, 1825))).strftime('%d/%m/%Y'),
+                    'issuer': random.choice(['DETRAN/ES', 'DETRAN/MG', 'DETRAN/RJ']),
+                    'security_elements': True
                 }
             },
             {
                 'status': 'warning',
-                'confidence': random.uniform(0.70, 0.85),
-                'analysis': 'CNH identificada mas com baixa qualidade da imagem.',
-                'details': ['Documento parcialmente legível', 'Recomenda-se nova foto', 'Dados básicos confirmados'],
-                'extracted_data': None
+                'confidence': random.uniform(0.65, 0.79),
+                'analysis': 'CNH detectada mas com qualidade de imagem comprometida ou elementos suspeitos.',
+                'details': [
+                    'Imagem borrada ou mal iluminada',
+                    'Alguns elementos de segurança não claros',
+                    'Possível alteração digital detectada',
+                    'Recomendada nova captura'
+                ],
+                'extracted_data': None,
+                'recommendations': ['Capturar nova foto com melhor iluminação', 'Verificar documento físico']
             },
             {
                 'status': 'rejected',
-                'confidence': random.uniform(0.30, 0.60),
-                'analysis': 'CNH não pôde ser validada adequadamente.',
-                'details': ['Imagem muito escura', 'Documento não legível', 'Possível documento fora da validade'],
-                'extracted_data': None
+                'confidence': random.uniform(0.15, 0.45),
+                'analysis': 'Documento não atende aos critérios de autenticidade.',
+                'details': [
+                    'Elementos de segurança ausentes',
+                    'Inconsistências nos dados',
+                    'Possível falsificação detectada',
+                    'Formato incompatível com padrão DENATRAN'
+                ],
+                'extracted_data': None,
+                'rejection_reasons': ['Documento suspeito de falsificação', 'Não atende critérios técnicos']
             }
         ],
         'residenceProof': [
             {
                 'status': 'approved',
-                'confidence': random.uniform(0.85, 0.95),
-                'analysis': 'Comprovante de residência válido. Endereço confirmado.',
-                'details': ['Documento legível', 'Data recente (últimos 3 meses)', 'Endereço confirmado', 'Empresa reconhecida'],
+                'confidence': random.uniform(0.88, 0.95),
+                'analysis': 'Comprovante de residência válido de empresa reconhecida.',
+                'details': [
+                    'Empresa concessionária verificada',
+                    'Data dentro do prazo (últimos 3 meses)',
+                    'Endereço completo e legível',
+                    'Código de barras autêntico'
+                ],
                 'extracted_data': {
-                    'company': random.choice(['CESAN', 'EDP Escelsa', 'Oi Fibra', 'Vivo']),
+                    'company': random.choice(['CESAN', 'EDP Escelsa', 'Oi Fibra', 'Vivo', 'NET']),
                     'date': (datetime.now() - timedelta(days=random.randint(1, 90))).strftime('%d/%m/%Y'),
-                    'address_confirmed': True
+                    'address_confirmed': True,
+                    'amount': f"R$ {random.randint(50, 300)},00"
                 }
             },
             {
                 'status': 'warning',
-                'confidence': random.uniform(0.65, 0.80),
-                'analysis': 'Comprovante identificado mas data superior a 3 meses.',
-                'details': ['Documento legível', 'Data pode estar desatualizada', 'Empresa confirmada'],
+                'confidence': random.uniform(0.60, 0.75),
+                'analysis': 'Comprovante identificado mas com ressalvas.',
+                'details': [
+                    'Data superior a 3 meses',
+                    'Qualidade da imagem baixa',
+                    'Empresa não reconhecida automaticamente'
+                ],
+                'extracted_data': None,
+                'recommendations': ['Fornecer comprovante mais recente']
+            },
+            {
+                'status': 'rejected',
+                'confidence': random.uniform(0.20, 0.50),
+                'analysis': 'Documento não atende aos critérios de comprovação de residência.',
+                'details': [
+                    'Data muito antiga (mais de 6 meses)',
+                    'Documento ilegível',
+                    'Não é comprovante de residência válido'
+                ],
                 'extracted_data': None
             }
         ],
         'photo': [
             {
                 'status': 'approved',
-                'confidence': random.uniform(0.85, 0.95),
-                'analysis': 'Foto identificada e de boa qualidade.',
-                'details': ['Rosto claramente visível', 'Boa iluminação', 'Qualidade adequada'],
+                'confidence': random.uniform(0.85, 0.94),
+                'analysis': 'Foto biométrica de qualidade adequada.',
+                'details': [
+                    'Rosto claramente visível',
+                    'Iluminação adequada',
+                    'Sem obstáculos (óculos escuros, chapéu)',
+                    'Qualidade suficiente para biometria'
+                ],
                 'extracted_data': {
                     'face_detected': True,
                     'quality_score': random.uniform(0.8, 1.0),
-                    'lighting': 'good'
+                    'lighting': 'good',
+                    'pose': 'frontal',
+                    'obstructions': False
                 }
+            },
+            {
+                'status': 'warning',
+                'confidence': random.uniform(0.60, 0.79),
+                'analysis': 'Foto detectada mas com qualidade limitada.',
+                'details': [
+                    'Iluminação inadequada',
+                    'Rosto parcialmente obstruído',
+                    'Qualidade insuficiente para biometria precisa'
+                ],
+                'extracted_data': None
             }
         ]
     }
     
-    # Get scenarios for document type or use generic
+    # Factors that influence validation accuracy
+    quality_factors = []
+    
+    # File size analysis
+    if file_size < 100000:  # < 100KB
+        quality_factors.append('low_quality')
+    elif file_size > 5000000:  # > 5MB
+        quality_factors.append('high_quality')
+    
+    # Filename analysis
+    if any(word in filename for word in ['blur', 'dark', 'bad', 'low']):
+        quality_factors.append('poor_naming')
+    elif any(word in filename for word in ['clear', 'good', 'hd', 'high']):
+        quality_factors.append('good_naming')
+    
+    # Document type specific validation
     scenarios = validation_scenarios.get(doc_type, validation_scenarios['residenceProof'])
     
-    # Randomly select a scenario (weighted towards positive results)
-    weights = [0.7, 0.2, 0.1] if len(scenarios) == 3 else [0.8, 0.2]
+    # Weight selection based on quality factors
+    if 'low_quality' in quality_factors or 'poor_naming' in quality_factors:
+        # Higher chance of rejection/warning for poor quality
+        weights = [0.30, 0.40, 0.30] if len(scenarios) == 3 else [0.40, 0.60]
+    elif 'high_quality' in quality_factors or 'good_naming' in quality_factors:
+        # Higher chance of approval for good quality
+        weights = [0.80, 0.15, 0.05] if len(scenarios) == 3 else [0.85, 0.15]
+    else:
+        # Standard weights
+        weights = [0.60, 0.25, 0.15] if len(scenarios) == 3 else [0.70, 0.30]
+    
     selected_scenario = random.choices(scenarios[:len(weights)], weights=weights)[0].copy()
     
     # Add processing metadata
     selected_scenario.update({
         'document_type': doc_type,
         'file_name': doc_info.get('name', 'unknown'),
-        'file_size': doc_info.get('size', 0),
-        'processing_time': random.uniform(1.5, 4.2),
+        'file_size': file_size,
+        'processing_time': random.uniform(2.1, 5.8),
         'validation_timestamp': datetime.now(timezone.utc).isoformat(),
-        'ai_model': 'DocumentValidatorAI v2.1',
-        'risk_score': random.uniform(0.1, 0.3) if selected_scenario['status'] == 'approved' else random.uniform(0.4, 0.9)
+        'ai_model': 'DocumentValidatorAI v3.2',
+        'quality_factors': quality_factors,
+        'risk_score': random.uniform(0.05, 0.25) if selected_scenario['status'] == 'approved' else random.uniform(0.5, 0.95),
+        'fraud_indicators': random.randint(0, 2) if selected_scenario['status'] == 'approved' else random.randint(3, 8)
     })
+    
+    # Special validation for CNH
+    if doc_type == 'cnh' and selected_scenario['status'] == 'approved':
+        # Simulate real CNH validation
+        selected_scenario['extracted_data'].update({
+            'cpf_match': random.choice([True, False]),  # Would check against user's CPF
+            'name_match': random.choice([True, False]), # Would check against user's name
+            'photo_match_score': random.uniform(0.75, 0.98)
+        })
     
     return selected_scenario
 
