@@ -958,17 +958,56 @@ const Home = () => {
                       </p>
                     </div>
                     
-                    <div className="md:col-span-2">
+                    <div>
                       <Label htmlFor="phone" className="text-sm font-semibold text-gray-700">Telefone/WhatsApp *</Label>
                       <Input
                         id="phone"
                         type="tel"
                         value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
+                        onChange={(e) => {
+                          setPhone(e.target.value);
+                          // Limpar erro quando usuário digita
+                          if (validationErrors.phone) {
+                            setValidationErrors(prev => ({...prev, phone: ''}));
+                          }
+                        }}
                         placeholder="(27) 99999-9999"
                         required
-                        className="mt-2 h-12 text-lg"
+                        className={`mt-2 h-12 text-lg ${validationErrors.phone ? 'border-red-500' : ''}`}
                       />
+                      {validationErrors.phone && (
+                        <p className="text-red-500 text-xs mt-1">{validationErrors.phone}</p>
+                      )}
+                      <p className="text-xs text-gray-500 mt-1">
+                        📱 Será usado para suporte e WhatsApp
+                      </p>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="cpf" className="text-sm font-semibold text-gray-700">CPF *</Label>
+                      <Input
+                        id="cpf"
+                        type="text"
+                        value={cpf}
+                        onChange={(e) => {
+                          const formatted = formatCPF(e.target.value);
+                          setCpf(formatted);
+                          // Limpar erro quando usuário digita
+                          if (validationErrors.cpf) {
+                            setValidationErrors(prev => ({...prev, cpf: ''}));
+                          }
+                        }}
+                        placeholder="000.000.000-00"
+                        required
+                        className={`mt-2 h-12 text-lg font-mono ${validationErrors.cpf ? 'border-red-500' : ''}`}
+                        maxLength="14"
+                      />
+                      {validationErrors.cpf && (
+                        <p className="text-red-500 text-xs mt-1">{validationErrors.cpf}</p>
+                      )}
+                      <p className="text-xs text-gray-500 mt-1">
+                        🆔 Usado para validação de identidade e certificado
+                      </p>
                     </div>
                   </div>
                 </div>
