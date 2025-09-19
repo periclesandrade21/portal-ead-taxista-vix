@@ -562,7 +562,8 @@ test_plan:
 
 test_plan:
   current_focus:
-    - "Real Asaas webhook processing with production data"
+    - "Portal do Aluno EAD Completo com Sistema de Vídeos"
+    - "Sistema de gestão de vídeos no painel administrativo"
   stuck_tasks: 
     - "Real Asaas webhook processing with production data"
   test_all: false
