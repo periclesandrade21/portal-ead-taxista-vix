@@ -30,7 +30,8 @@ import {
   CoursesWithPricesTab,
   VideosTab,
   AdminUsersTab,
-  ReportsTab
+  ReportsTab,
+  DocumentsTab
 } from './AdminEADCompleteabs';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
