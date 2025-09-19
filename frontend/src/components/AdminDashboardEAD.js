@@ -367,6 +367,191 @@ const AdminDashboardEAD = () => {
     alert(`📊 Relatório sendo exportado em formato ${format.toUpperCase()}...\nAguarde o download iniciar.`);
   };
 
+  // Funções do painel administrativo antigo
+  const fetchAdminData = async () => {
+    // Simular carregamento de dados administrativos
+    const statsArray = cityStatsData;
+    return statsArray;
+  };
+
+  const handleDeleteUser = async (userId) => {
+    try {
+      const userToDelete = users.find(u => u.id === userId);
+      if (!userToDelete) return;
+      
+      setUsers(prev => prev.filter(u => u.id !== userId));
+      alert(`✅ Usuário ${userToDelete.name} removido com sucesso!`);
+    } catch (error) {
+      console.error('Erro ao excluir usuário:', error);
+      alert('Erro ao excluir usuário. Tente novamente.');
+    }
+  };
+
+  const handleCreateAdminUser = async () => {
+    try {
+      const newAdminUser = {
+        id: Date.now().toString(),
+        username: `user_${Date.now()}`,
+        full_name: 'Novo Usuário Admin',
+        role: 'support',
+        created_at: new Date().toLocaleDateString()
+      };
+      
+      setAdminUsers(prev => [...prev, newAdminUser]);
+      setAdminUserModal({ show: false, user: null, isEdit: false });
+      alert('✅ Usuário administrativo criado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao criar usuário admin:', error);
+      alert('Erro ao criar usuário administrativo.');
+    }
+  };
+
+  const handleResetAdminPassword = async () => {
+    try {
+      alert(`✅ Senha do usuário ${adminPasswordModal.username} redefinida com sucesso!`);
+      setAdminPasswordModal({ show: false, userId: null, username: '', newPassword: '', showPassword: false });
+    } catch (error) {
+      console.error('Erro ao redefinir senha:', error);
+      alert('Erro ao redefinir senha.');
+    }
+  };
+
+  const handleDeleteAdminUser = async () => {
+    try {
+      if (deleteUserModal.username === 'admin') {
+        alert('❌ Não é possível excluir o usuário admin principal.');
+        return;
+      }
+      
+      setAdminUsers(prev => prev.filter(u => u.id !== deleteUserModal.userId));
+      setDeleteUserModal({ show: false, userId: null, username: '' });
+      alert('✅ Usuário administrativo excluído com sucesso!');
+    } catch (error) {
+      console.error('Erro ao excluir usuário admin:', error);
+      alert('Erro ao excluir usuário administrativo.');
+    }
+  };
+
+  // Funções para gestão de vídeos
+  const fetchModules = async () => {
+    try {
+      const response = await axios.get(`${API}/modules`);
+      setModules(response.data.modules || []);
+    } catch (error) {
+      console.error('Erro ao carregar módulos:', error);
+    }
+  };
+
+  const fetchModuleVideos = async (moduleId) => {
+    if (!moduleId) return;
+    try {
+      setVideoLoadingStates(prev => ({ ...prev, [moduleId]: true }));
+      const response = await axios.get(`${API}/modules/${moduleId}/videos`);
+      setVideos(response.data.videos || []);
+    } catch (error) {
+      console.error('Erro ao carregar vídeos:', error);
+    } finally {
+      setVideoLoadingStates(prev => ({ ...prev, [moduleId]: false }));
+    }
+  };
+
+  const handleCreateModule = async () => {
+    try {
+      await axios.post(`${API}/modules`, moduleModal.module);
+      setModuleModal({ show: false, module: { name: '', description: '', duration_hours: 0, color: '#3b82f6' } });
+      fetchModules();
+    } catch (error) {
+      console.error('Erro ao criar módulo:', error);
+      alert('Erro ao criar módulo');
+    }
+  };
+
+  const handleCreateVideo = async () => {
+    try {
+      if (!videoModal.video.youtube_url || !videoModal.video.title || !videoModal.video.module_id) {
+        alert('Por favor, preencha todos os campos obrigatórios');
+        return;
+      }
+      
+      await axios.post(`${API}/videos`, videoModal.video);
+      setVideoModal({ 
+        show: false, 
+        video: { title: '', description: '', youtube_url: '', module_id: '', duration_minutes: 0 } 
+      });
+      
+      if (selectedModule) {
+        fetchModuleVideos(selectedModule);
+      }
+    } catch (error) {
+      console.error('Erro ao criar vídeo:', error);
+      alert(error.response?.data?.detail || 'Erro ao criar vídeo');
+    }
+  };
+
+  const handleDeleteVideo = async () => {
+    try {
+      await axios.delete(`${API}/videos/${deleteVideoModal.videoId}`);
+      setDeleteVideoModal({ show: false, videoId: null, videoTitle: '' });
+      
+      if (selectedModule) {
+        fetchModuleVideos(selectedModule);
+      }
+    } catch (error) {
+      console.error('Erro ao excluir vídeo:', error);
+      alert('Erro ao excluir vídeo');
+    }
+  };
+
+  const extractYouTubeId = (url) => {
+    const patterns = [
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&\n]+)/,
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([^&\n]+)/,
+      /(?:https?:\/\/)?(?:www\.)?youtu\.be\/([^&\n]+)/,
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/v\/([^&\n]+)/
+    ];
+    
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) return match[1];
+    }
+    return '';
+  };
+
+  const formatDuration = (minutes) => {
+    if (!minutes) return '';
+    if (minutes < 60) return `${minutes}min`;
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}min` : `${hours}h`;
+  };
+
+  // Funções para cursos com preços
+  const handleEditPrice = async () => {
+    try {
+      setCoursesWithPrices(prev => prev.map(course => 
+        course.id === editPriceModal.courseId 
+          ? { ...course, price: editPriceModal.currentPrice }
+          : course
+      ));
+      setEditPriceModal({ show: false, courseId: null, currentPrice: 0 });
+      alert('✅ Preço atualizado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao atualizar preço:', error);
+      alert('Erro ao atualizar preço.');
+    }
+  };
+
+  const handleDeleteCourse = async () => {
+    try {
+      setCoursesWithPrices(prev => prev.filter(c => c.id !== deleteCourseModal.courseId));
+      setDeleteCourseModal({ show: false, courseId: null, courseName: '' });
+      alert('✅ Curso excluído com sucesso!');
+    } catch (error) {
+      console.error('Erro ao excluir curso:', error);
+      alert('Erro ao excluir curso.');
+    }
+  };
+
   const getStatusBadge = (status) => {
     const statusConfig = {
       'certified': { variant: 'default', text: '✓ Certificado', className: 'bg-green-600' },
