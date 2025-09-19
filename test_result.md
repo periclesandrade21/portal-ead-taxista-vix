@@ -343,6 +343,18 @@ test_plan:
         agent: "testing"
         comment: "🔧 CRITICAL FIXES FULLY VERIFIED - All user reported issues have been resolved successfully: 1) PASSWORD IMPROVEMENTS: ✅ Password generation upgraded from 8 to 10 characters with full complexity (uppercase, lowercase, numbers, symbols @#$%*), avoids confusing characters (0, O, 1, l, I). Generated example: 'FY6Kpsnf@4' meets all security requirements. 2) EMAIL TRANSPARENCY: ✅ Development mode shows detailed formatted email logs in backend console with complete email content, recipient info, and clear 'EMAIL SIMULADO - MODO DESENVOLVIMENTO' headers. Returns TRUE status honestly. 3) WHATSAPP HONESTY: ✅ WhatsApp function now returns FALSE instead of lying about sending messages. Shows transparent logs 'WhatsApp API não configurado - mensagem apenas simulada' and detailed message content for development. 4) COMPLETE ENDPOINT: ✅ PasswordSentResponse structure working correctly with password_sent_email: true (simulated), password_sent_whatsapp: false (honest), and improved 10-character temporary password. All critical fixes verified through comprehensive testing with user 'Ana Silva Santos' (ana.silva.1758246042@email.com). User reported issues about weak passwords, failed emails, and lying WhatsApp status have been completely resolved."
 
+  - task: "Sistema de eye icon para visualização de senhas e correção de validação no admin"
+    implemented: true
+    working: true
+    file: "StudentPortal.js + AdminDashboard.js + server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ EYE ICON E VALIDAÇÃO DE SENHA ADMIN IMPLEMENTADOS - Duas correções principais implementadas com sucesso: 1) ÍCONE DE OLHO PARA SENHAS: Adicionado eye/eyeOff icon toggle nos campos de senha tanto no Portal do Aluno (StudentPortal.js) quanto no modal de reset de senha do Admin (AdminDashboard.js). Usuários agora podem alternar entre senha oculta (type='password') e visível (type='text') clicando no ícone. 2) CORREÇÃO DA VALIDAÇÃO DE SENHA DO ADMIN: Corrigido mismatch entre frontend e backend no endpoint PUT /api/users/{user_id}/reset-password. Backend agora recebe parâmetro ResetPasswordAdminRequest com campo 'newPassword' no corpo da requisição (JSON) em vez de query parameter. Atualiza campo 'temporary_password' na collection 'subscriptions'. Sistema testado: backend confirma que admin pode redefinir senhas e alunos conseguem fazer login com novas senhas. Frontend verifica que eye icon funciona corretamente no portal do aluno. Ambos os problemas reportados pelo usuário foram completamente resolvidos."
+
   - task: "Sistema de reset de senha por administrador"
     implemented: true
     working: true
