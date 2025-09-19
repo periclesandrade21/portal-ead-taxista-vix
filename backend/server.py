@@ -310,8 +310,8 @@ async def validate_cpf_with_api(cpf: str) -> dict:
     
     return result
 
-async def check_duplicate_registration(db, name: str, email: str, cpf: str) -> dict:
-    """Verifica duplicidade de nome, email e CPF"""
+async def check_duplicate_registration(db, name: str, email: str, cpf: str, phone: str = None, car_plate: str = None, license_number: str = None) -> dict:
+    """Verifica duplicidade de todos os campos importantes"""
     duplicates = {}
     
     # Verificar email duplicado (case-insensitive)
@@ -320,7 +320,11 @@ async def check_duplicate_registration(db, name: str, email: str, cpf: str) -> d
         "email": {"$regex": f"^{re.escape(email_normalized)}$", "$options": "i"}
     })
     if email_exists:
-        duplicates["email"] = True
+        duplicates["email"] = {
+            "field": "Email", 
+            "value": email,
+            "existing_user": email_exists.get("name")
+        }
     
     # Verificar CPF duplicado
     clean_cpf = re.sub(r'[^\d]', '', cpf)
@@ -328,7 +332,50 @@ async def check_duplicate_registration(db, name: str, email: str, cpf: str) -> d
         "cpf": {"$regex": f"^{re.escape(clean_cpf)}$"}
     })
     if cpf_exists:
-        duplicates["cpf"] = True
+        duplicates["cpf"] = {
+            "field": "CPF", 
+            "value": cpf,
+            "existing_user": cpf_exists.get("name")
+        }
+    
+    # Verificar telefone duplicado
+    if phone:
+        clean_phone = re.sub(r'[^\d]', '', phone)
+        phone_exists = await db.subscriptions.find_one({
+            "phone": {"$regex": f"^.*{re.escape(clean_phone)}.*$"}
+        })
+        if phone_exists:
+            duplicates["phone"] = {
+                "field": "Telefone", 
+                "value": phone,
+                "existing_user": phone_exists.get("name")
+            }
+    
+    # Verificar placa duplicada
+    if car_plate:
+        clean_plate = car_plate.upper().strip()
+        plate_exists = await db.subscriptions.find_one({
+            "car_plate": {"$regex": f"^{re.escape(clean_plate)}$", "$options": "i"}
+        })
+        if plate_exists:
+            duplicates["car_plate"] = {
+                "field": "Placa do Veículo", 
+                "value": car_plate,
+                "existing_user": plate_exists.get("name")
+            }
+    
+    # Verificar alvará duplicado
+    if license_number:
+        clean_license = license_number.upper().strip()
+        license_exists = await db.subscriptions.find_one({
+            "license_number": {"$regex": f"^{re.escape(clean_license)}$", "$options": "i"}
+        })
+        if license_exists:
+            duplicates["license_number"] = {
+                "field": "Número do Alvará", 
+                "value": license_number,
+                "existing_user": license_exists.get("name")
+            }
     
     # Verificar nome duplicado (ignorando case e espaços extras)
     name_normalized = " ".join(name.strip().lower().split())
@@ -337,7 +384,11 @@ async def check_duplicate_registration(db, name: str, email: str, cpf: str) -> d
     for existing in existing_names:
         existing_normalized = " ".join(existing["name"].strip().lower().split())
         if existing_normalized == name_normalized:
-            duplicates["name"] = True
+            duplicates["name"] = {
+                "field": "Nome", 
+                "value": name,
+                "existing_user": existing.get("name")
+            }
             break
     
     return duplicates
