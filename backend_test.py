@@ -13,7 +13,7 @@ import sys
 import os
 
 # Get backend URL from frontend .env
-BACKEND_URL = "https://taxilearn.preview.emergentagent.com/api"
+BACKEND_URL = "https://ead-taxi.preview.emergentagent.com/api"
 
 class Colors:
     GREEN = '\033[92m'
