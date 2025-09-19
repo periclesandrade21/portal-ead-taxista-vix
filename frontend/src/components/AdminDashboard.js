@@ -919,16 +919,32 @@ const AdminDashboard = () => {
               <CardContent className="space-y-4">
                 <div>
                   <Label>Nova Senha</Label>
-                  <Input
-                    type="password"
-                    value={resetPasswordModal.newPassword}
-                    onChange={(e) => setResetPasswordModal({...resetPasswordModal, newPassword: e.target.value})}
-                    placeholder="Mínimo 6 caracteres"
-                  />
+                  <div className="relative">
+                    <Input
+                      type={resetPasswordModal.showPassword ? "text" : "password"}
+                      value={resetPasswordModal.newPassword}
+                      onChange={(e) => setResetPasswordModal({...resetPasswordModal, newPassword: e.target.value})}
+                      placeholder="Mínimo 6 caracteres"
+                      className="pr-10"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      onClick={() => setResetPasswordModal({...resetPasswordModal, showPassword: !resetPasswordModal.showPassword})}
+                    >
+                      {resetPasswordModal.showPassword ? (
+                        <EyeOff className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                      )}
+                    </Button>
+                  </div>
                 </div>
                 <div className="flex gap-2">
                   <Button onClick={resetUserPassword}>Alterar</Button>
-                  <Button variant="outline" onClick={() => setResetPasswordModal({ show: false, userId: null, newPassword: '' })}>
+                  <Button variant="outline" onClick={() => setResetPasswordModal({ show: false, userId: null, newPassword: '', showPassword: false })}>
                     Cancelar
                   </Button>
                 </div>
