@@ -568,7 +568,7 @@ async def seed_database():
         # Mapear nomes de módulos para IDs
         module_map = {}
         for module in MODULES_DATA:
-            module_map[module["name"]] = module["id"]
+            module_map[module["title"]] = module["id"]
         
         # Inserir vídeos
         videos_to_insert = []
