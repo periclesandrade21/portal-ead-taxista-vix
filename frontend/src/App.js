@@ -1157,12 +1157,12 @@ const Home = () => {
       <section id="cadastro" className="py-20 bg-gradient-to-r from-blue-600 to-green-600">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <Badge className="mb-4 bg-white/20 text-white">Sistema Completo</Badge>
-          <h3 className="text-4xl font-bold text-white mb-6">🚀 Cadastro Profissional Completo</h3>
+          <h3 className="text-4xl font-bold text-white mb-6">🚀 Faça Seu Cadastro</h3>
           <p className="text-xl text-blue-100 mb-4">
-            Sistema avançado de cadastro com 7 etapas detalhadas e validação automática por IA
+            Sistema avançado de cadastro com 6 etapas detalhadas e processo simplificado
           </p>
           <p className="text-lg text-blue-200 mb-8">
-            ⚡ Upload de documentos • Validação inteligente • Pagamento seguro • Acesso imediato
+            ⚡ Upload de documentos • Dados completos • Pagamento seguro • Acesso imediato
           </p>
           
           <div className="grid md:grid-cols-3 gap-6 mb-8">
@@ -1181,8 +1181,8 @@ const Home = () => {
                 <div className="bg-white/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <CheckCircle className="h-8 w-8 text-white" />
                 </div>
-                <h4 className="font-semibold text-white mb-2">Validação IA</h4>
-                <p className="text-blue-100 text-sm">Análise automática de documentos em minutos</p>
+                <h4 className="font-semibold text-white mb-2">Processo Simplificado</h4>
+                <p className="text-blue-100 text-sm">6 etapas rápidas sem validação automática</p>
               </CardContent>
             </Card>
             
