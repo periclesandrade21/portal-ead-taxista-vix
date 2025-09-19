@@ -4787,7 +4787,8 @@ def test_modules_available():
         response = requests.get(f"{BACKEND_URL}/modules", timeout=10)
         
         if response.status_code == 200:
-            modules = response.json()
+            data = response.json()
+            modules = data.get('modules', []) if isinstance(data, dict) else data
             print_success(f"Modules endpoint responded successfully")
             print_info(f"Found {len(modules)} modules")
             
