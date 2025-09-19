@@ -1712,6 +1712,171 @@ const AdminDashboard = () => {
           </div>
         )}
 
+        {/* Modal de Novo Usuário Administrativo */}
+        {adminUserModal.show && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <Card className="w-96 max-h-96 overflow-y-auto">
+              <CardHeader>
+                <CardTitle>👥 Novo Usuário Administrativo</CardTitle>
+                <CardDescription>
+                  Criar novo usuário com acesso ao painel admin
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label>Nome Completo</Label>
+                  <Input
+                    value={adminUserModal.user?.full_name || ''}
+                    onChange={(e) => setAdminUserModal({
+                      ...adminUserModal, 
+                      user: {...adminUserModal.user, full_name: e.target.value}
+                    })}
+                    placeholder="Ex: João Silva Santos"
+                  />
+                </div>
+                
+                <div>
+                  <Label>Nome de Usuário</Label>
+                  <Input
+                    value={adminUserModal.user?.username || ''}
+                    onChange={(e) => setAdminUserModal({
+                      ...adminUserModal, 
+                      user: {...adminUserModal.user, username: e.target.value}
+                    })}
+                    placeholder="Ex: joao.silva"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Será usado para fazer login no painel
+                  </p>
+                </div>
+                
+                <div>
+                  <Label>Senha</Label>
+                  <Input
+                    type="password"
+                    value={adminUserModal.user?.password || ''}
+                    onChange={(e) => setAdminUserModal({
+                      ...adminUserModal, 
+                      user: {...adminUserModal.user, password: e.target.value}
+                    })}
+                    placeholder="Mínimo 6 caracteres"
+                  />
+                </div>
+                
+                <div>
+                  <Label>Função</Label>
+                  <select
+                    value={adminUserModal.user?.role || 'admin'}
+                    onChange={(e) => setAdminUserModal({
+                      ...adminUserModal, 
+                      user: {...adminUserModal.user, role: e.target.value}
+                    })}
+                    className="w-full p-2 border rounded-md"
+                  >
+                    <option value="admin">Administrador</option>
+                    <option value="moderator">Moderador</option>
+                    <option value="support">Suporte</option>
+                  </select>
+                </div>
+                
+                <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                  <p className="text-sm text-blue-800">
+                    💡 <strong>Dica:</strong> Use senhas fortes com letras, números e símbolos
+                  </p>
+                </div>
+                
+                <div className="flex gap-2">
+                  <Button onClick={handleCreateAdminUser}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Criar Usuário
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setAdminUserModal({ show: false, user: null, isEdit: false })}
+                  >
+                    Cancelar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Modal de Reset de Senha Administrativo */}
+        {adminPasswordModal.show && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <Card className="w-96">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Key className="h-5 w-5 mr-2" />
+                  Reset Senha Administrativa
+                </CardTitle>
+                <CardDescription>
+                  Alterar senha para @{adminPasswordModal.username}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label>Nova Senha</Label>
+                  <div className="relative">
+                    <Input
+                      type={adminPasswordModal.showPassword ? "text" : "password"}
+                      value={adminPasswordModal.newPassword}
+                      onChange={(e) => setAdminPasswordModal({
+                        ...adminPasswordModal, 
+                        newPassword: e.target.value
+                      })}
+                      placeholder="Mínimo 6 caracteres"
+                      className="pr-10"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      onClick={() => setAdminPasswordModal({
+                        ...adminPasswordModal, 
+                        showPassword: !adminPasswordModal.showPassword
+                      })}
+                    >
+                      {adminPasswordModal.showPassword ? (
+                        <EyeOff className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="bg-red-50 p-3 rounded-lg border border-red-200">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="h-4 w-4 text-red-600 mt-0.5" />
+                    <div className="text-sm text-red-800">
+                      <p className="font-semibold">⚠️ Atenção:</p>
+                      <p>Esta ação alterará a senha administrativa. O usuário precisará usar a nova senha para acessar o painel.</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex gap-2">
+                  <Button onClick={handleResetAdminPassword}>
+                    <Key className="h-4 w-4 mr-2" />
+                    Alterar Senha
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setAdminPasswordModal({ 
+                      show: false, userId: null, username: '', newPassword: '', showPassword: false 
+                    })}
+                  >
+                    Cancelar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {/* Modal de Novo Curso */}
         {courseModal.show && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
