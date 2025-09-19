@@ -89,7 +89,8 @@ const StudentPortalComplete = () => {
           phone: response.data.user.phone || '',
           city: response.data.user.city || '',
           car_plate: response.data.user.car_plate || '',
-          license_number: response.data.user.license_number || ''
+          license_number: response.data.user.license_number || '',
+          photo: response.data.user.photo || null
         });
         await loadStudentData(response.data.user.id);
       } else {
