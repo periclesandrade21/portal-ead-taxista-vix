@@ -191,6 +191,7 @@ const StudentPortal = () => {
                   onChange={(e) => {
                     setLoginData({...loginData, email: e.target.value});
                     setLoginError(''); // Limpar erro ao digitar
+                    setErrorModal({ show: false, type: '', message: '', title: '' }); // Limpar modal de erro
                   }}
                   placeholder="seu@email.com"
                   required
