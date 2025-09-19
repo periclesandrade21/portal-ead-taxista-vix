@@ -2044,6 +2044,9 @@ def run_all_tests():
     
     test_results = {}
     
+    # PRIORITY: Webhook investigation as requested
+    test_results['webhook_investigation'] = test_webhook_investigation()
+    
     # Run basic tests first
     test_results['health_check'] = test_health_check()
     test_results['existing_endpoints'] = test_existing_endpoints()
