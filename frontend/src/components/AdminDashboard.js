@@ -11,6 +11,7 @@ import {
   Award, 
   TrendingUp, 
   Eye, 
+  EyeOff,
   Edit, 
   Trash2, 
   Plus,
