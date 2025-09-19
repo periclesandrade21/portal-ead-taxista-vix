@@ -5015,12 +5015,12 @@ def test_student_authentication_system():
     
     # First create a subscription
     test_data = {
-        "name": "Estudante Teste Portal",
-        "email": f"estudante.portal.{timestamp}@email.com",
+        "name": "Maria Silva Santos",
+        "email": f"maria.silva.{timestamp}@gmail.com",
         "phone": "27999888777",
         "cpf": "11144477735",  # Valid CPF for testing
-        "carPlate": f"EPT-{timestamp[-4:]}-T",
-        "licenseNumber": f"TA-{timestamp[-5:]}",
+        "carPlate": f"MSS-{timestamp[-4:]}",
+        "licenseNumber": f"ES-{timestamp[-5:]}",
         "city": "Vitória",
         "lgpd_consent": True
     }
