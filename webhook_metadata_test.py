@@ -48,8 +48,8 @@ def test_webhook_metadata_storage_fix():
     timestamp = str(int(time.time()))
     
     test_data = {
-        "name": f"Webhook Test User {timestamp}",
-        "email": f"webhook.test.{timestamp}@email.com",
+        "name": "Ana Silva Santos",
+        "email": f"ana.webhook.{timestamp}@email.com",
         "phone": f"2799{timestamp[-7:]}",  # Use timestamp for unique phone
         "cpf": "11144477735",  # Valid CPF for testing
         "carPlate": f"WHK-{timestamp[-4:]}-T",
