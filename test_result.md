@@ -267,7 +267,8 @@ metadata:
 
 test_plan:
   current_focus: []
-  stuck_tasks: []
+  stuck_tasks: 
+    - "Real Asaas webhook processing with production data"
   test_all: false
   test_priority: "high_first"
 
