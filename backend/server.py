@@ -78,6 +78,73 @@ class LoginRequest(BaseModel):
 
 class LoginResponse(BaseModel):
     success: bool
+
+# Novos modelos para sistema de vídeos e avaliações
+class CourseModule(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    description: str
+    order: int
+    duration_hours: float
+    color: str = "#3b82f6"  # Cor para identificação visual
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CourseVideo(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: Optional[str] = ""
+    youtube_url: str
+    youtube_id: str  # Extraído da URL para embed
+    module_id: str
+    order: int
+    duration_minutes: Optional[int] = None
+    thumbnail_url: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_by: str  # Admin user ID
+
+class Question(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    module_id: str
+    question: str
+    options: List[str]  # Lista de 4 opções
+    correct_answer: int  # Índice da resposta correta (0-3)
+    difficulty: str  # "facil", "media", "dificil"
+    explanation: Optional[str] = ""
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class UserProgress(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    module_id: str
+    videos_watched: List[str] = []  # IDs dos vídeos assistidos
+    quiz_attempts: List[dict] = []  # Histórico de tentativas do quiz
+    quiz_score: Optional[float] = None  # Última pontuação (0-100)
+    quiz_passed: bool = False  # Se passou no quiz (>= 70%)
+    module_completed: bool = False
+    completion_date: Optional[datetime] = None
+    last_updated: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# Modelos para requests da API
+class CourseModuleCreate(BaseModel):
+    name: str
+    description: str
+    duration_hours: float
+    color: Optional[str] = "#3b82f6"
+
+class CourseVideoCreate(BaseModel):
+    title: str
+    description: Optional[str] = ""
+    youtube_url: str
+    module_id: str
+    duration_minutes: Optional[int] = None
+
+class QuestionCreate(BaseModel):
+    module_id: str
+    question: str
+    options: List[str]
+    correct_answer: int
+    difficulty: str
+    explanation: Optional[str] = ""
     message: str
     user: Optional[dict] = None
 
