@@ -378,6 +378,7 @@ const Home = () => {
       name,
       email,
       phone,
+      cpf,
       car_plate: carPlate,
       license_number: licenseNumber,
       city: finalCity
