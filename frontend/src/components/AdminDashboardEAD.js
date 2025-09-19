@@ -17,12 +17,10 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 import { 
-  DriversTab, 
   CoursesTab, 
   ClassesTab, 
   CertificatesTab, 
   ReportsTab, 
-  CommunicationTab, 
   SettingsTab 
 } from './AdminEADTabs';
 import {
