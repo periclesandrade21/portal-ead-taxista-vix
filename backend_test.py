@@ -4826,7 +4826,8 @@ def test_videos_by_module(modules):
     results = []
     
     # Test first 2 modules
-    for i, module in enumerate(modules[:2], 1):
+    modules_to_test = modules[:2] if len(modules) >= 2 else modules
+    for i, module in enumerate(modules_to_test, 1):
         module_id = module.get('id')
         module_name = module.get('name', 'Unknown')
         
@@ -4841,7 +4842,8 @@ def test_videos_by_module(modules):
                 print_info(f"  Found {len(videos)} videos")
                 
                 # Display video information
-                for j, video in enumerate(videos[:3], 1):  # Show first 3 videos
+                videos_to_show = videos[:3] if len(videos) >= 3 else videos
+                for j, video in enumerate(videos_to_show, 1):  # Show first 3 videos
                     video_title = video.get('title', 'Unknown')
                     video_id = video.get('id', 'Unknown')
                     duration = video.get('duration_minutes', 0)
