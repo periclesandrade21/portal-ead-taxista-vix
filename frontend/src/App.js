@@ -375,7 +375,7 @@ const Home = () => {
   const handleSubscription = async (e) => {
     e.preventDefault();
     
-    // Validar formulário
+    // Validar formulário (incluindo LGPD)
     if (!validateForm()) {
       alert("Por favor, corrija os erros no formulário antes de continuar.");
       return;
@@ -391,7 +391,8 @@ const Home = () => {
         cpf,
         carPlate,
         licenseNumber,
-        city: finalCity
+        city: finalCity,
+        lgpd_consent: lgpdConsent  // Incluir consentimento LGPD
       });
       
       // Salvar informações sobre o envio da senha
