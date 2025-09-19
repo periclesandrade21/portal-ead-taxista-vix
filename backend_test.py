@@ -5018,7 +5018,7 @@ def test_student_authentication_system():
         "name": "Maria Silva Santos",
         "email": f"maria.silva.{timestamp}@gmail.com",
         "phone": f"279998887{timestamp[-2:]}",
-        "cpf": f"111444777{timestamp[-2:]}",  # Valid CPF for testing
+        "cpf": "12345678909",  # Valid CPF for testing
         "carPlate": f"MSS-{timestamp[-4:]}-T",
         "licenseNumber": f"ES-{timestamp[-5:]}",
         "city": "Vitória",
