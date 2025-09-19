@@ -16,12 +16,9 @@ const PaymentFlow = ({ userSubscription, onPaymentSuccess, onBack }) => {
   // URL do backend
   const API = process.env.REACT_APP_BACKEND_URL;
 
-  // Redirecionamento automático para o Asaas
+  // Não redireciona automaticamente - deixa o usuário escolher
   useEffect(() => {
-    if (paymentStatus === "pending") {
-      // Redireciona automaticamente para o link do Asaas
-      window.location.href = 'https://sandbox.asaas.com/i/bsnw3pmz2yiacw1w';
-    }
+    // Removido redirecionamento automático
   }, [paymentStatus]);
 
   const handlePaymentSuccess = () => {
