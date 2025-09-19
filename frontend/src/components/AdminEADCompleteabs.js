@@ -709,3 +709,528 @@ export const AdminUsersTab = ({
     </Card>
   </TabsContent>
 );
+
+// Aba de Relatórios - Sistema Completo
+export const ReportsTab = ({ 
+  subscriptions = [],
+  cities = [],
+  discounts = [],
+  certificates = [],
+  exportReport,
+  reportFilters = { city: 'all', course: 'all', period: 'month', status: 'all' },
+  setReportFilters
+}) => (
+  <TabsContent value="reports" className="space-y-6">
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <FileText className="h-5 w-5" />
+          Sistema de Relatórios - EAD Taxistas
+        </CardTitle>
+        <CardDescription>
+          Relatórios essenciais para gestão e acompanhamento do programa EAD para taxistas
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {/* Filtros Globais */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
+          <div>
+            <Label htmlFor="city-filter">Filtrar por Cidade</Label>
+            <select
+              id="city-filter"
+              value={reportFilters.city}
+              onChange={(e) => setReportFilters && setReportFilters(prev => ({ ...prev, city: e.target.value }))}
+              className="w-full mt-1 p-2 border border-gray-300 rounded-md"
+            >
+              <option value="all">Todas as Cidades</option>
+              {cities.map(city => (
+                <option key={city.city} value={city.city}>{city.city}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div>
+            <Label htmlFor="course-filter">Filtrar por Curso</Label>
+            <select
+              id="course-filter"
+              value={reportFilters.course}
+              onChange={(e) => setReportFilters && setReportFilters(prev => ({ ...prev, course: e.target.value }))}
+              className="w-full mt-1 p-2 border border-gray-300 rounded-md"
+            >
+              <option value="all">Todos os Cursos</option>
+              <option value="completo">Curso Completo EAD</option>
+              <option value="direcao_defensiva">Direção Defensiva</option>
+              <option value="relacoes_humanas">Relações Humanas</option>
+              <option value="primeiros_socorros">Primeiros Socorros</option>
+              <option value="mecanica_basica">Mecânica Básica</option>
+            </select>
+          </div>
+          
+          <div>
+            <Label htmlFor="period-filter">Período</Label>
+            <select
+              id="period-filter"
+              value={reportFilters.period}
+              onChange={(e) => setReportFilters && setReportFilters(prev => ({ ...prev, period: e.target.value }))}
+              className="w-full mt-1 p-2 border border-gray-300 rounded-md"
+            >
+              <option value="today">Hoje</option>
+              <option value="week">Esta Semana</option>
+              <option value="month">Este Mês</option>
+              <option value="quarter">Este Trimestre</option>
+              <option value="year">Este Ano</option>
+              <option value="all">Todo Período</option>
+            </select>
+          </div>
+          
+          <div>
+            <Label htmlFor="status-filter">Status</Label>
+            <select
+              id="status-filter"
+              value={reportFilters.status}
+              onChange={(e) => setReportFilters && setReportFilters(prev => ({ ...prev, status: e.target.value }))}
+              className="w-full mt-1 p-2 border border-gray-300 rounded-md"
+            >
+              <option value="all">Todos os Status</option>
+              <option value="active">Ativo</option>
+              <option value="in_progress">Em Andamento</option>
+              <option value="completed">Concluído</option>
+              <option value="failed">Reprovado</option>
+              <option value="pending">Pendente</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Grid de Relatórios */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          {/* 1. Relatório de Inscrições */}
+          <Card className="border-l-4 border-l-blue-500">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Users className="h-5 w-5 text-blue-600" />
+                Relatório de Inscrições
+              </CardTitle>
+              <CardDescription>
+                Lista todos os alunos cadastrados com situação atual
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="text-sm space-y-1">
+                  <p><strong>Campos inclusos:</strong></p>
+                  <p>• Nome, CPF, Cidade</p>
+                  <p>• Curso inscrito</p>
+                  <p>• Data de inscrição</p>
+                  <p>• Situação (Ativo, Em andamento, Concluído, Reprovado)</p>
+                </div>
+                <div className="bg-blue-50 p-3 rounded-lg">
+                  <p className="text-sm text-blue-700">
+                    ✅ <strong>Uso:</strong> Acompanhar volume de alunos por curso ou região
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" onClick={() => exportReport('inscricoes', 'excel')} className="bg-green-600 hover:bg-green-700">
+                    <Download className="h-4 w-4 mr-1" />
+                    Excel
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => exportReport('inscricoes', 'csv')}>
+                    <Download className="h-4 w-4 mr-1" />
+                    CSV
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => exportReport('inscricoes', 'pdf')}>
+                    <Download className="h-4 w-4 mr-1" />
+                    PDF
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 2. Relatório de Progresso */}
+          <Card className="border-l-4 border-l-yellow-500">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-yellow-600" />
+                Relatório de Progresso
+              </CardTitle>
+              <CardDescription>
+                Mostra o quanto do curso o aluno já concluiu
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="text-sm space-y-1">
+                  <p><strong>Campos inclusos:</strong></p>
+                  <p>• Nome do aluno</p>
+                  <p>• Curso</p>
+                  <p>• Porcentagem concluída (ex: 70%)</p>
+                  <p>• Último acesso</p>
+                  <p>• Módulos pendentes</p>
+                  <p>• Status da avaliação final</p>
+                </div>
+                <div className="bg-yellow-50 p-3 rounded-lg">
+                  <p className="text-sm text-yellow-700">
+                    ✅ <strong>Uso:</strong> Identificar quem está parado ou com dificuldades
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" onClick={() => exportReport('progresso', 'excel')} className="bg-green-600 hover:bg-green-700">
+                    <Download className="h-4 w-4 mr-1" />
+                    Excel
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => exportReport('progresso', 'csv')}>
+                    <Download className="h-4 w-4 mr-1" />
+                    CSV
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => exportReport('progresso', 'pdf')}>
+                    <Download className="h-4 w-4 mr-1" />
+                    PDF
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 3. Relatório de Certificados Emitidos */}
+          <Card className="border-l-4 border-l-green-500">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Award className="h-5 w-5 text-green-600" />
+                Certificados Emitidos
+              </CardTitle>
+              <CardDescription>
+                Lista quem concluiu e recebeu certificado
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="text-sm space-y-1">
+                  <p><strong>Campos inclusos:</strong></p>
+                  <p>• Nome do aluno</p>
+                  <p>• Curso concluído</p>
+                  <p>• Data de emissão</p>
+                  <p>• Código do certificado / QR Code</p>
+                  <p>• Validade (ex: 1 ano)</p>
+                </div>
+                <div className="bg-green-50 p-3 rounded-lg">
+                  <p className="text-sm text-green-700">
+                    ✅ <strong>Uso:</strong> Validação por prefeituras ou SMTT
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" onClick={() => exportReport('certificados', 'excel')} className="bg-green-600 hover:bg-green-700">
+                    <Download className="h-4 w-4 mr-1" />
+                    Excel
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => exportReport('certificados', 'csv')}>
+                    <Download className="h-4 w-4 mr-1" />
+                    CSV
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => exportReport('certificados', 'pdf')}>
+                    <Download className="h-4 w-4 mr-1" />
+                    PDF
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 4. Relatório de Pagamentos */}
+          <Card className="border-l-4 border-l-purple-500">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <DollarSign className="h-5 w-5 text-purple-600" />
+                Relatório de Pagamentos
+              </CardTitle>
+              <CardDescription>
+                Monitora pagamentos realizados ou pendentes
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="text-sm space-y-1">
+                  <p><strong>Campos inclusos:</strong></p>
+                  <p>• Nome do aluno</p>
+                  <p>• Valor pago</p>
+                  <p>• Forma de pagamento (Pix, Boleto, Cartão)</p>
+                  <p>• Status (Pago, Pendente, Gratuito)</p>
+                  <p>• Desconto aplicado ou isenção</p>
+                </div>
+                <div className="bg-purple-50 p-3 rounded-lg">
+                  <p className="text-sm text-purple-700">
+                    ✅ <strong>Uso:</strong> Controle financeiro e campanhas de desconto
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" onClick={() => exportReport('pagamentos', 'excel')} className="bg-green-600 hover:bg-green-700">
+                    <Download className="h-4 w-4 mr-1" />
+                    Excel
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => exportReport('pagamentos', 'csv')}>
+                    <Download className="h-4 w-4 mr-1" />
+                    CSV
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => exportReport('pagamentos', 'pdf')}>
+                    <Download className="h-4 w-4 mr-1" />
+                    PDF
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 5. Relatório de Documentação */}
+          <Card className="border-l-4 border-l-red-500">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <FileCheck className="h-5 w-5 text-red-600" />
+                Relatório de Documentação
+              </CardTitle>
+              <CardDescription>
+                Verifica quem enviou e quem está com pendência
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="text-sm space-y-1">
+                  <p><strong>Campos inclusos:</strong></p>
+                  <p>• Nome do aluno</p>
+                  <p>• CNH enviada? ✔️❌</p>
+                  <p>• Comprovante de residência? ✔️❌</p>
+                  <p>• Alvará/táxi? ✔️❌</p>
+                  <p>• Observações do validador</p>
+                </div>
+                <div className="bg-red-50 p-3 rounded-lg">
+                  <p className="text-sm text-red-700">
+                    ✅ <strong>Uso:</strong> Suporte para cobrar documentos pendentes
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" onClick={() => exportReport('documentacao', 'excel')} className="bg-green-600 hover:bg-green-700">
+                    <Download className="h-4 w-4 mr-1" />
+                    Excel
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => exportReport('documentacao', 'csv')}>
+                    <Download className="h-4 w-4 mr-1" />
+                    CSV
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => exportReport('documentacao', 'pdf')}>
+                    <Download className="h-4 w-4 mr-1" />
+                    PDF
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 6. Relatório por Cooperativa ou Município */}
+          <Card className="border-l-4 border-l-indigo-500">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Building className="h-5 w-5 text-indigo-600" />
+                Relatório por Município
+              </CardTitle>
+              <CardDescription>
+                Agrupa dados por entidade ou cidade
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="text-sm space-y-1">
+                  <p><strong>Campos inclusos:</strong></p>
+                  <p>• Nome da cooperativa</p>
+                  <p>• Total de taxistas inscritos</p>
+                  <p>• Número de concluintes</p>
+                  <p>• Percentual de aprovação</p>
+                </div>
+                <div className="bg-indigo-50 p-3 rounded-lg">
+                  <p className="text-sm text-indigo-700">
+                    ✅ <strong>Uso:</strong> Gestores públicos verificarem engajamento local
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" onClick={() => exportReport('municipios', 'excel')} className="bg-green-600 hover:bg-green-700">
+                    <Download className="h-4 w-4 mr-1" />
+                    Excel
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => exportReport('municipios', 'csv')}>
+                    <Download className="h-4 w-4 mr-1" />
+                    CSV
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => exportReport('municipios', 'pdf')}>
+                    <Download className="h-4 w-4 mr-1" />
+                    PDF
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 7. Relatório de Descontos e Doações */}
+          <Card className="border-l-4 border-l-pink-500">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Gift className="h-5 w-5 text-pink-600" />
+                Descontos e Doações
+              </CardTitle>
+              <CardDescription>
+                Quem recebeu desconto ou gratuidade
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="text-sm space-y-1">
+                  <p><strong>Campos inclusos:</strong></p>
+                  <p>• Nome</p>
+                  <p>• Curso</p>
+                  <p>• Valor original</p>
+                  <p>• Desconto aplicado (% ou valor)</p>
+                  <p>• Motivo da doação</p>
+                </div>
+                <div className="bg-pink-50 p-3 rounded-lg">
+                  <p className="text-sm text-pink-700">
+                    ✅ <strong>Uso:</strong> Prestação de contas ou auditorias
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" onClick={() => exportReport('descontos', 'excel')} className="bg-green-600 hover:bg-green-700">
+                    <Download className="h-4 w-4 mr-1" />
+                    Excel
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => exportReport('descontos', 'csv')}>
+                    <Download className="h-4 w-4 mr-1" />
+                    CSV
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => exportReport('descontos', 'pdf')}>
+                    <Download className="h-4 w-4 mr-1" />
+                    PDF
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 8. Relatório de Reprovações */}
+          <Card className="border-l-4 border-l-orange-500">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <AlertCircle className="h-5 w-5 text-orange-600" />
+                Relatório de Reprovações
+              </CardTitle>
+              <CardDescription>
+                Quem não passou no curso
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="text-sm space-y-1">
+                  <p><strong>Campos inclusos:</strong></p>
+                  <p>• Nome do aluno</p>
+                  <p>• Curso</p>
+                  <p>• Nota final</p>
+                  <p>• Tentativas de prova</p>
+                  <p>• Motivo da reprovação</p>
+                </div>
+                <div className="bg-orange-50 p-3 rounded-lg">
+                  <p className="text-sm text-orange-700">
+                    ✅ <strong>Uso:</strong> Oferecer reciclagem ou suporte extra
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" onClick={() => exportReport('reprovacoes', 'excel')} className="bg-green-600 hover:bg-green-700">
+                    <Download className="h-4 w-4 mr-1" />
+                    Excel
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => exportReport('reprovacoes', 'csv')}>
+                    <Download className="h-4 w-4 mr-1" />
+                    CSV
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => exportReport('reprovacoes', 'pdf')}>
+                    <Download className="h-4 w-4 mr-1" />
+                    PDF
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 9. Relatório de Acessos */}
+          <Card className="border-l-4 border-l-cyan-500">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Activity className="h-5 w-5 text-cyan-600" />
+                Relatório de Acessos
+              </CardTitle>
+              <CardDescription>
+                Quando e quantas vezes o aluno acessou
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="text-sm space-y-1">
+                  <p><strong>Campos inclusos:</strong></p>
+                  <p>• Nome</p>
+                  <p>• Último login</p>
+                  <p>• Tempo total de navegação</p>
+                  <p>• IP</p>
+                </div>
+                <div className="bg-cyan-50 p-3 rounded-lg">
+                  <p className="text-sm text-cyan-700">
+                    ✅ <strong>Uso:</strong> Identificar engajamento ou possíveis fraudes
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" onClick={() => exportReport('acessos', 'excel')} className="bg-green-600 hover:bg-green-700">
+                    <Download className="h-4 w-4 mr-1" />
+                    Excel
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => exportReport('acessos', 'csv')}>
+                    <Download className="h-4 w-4 mr-1" />
+                    CSV
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => exportReport('acessos', 'pdf')}>
+                    <Download className="h-4 w-4 mr-1" />
+                    PDF
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Resumo de Exportação */}
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Download className="h-5 w-5" />
+              📤 Exportação de Relatórios
+            </CardTitle>
+            <CardDescription>
+              Todos os relatórios podem ser exportados nos seguintes formatos
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4 border rounded-lg text-center">
+                <div className="text-2xl mb-2">📊</div>
+                <h4 className="font-semibold text-green-600">Excel (.xlsx)</h4>
+                <p className="text-sm text-gray-600">Análise de dados e gráficos</p>
+              </div>
+              <div className="p-4 border rounded-lg text-center">
+                <div className="text-2xl mb-2">📋</div>
+                <h4 className="font-semibold text-blue-600">CSV</h4>
+                <p className="text-sm text-gray-600">Importação em outros sistemas</p>
+              </div>
+              <div className="p-4 border rounded-lg text-center">
+                <div className="text-2xl mb-2">📄</div>
+                <h4 className="font-semibold text-red-600">PDF</h4>
+                <p className="text-sm text-gray-600">Envio à prefeitura, SMTU, etc.</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </CardContent>
+    </Card>
+  </TabsContent>
+);
