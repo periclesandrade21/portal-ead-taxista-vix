@@ -915,43 +915,6 @@ const AdminDashboardEAD = () => {
             handleDeleteUser={handleDeleteUser}
           />
 
-          {/* Gestão de Motoristas */}
-          <DriversTab 
-            drivers={drivers}
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            dateFilter={dateFilter}
-            setDateFilter={setDateFilter}
-            filteredDrivers={filteredDrivers}
-            setDriverModal={setDriverModal}
-            getStatusBadge={getStatusBadge}
-            getDocumentStatusBadge={getDocumentStatusBadge}
-            handleGenerateCertificate={handleGenerateCertificate}
-            selectedDrivers={selectedDrivers}
-            setSelectedDrivers={setSelectedDrivers}
-          />
-
-          {/* Aba de Pagamentos */}
-          <PaymentsTab 
-            paymentStats={paymentStats}
-            adminStats={adminStats}
-            dateFilter={dateFilter}
-            setDateFilter={setDateFilter}
-          />
-
-          {/* Aba de Gráficos */}
-          <ChartsTab cityStatsData={cityStatsData} />
-
-          {/* Aba de Cidades */}
-          <CitiesTab cities={cities} />
-
-          {/* Gestão de Cursos com Preços */}
-          <CoursesWithPricesTab 
-            coursesWithPrices={coursesWithPrices}
-            setEditPriceModal={setEditPriceModal}
-            setDeleteCourseModal={setDeleteCourseModal}
-          />
-
           {/* Gestão de Vídeos */}
           <VideosTab 
             modules={modules}
@@ -973,21 +936,17 @@ const AdminDashboardEAD = () => {
             handleGenerateCertificate={handleGenerateCertificate}
           />
 
+          {/* Relatórios */}
+          <ReportsTab 
+            exportReport={exportReport}
+          />
+
           {/* Usuários Administrativos */}
           <AdminUsersTab 
             adminUsers={adminUsers}
             setAdminUserModal={setAdminUserModal}
             setAdminPasswordModal={setAdminPasswordModal}
             setDeleteUserModal={setDeleteUserModal}
-          />
-
-          {/* Comunicação */}
-          <CommunicationTab 
-            messageModal={messageModal}
-            setMessageModal={setMessageModal}
-            handleSendNotification={handleSendNotification}
-            drivers={drivers}
-            notifications={notifications}
           />
 
           {/* Configurações */}
