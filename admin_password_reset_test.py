@@ -40,87 +40,40 @@ def print_warning(message):
 def print_info(message):
     print(f"{Colors.BLUE}ℹ️  {message}{Colors.ENDC}")
 
-def generate_valid_cpf():
-    """Generate a valid CPF for testing"""
-    import random
-    
-    # Generate first 9 digits
-    cpf = [random.randint(0, 9) for _ in range(9)]
-    
-    # Calculate first verification digit
-    sum1 = sum(cpf[i] * (10 - i) for i in range(9))
-    digit1 = 11 - (sum1 % 11)
-    if digit1 >= 10:
-        digit1 = 0
-    cpf.append(digit1)
-    
-    # Calculate second verification digit
-    sum2 = sum(cpf[i] * (11 - i) for i in range(10))
-    digit2 = 11 - (sum2 % 11)
-    if digit2 >= 10:
-        digit2 = 0
-    cpf.append(digit2)
-    
-    return ''.join(map(str, cpf))
-
-def create_unique_test_subscription():
-    """Create a unique test subscription for admin password reset testing"""
-    print_test_header("Creating Unique Test Subscription for Admin Password Reset")
-    
-    # Create test subscription with unique data using timestamp
-    timestamp = str(int(time.time()))
-    unique_suffix = timestamp[-6:]  # Use last 6 digits for uniqueness
-    
-    # Generate a valid CPF
-    valid_cpf = generate_valid_cpf()
-    
-    test_data = {
-        "name": f"João Silva Santos",
-        "email": f"admin.reset.test.{timestamp}@email.com",
-        "phone": f"2799{unique_suffix}",
-        "cpf": valid_cpf,
-        "carPlate": f"ART-{unique_suffix[:4]}-T",
-        "licenseNumber": f"TA-{unique_suffix}",
-        "city": "Vitória",
-        "lgpd_consent": True
-    }
+def get_existing_test_subscription():
+    """Get an existing subscription for admin password reset testing"""
+    print_test_header("Getting Existing Subscription for Admin Password Reset")
     
     try:
-        response = requests.post(
-            f"{BACKEND_URL}/subscribe",
-            json=test_data,
-            headers={"Content-Type": "application/json"},
-            timeout=10
-        )
+        response = requests.get(f"{BACKEND_URL}/subscriptions", timeout=10)
         
         if response.status_code == 200:
-            data = response.json()
-            print_success("Test subscription created successfully")
-            print_info(f"Email: {test_data['email']}")
-            print_info(f"Original Password: {data.get('temporary_password')}")
+            subscriptions = response.json()
             
-            # Get the subscription ID by fetching all subscriptions
-            subscriptions_response = requests.get(f"{BACKEND_URL}/subscriptions", timeout=10)
-            if subscriptions_response.status_code == 200:
-                subscriptions = subscriptions_response.json()
-                for sub in subscriptions:
-                    if sub.get('email') == test_data['email']:
-                        print_info(f"Subscription ID: {sub.get('id')}")
-                        return {
-                            "id": sub.get("id"),
-                            "email": test_data["email"],
-                            "original_password": data.get("temporary_password"),
-                            "name": test_data["name"]
-                        }
+            # Find a subscription we can use for testing
+            for sub in subscriptions:
+                if sub.get('email') and sub.get('id') and sub.get('temporary_password'):
+                    print_success("Found existing subscription for testing")
+                    print_info(f"Email: {sub.get('email')}")
+                    print_info(f"Subscription ID: {sub.get('id')}")
+                    print_info(f"Current Password: {sub.get('temporary_password')}")
+                    print_info(f"Name: {sub.get('name')}")
+                    
+                    return {
+                        "id": sub.get("id"),
+                        "email": sub.get("email"),
+                        "original_password": sub.get("temporary_password"),
+                        "name": sub.get("name")
+                    }
             
-            print_error("Could not find subscription ID")
+            print_error("No suitable subscription found for testing")
             return None
         else:
-            print_error(f"Test subscription creation failed: {response.status_code} - {response.text}")
+            print_error(f"Failed to get subscriptions: {response.status_code}")
             return None
             
     except requests.exceptions.RequestException as e:
-        print_error(f"Test subscription creation failed: {str(e)}")
+        print_error(f"Failed to get subscriptions: {str(e)}")
         return None
 
 def test_admin_password_reset_valid_user(test_subscription):
@@ -369,11 +322,11 @@ def run_admin_password_reset_tests():
     
     test_results = {}
     
-    # Create test subscription for password reset tests
-    test_subscription = create_unique_test_subscription()
+    # Get existing test subscription for password reset tests
+    test_subscription = get_existing_test_subscription()
     
     if not test_subscription:
-        print_error("Could not create test subscription. Aborting admin password reset tests.")
+        print_error("Could not get test subscription. Aborting admin password reset tests.")
         return False
     
     # Run admin password reset tests
