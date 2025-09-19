@@ -407,6 +407,30 @@ test_plan:
         agent: "testing"
         comment: "🔍 WEBHOOK INVESTIGATION COMPLETED SUCCESSFULLY - Comprehensive analysis of real Asaas webhook data executed with detailed findings: 1) WEBHOOK PROCESSING: Real webhook data (customer_id: cus_000130254085, payment_id: pay_2zg8sti32jdr0v04, value: R$60.72) successfully processed by backend with 200 response ✅. 2) USER IDENTIFICATION: Webhook found and updated user 'João Silva Santos' (joao.normalizado@gmail.com) - status changed to 'paid' and course access granted ✅. 3) DATA STORAGE ISSUE IDENTIFIED: Webhook data (customer_id, payment_id, payment_value, payment_confirmed_at) not being stored in database due to logic flaw in webhook code - when customer is string format, code looks for existing customer_id matches but falls back to pending users, however all users are already 'paid' ❌. 4) WEBHOOK FUNCTIONALITY: Core webhook processing works correctly - finds users, updates status, grants course access, but metadata storage needs fix ⚠️. 5) INVESTIGATION RESULTS: 8 total users analyzed, all with 'paid' status, 1 user (Ana Lgpd Silva) matches test pattern, no users have webhook metadata fields populated. The webhook system is functional for payment processing but needs code fix to properly store Asaas metadata for audit trail and debugging purposes."
 
+  - task: "Sistema de portal administrativo - Aba Cidades"
+    implemented: true
+    working: true
+    file: "AdminDashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ ABA CIDADES TOTALMENTE FUNCIONAL - Testes abrangentes executados com sucesso em todos os cenários solicitados: 1) LOGIN ADMIN: Autenticação funcionando perfeitamente com credenciais admin/admin@123 ✅. 2) NAVEGAÇÃO: Aba 'Cidades' acessível e carregando corretamente ✅. 3) ESTATÍSTICAS POR CIDADE: Sistema mostra estatísticas de pagamento por cidade do ES com dados reais (Total: 8 usuários, Pagos: 8, Pendentes: 0) ✅. 4) FILTRO DE CIDADES: Funcionalidade de filtro por cidade funcionando (testado com 'Vitória'), botão 'Limpar' operacional ✅. 5) GRÁFICOS VISUAIS: Barras de progresso visuais mostrando status paid/pending por cidades ES com cores (verde para pagos, vermelho para pendentes) ✅. 6) CARDS DE RESUMO: Todos os 5 cards funcionando - Total de Cidades: 4, Total Usuários: 6, Pagamentos Confirmados: 6, Pagamentos Pendentes: 0, Taxa de Conversão: 100.0% ✅. Sistema de cidades do portal administrativo completamente operacional e exibindo informações solicitadas corretamente."
+
+  - task: "Sistema de portal administrativo - Aba Cursos"
+    implemented: true
+    working: true
+    file: "AdminDashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ ABA CURSOS TOTALMENTE FUNCIONAL - Testes abrangentes executados com sucesso em todos os cenários solicitados: 1) NAVEGAÇÃO: Aba 'Cursos' acessível e carregando corretamente com título 'Gestão de Cursos' ✅. 2) VALOR R$ 150,00: Preço do curso exibido corretamente em múltiplos locais (Valor do Curso: R$ 150,00) ✅. 3) DETALHES DO CURSO: Seção completa mostrando - Valor do Curso: R$ 150,00, Carga Horária: 28h, Inscritos: 8, Concluídos: 8 ✅. 4) ESTATÍSTICAS FINANCEIRAS: Seção funcionando perfeitamente - Receita Total: R$ 1.200 (8 pagos × R$ 150), Receita Potencial: R$ 1.200, Receita Pendente: R$ 0 ✅. 5) BOTÃO 'NOVO CURSO': Modal abre corretamente com todos os campos de formulário (Nome do Curso, Descrição, Preço R$, Carga Horária) ✅. 6) MODAL FUNCIONAL: Campos preenchíveis, valores padrão corretos (150 para preço, 28 para horas), botões 'Criar' e 'Cancelar' funcionais ✅. 7) MÓDULOS DO CURSO: Lista completa exibida (Relações Humanas 14h, Direção Defensiva 8h, Primeiros Socorros 2h, Mecânica Básica 4h) ✅. Sistema de cursos do portal administrativo completamente operacional com todas as funcionalidades solicitadas."
+
 agent_communication:
   - agent: "main"
     message: "Iniciando implementação do bot IA. Prioridades: 1) Bot IA funcional, 2) Ajustes no formulário, 3) Autoplay video, 4) Preparar estrutura para fluxo cadastro+pagamento"
