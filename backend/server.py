@@ -185,7 +185,10 @@ def parse_from_mongo(item):
     if isinstance(item, dict):
         parsed = {}
         for key, value in item.items():
-            if key.endswith('_date') or key == 'timestamp':
+            # Skip MongoDB _id field to avoid ObjectId serialization issues
+            if key == '_id':
+                continue
+            elif key.endswith('_date') or key == 'timestamp':
                 if isinstance(value, str):
                     try:
                         parsed[key] = datetime.fromisoformat(value.replace('Z', '+00:00'))
