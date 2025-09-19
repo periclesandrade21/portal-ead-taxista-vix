@@ -4868,7 +4868,8 @@ def test_questions_by_module_difficulty(modules):
     results = []
     
     # Test first 2 modules for questions
-    for i, module in enumerate(modules[:2], 1):
+    modules_to_test = modules[:2] if len(modules) >= 2 else modules
+    for i, module in enumerate(modules_to_test, 1):
         module_id = module.get('id')
         module_name = module.get('name', 'Unknown')
         
