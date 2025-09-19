@@ -1125,6 +1125,9 @@ const AdminDashboardEAD = () => {
             dateFilter={dateFilter}
             setDateFilter={setDateFilter}
             handleDeleteUser={handleDeleteUser}
+            handleApplyDiscount={handleApplyDiscount}
+            handleResetStudentPassword={handleResetStudentPassword}
+            handleClearFields={handleClearFields}
           />
 
           {/* Aba de Pagamentos */}
