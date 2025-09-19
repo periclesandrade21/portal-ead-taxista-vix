@@ -7,7 +7,7 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
 import asyncio
 from motor.motor_asyncio import AsyncIOMotorCollection
-from .moodle_client import MoodleAPIClient, MoodleUser, MoodleCourse
+from moodle_client import MoodleAPIClient, MoodleUser, MoodleCourse
 import hashlib
 import secrets
 import logging
