@@ -297,6 +297,62 @@ const AdminDashboard = () => {
     }
   };
 
+  // Funções para gestão de usuários administrativos
+  const handleCreateAdminUser = async () => {
+    try {
+      const response = await axios.post(`${API}/admin/users`, adminUserModal.user);
+      if (response.status === 200) {
+        setAdminUsers([...adminUsers, response.data]);
+        setAdminUserModal({ show: false, user: null, isEdit: false });
+        alert('✅ Usuário administrativo criado com sucesso!');
+      }
+    } catch (error) {
+      console.error('Erro ao criar usuário admin:', error);
+      if (error.response?.status === 400) {
+        alert('❌ Nome de usuário já existe. Escolha outro.');
+      } else {
+        alert('❌ Erro ao criar usuário administrativo. Tente novamente.');
+      }
+    }
+  };
+
+  const handleResetAdminPassword = async () => {
+    try {
+      const response = await axios.put(`${API}/admin/users/${adminPasswordModal.userId}/reset-password`, {
+        username: adminPasswordModal.username,
+        new_password: adminPasswordModal.newPassword
+      });
+      
+      if (response.status === 200) {
+        setAdminPasswordModal({ show: false, userId: null, username: '', newPassword: '', showPassword: false });
+        alert('✅ Senha administrativa alterada com sucesso!');
+      }
+    } catch (error) {
+      console.error('Erro ao alterar senha admin:', error);
+      alert('❌ Erro ao alterar senha. Tente novamente.');
+    }
+  };
+
+  const handleDeleteAdminUser = async (userId, username) => {
+    if (username === 'admin') {
+      alert('❌ Não é possível excluir o usuário admin principal.');
+      return;
+    }
+    
+    if (confirm(`Tem certeza que deseja excluir o usuário administrativo "${username}"?`)) {
+      try {
+        const response = await axios.delete(`${API}/admin/users/${userId}`);
+        if (response.status === 200) {
+          setAdminUsers(adminUsers.filter(user => user.id !== userId));
+          alert('✅ Usuário administrativo excluído com sucesso!');
+        }
+      } catch (error) {
+        console.error('Erro ao excluir usuário admin:', error);
+        alert('❌ Erro ao excluir usuário. Tente novamente.');
+      }
+    }
+  };
+
   // Filtros para cidade
   const getFilteredCityStats = () => {
     // Calcular estatísticas reais baseadas nas inscrições
