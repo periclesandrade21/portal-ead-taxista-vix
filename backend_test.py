@@ -684,14 +684,17 @@ def test_subscription_creation():
     """Test subscription creation endpoint"""
     print_test_header("Asaas Payment Flow - Subscription Creation")
     
-    # Test data with valid CPF and realistic name
+    # Test data with valid CPF and realistic name - use timestamp for uniqueness
+    import time
+    timestamp = str(int(time.time()))
+    
     test_data = {
         "name": "João Silva Santos",
-        "email": "joao.teste@email.com",
+        "email": f"joao.teste.{timestamp}@email.com",
         "phone": "27999999999",
         "cpf": "11144477735",  # Valid CPF for testing
-        "carPlate": "ABC-1234-T",
-        "licenseNumber": "12345",
+        "carPlate": f"ABC-{timestamp[-4:]}-T",
+        "licenseNumber": f"{timestamp[-5:]}",
         "city": "Vitória",
         "lgpd_consent": True
     }
