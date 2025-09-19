@@ -771,7 +771,14 @@ const StudentPortalComplete = () => {
           <FinancialTab user={user} />
 
           {/* Perfil */}
-          <ProfileTab profileData={profileData} user={user} />
+          <ProfileTab 
+            profileData={profileData} 
+            user={user}
+            handlePhotoUpload={handlePhotoUpload}
+            setChangePasswordModal={setChangePasswordModal}
+            accessHistory={accessHistory}
+            activityHistory={activityHistory}
+          />
 
           {/* Modal de Quiz */}
           {quizModal.show && (
