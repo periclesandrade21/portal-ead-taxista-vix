@@ -147,7 +147,7 @@ const AdminDashboard = () => {
 
     let todayPaid = 0, weekPaid = 0, monthPaid = 0;
     let todayRevenue = 0, weekRevenue = 0, monthRevenue = 0;
-    const coursePrice = 150; // Preço padrão do curso
+    // Usar coursePrice dinâmico em vez de valor fixo
 
     subscriptions.forEach(sub => {
       const subDate = new Date(sub.subscription_date);
