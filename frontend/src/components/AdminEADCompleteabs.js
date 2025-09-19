@@ -14,7 +14,7 @@ import {
   Volume2, Settings, CreditCard, Receipt, GraduationCap, Shield, Bell, Home, LogOut, 
   Camera, Upload, MapPin, Building, Car, FileCheck, QrCode, Send, UserCheck, 
   Calendar as CalendarIcon, Briefcase, Database, Zap, Globe, UserPlus, FileX, Plus,
-  Trash2
+  Trash2, X
 } from 'lucide-react';
 
 // Aba de Inscrições
