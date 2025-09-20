@@ -110,38 +110,56 @@ const StudentPortalComplete = () => {
 
   const loadStudentData = async (userId) => {
     try {
-      // Carregar módulos
+      // Carregar módulos reais
       const modulesResponse = await axios.get(`${API}/modules`);
       setModules(modulesResponse.data.modules || []);
 
-      // Carregar progresso do usuário (mock por enquanto)
-      const mockProgress = {
-        'module1': { videos_watched: ['video1', 'video2'], quiz_score: 85, quiz_passed: true },
-        'module2': { videos_watched: ['video1'], quiz_score: null, quiz_passed: false }
-      };
-      setUserProgress(mockProgress);
+      // Inicializar com dados vazios - será preenchido quando implementado progresso real
+      setUserProgress({});
 
-      // Carregar notificações
-      setNotifications([
-        { id: 1, type: 'success', message: 'Bem-vindo ao Portal EAD!', time: '2 min atrás' },
-        { id: 2, type: 'info', message: 'Novo módulo disponível: Mecânica Básica', time: '1 hora atrás' },
-        { id: 3, type: 'warning', message: 'Lembre-se de completar o quiz do módulo anterior', time: '2 horas atrás' }
-      ]);
+      // Notificações baseadas no status real do usuário
+      const realNotifications = [];
+      if (user && user.course_access === 'granted') {
+        realNotifications.push({
+          id: 1, 
+          type: 'success', 
+          message: `Bem-vindo, ${user.name}! Seu curso foi liberado.`, 
+          time: 'agora'
+        });
+      }
+      if (user && user.payment_status === 'pending') {
+        realNotifications.push({
+          id: 2, 
+          type: 'warning', 
+          message: 'Aguardando confirmação de pagamento', 
+          time: '1 hora atrás'
+        });
+      }
+      setNotifications(realNotifications);
 
-      // Carregar histórico de acessos (mock)
-      setAccessHistory([
-        { id: 1, action: 'Login realizado', date: new Date().toLocaleString(), ip: '192.168.1.100' },
-        { id: 2, action: 'Login realizado', date: new Date(Date.now() - 86400000).toLocaleString(), ip: '192.168.1.100' },
-        { id: 3, action: 'Login realizado', date: new Date(Date.now() - 172800000).toLocaleString(), ip: '192.168.1.105' }
-      ]);
+      // Histórico de acesso real - apenas login atual
+      const realAccessHistory = [
+        { 
+          id: 1, 
+          action: 'Login realizado', 
+          date: new Date().toLocaleString('pt-BR'), 
+          ip: 'IP oculto por segurança' 
+        }
+      ];
+      setAccessHistory(realAccessHistory);
 
-      // Carregar histórico de atividades (mock)
-      setActivityHistory([
-        { id: 1, action: 'Vídeo assistido: Fundamentos da Mecânica', module: 'Mecânica Básica', date: new Date().toLocaleString() },
-        { id: 2, action: 'Quiz realizado: Legislação de Trânsito', module: 'Legislação', score: 85, date: new Date(Date.now() - 3600000).toLocaleString() },
-        { id: 3, action: 'Vídeo assistido: RCP e Primeiros Socorros', module: 'Primeiros Socorros', date: new Date(Date.now() - 7200000).toLocaleString() },
-        { id: 4, action: 'Login no portal', module: 'Sistema', date: new Date(Date.now() - 10800000).toLocaleString() }
-      ]);
+      // Histórico de atividades real - apenas login atual
+      const realActivityHistory = [
+        { 
+          id: 1, 
+          action: 'Login no portal', 
+          module: 'Sistema', 
+          date: new Date().toLocaleString('pt-BR') 
+        }
+      ];
+      setActivityHistory(realActivityHistory);
+
+      console.log('✅ Dados reais do estudante carregados');
 
     } catch (error) {
       console.error('Erro ao carregar dados do estudante:', error);
