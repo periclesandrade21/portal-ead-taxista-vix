@@ -3051,6 +3051,51 @@ async def get_admin_users():
         logger.error(f"Error getting admin users: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/admin/login")
+async def admin_login(request: dict):
+    """Login para administradores do sistema"""
+    try:
+        username = request.get('username')
+        password = request.get('password')
+        
+        if not username or not password:
+            raise HTTPException(status_code=400, detail="Username e password são obrigatórios")
+        
+        # Buscar usuário admin na base
+        admin_user = await db.admin_users.find_one({"username": username})
+        
+        if not admin_user:
+            logging.warning(f"Tentativa de login com usuário inexistente: {username}")
+            raise HTTPException(status_code=404, detail="Usuário não encontrado")
+        
+        # Verificar senha (em produção usar hash)
+        if admin_user.get("password") != password:
+            logging.warning(f"Senha incorreta para usuário admin: {username}")
+            raise HTTPException(status_code=401, detail="Credenciais inválidas")
+        
+        # Verificar se usuário está ativo
+        if not admin_user.get("active", True):
+            raise HTTPException(status_code=403, detail="Usuário desativado")
+        
+        logging.info(f"✅ Login admin realizado: {username}")
+        
+        return {
+            "success": True,
+            "message": "Login realizado com sucesso",
+            "user": {
+                "id": admin_user.get("id"),
+                "username": admin_user.get("username"),
+                "full_name": admin_user.get("full_name"),
+                "role": admin_user.get("role")
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"❌ Erro no login admin: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro interno do servidor")
+
 @app.post("/api/admin/set-temp-password")
 async def set_temp_password(request: dict):
     """Definir senha temporária para usuário - DEBUG"""
