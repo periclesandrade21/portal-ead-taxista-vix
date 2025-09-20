@@ -578,7 +578,10 @@ const AdminDashboardEAD = () => {
 
   const handleResetStudentPassword = async (subscriptionId) => {
     const subscription = subscriptions.find(s => s.id === subscriptionId);
-    if (!subscription) return;
+    if (!subscription) {
+      alert('❌ Usuário não encontrado!');
+      return;
+    }
 
     const confirmReset = window.confirm(
       `🔑 Resetar senha do aluno?\n\n` +
@@ -590,34 +593,26 @@ const AdminDashboardEAD = () => {
     if (!confirmReset) return;
 
     try {
-      // Gerar nova senha temporária (10 caracteres)
-      const newPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-2).toUpperCase();
-      
-      // Simular chamada para API de reset
-      // await axios.put(`${API}/users/${subscriptionId}/reset-password`, { newPassword });
-      
-      // Atualizar localmente
-      setSubscriptions(prev => prev.map(sub => 
-        sub.id === subscriptionId 
-          ? { 
-              ...sub, 
-              temporary_password: newPassword,
-              password_reset_at: new Date().toISOString(),
-              password_reset_by: 'admin'
-            }
-          : sub
-      ));
+      // Chamar API real de reset de senha
+      const response = await axios.post(`${BACKEND_URL}/api/auth/reset-password`, {
+        email: subscription.email
+      });
 
-      alert(`✅ Senha resetada com sucesso!\n\n` +
-            `Aluno: ${subscription.name}\n` +
-            `Nova senha temporária: ${newPassword}\n\n` +
-            `📧 Email: ✅ Enviado para ${subscription.email}\n` +
-            `📱 WhatsApp: ✅ Enviado para ${subscription.phone}\n\n` +
-            `O aluno deve fazer login com a nova senha e alterá-la no primeiro acesso.`);
+      if (response.data) {
+        // Atualizar lista de subscriptions
+        await fetchSubscriptions();
+        
+        alert(`✅ Senha resetada com sucesso!\n\n` +
+              `Aluno: ${subscription.name}\n` +
+              `📧 Email: ${response.data.email_sent ? '✅ Enviado' : '❌ Falhou'}\n` +
+              `📱 WhatsApp: ${response.data.whatsapp_sent ? '✅ Enviado' : '❌ Falhou'}\n\n` +
+              `${response.data.message}\n\n` +
+              `O aluno deve fazer login com a nova senha e alterá-la no primeiro acesso.`);
+      }
 
     } catch (error) {
       console.error('Erro ao resetar senha:', error);
-      alert('❌ Erro ao resetar senha. Tente novamente.');
+      alert(`❌ Erro ao resetar senha: ${error.response?.data?.detail || error.message}`);
     }
   };
 
