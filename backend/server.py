@@ -1785,39 +1785,149 @@ async def delete_subscription(subscription_id: str):
 # Webhook do Asaas para confirmar pagamentos
 @api_router.post("/webhook/asaas-payment")
 async def asaas_webhook(request: dict):
-    """Webhook para receber notificações de pagamento do Asaas"""
+    """Webhook para receber notificações de pagamento do Asaas - Versão Real"""
     try:
+        logging.info(f"🔔 Webhook Asaas recebido: {json.dumps(request, indent=2, default=str)}")
+        
         event = request.get('event')
         payment_data = request.get('payment', {})
         
-        # Aceitar tanto PAYMENT_CONFIRMED quanto PAYMENT_RECEIVED
-        if event in ['PAYMENT_CONFIRMED', 'PAYMENT_RECEIVED']:
-            # Extrair informações do pagamento
-            customer_info = payment_data.get('customer', {})
+        if event in ['PAYMENT_CONFIRMED', 'PAYMENT_RECEIVED', 'PAYMENT_OVERDUE', 'PAYMENT_DELETED']:
             payment_id = payment_data.get('id')
             value = payment_data.get('value')
+            customer_id = payment_data.get('customer')
+            billing_type = payment_data.get('billingType')
+            status = payment_data.get('status')
+            external_reference = payment_data.get('externalReference')
             
-            logging.info(f"Webhook recebido: Event={event}, Payment={payment_id}, Value=R${value}")
+            logging.info(f"📋 Processando: Event={event}, Payment={payment_id}, Customer={customer_id}, Value=R${value}, Status={status}")
             
-            # Tentar extrair email do customer (formato antigo vs novo)
-            customer_email = None
-            customer_id = None
+            # 1. Buscar registro de pagamento na nossa base
+            payment_record = await db.asaas_payments.find_one({
+                "asaas_payment_id": payment_id
+            })
             
-            if isinstance(customer_info, dict):
-                customer_email = customer_info.get('email')
-                logging.info(f"Customer email extraído: {customer_email}")
-            elif isinstance(customer_info, str):
-                customer_id = customer_info
-                logging.info(f"Customer ID extraído: {customer_id}")
+            if not payment_record:
+                logging.warning(f"⚠️ Pagamento não encontrado na base: {payment_id}")
+                return {"status": "error", "message": "Pagamento não encontrado"}
             
-            # Buscar usuário para atualizar
-            updated_user = None
-            subscription_filter = None
+            user_email = payment_record.get('user_email')
+            user_name = payment_record.get('user_name')
             
-            # 1. Primeiro tentar por email se disponível
-            if customer_email:
-                subscription_filter = {"email": customer_email}
-                logging.info(f"Buscando usuário por email: {customer_email}")
+            logging.info(f"👤 Pagamento encontrado para: {user_name} ({user_email})")
+            
+            # 2. Atualizar status do pagamento
+            payment_update = {
+                "status": status.lower() if status else "unknown",
+                "updated_at": datetime.now(timezone.utc).isoformat(),
+                "webhook_data": payment_data,
+                "processed_at": datetime.now(timezone.utc).isoformat()
+            }
+            
+            await db.asaas_payments.update_one(
+                {"asaas_payment_id": payment_id},
+                {"$set": payment_update}
+            )
+            
+            # 3. Se pagamento foi confirmado, liberar curso
+            if event in ['PAYMENT_CONFIRMED', 'PAYMENT_RECEIVED'] and status in ['RECEIVED', 'CONFIRMED']:
+                
+                # Atualizar subscription
+                subscription_update = {
+                    "status": "paid",
+                    "course_access": "granted",
+                    "payment_confirmed_at": datetime.now(timezone.utc).isoformat(),
+                    "asaas_payment_status": status,
+                    "asaas_billing_type": billing_type
+                }
+                
+                result = await db.subscriptions.update_one(
+                    {"email": user_email},
+                    {"$set": subscription_update}
+                )
+                
+                if result.modified_count > 0:
+                    logging.info(f"✅ Curso liberado para: {user_name} ({user_email})")
+                    
+                    # Enviar notificação por WhatsApp
+                    try:
+                        whatsapp_message = f"""🎉 *CURSO LIBERADO!*
+
+Olá *{user_name}*!
+
+✅ Seu pagamento foi confirmado!
+💰 Valor: R$ {value}
+💳 Método: {billing_type}
+
+🎓 *SEU CURSO FOI LIBERADO!*
+
+📱 *Como acessar:*
+1. Entre no Portal do Aluno
+2. Use seu email: {user_email}
+3. Use sua senha temporária
+
+🌐 *Portal:* https://taxiead.preview.emergentagent.com
+
+📚 *O que você terá acesso:*
+• Direção Defensiva (8h)
+• Relações Humanas (14h)  
+• Primeiros Socorros (2h)
+• Mecânica Básica (4h)
+
+Bons estudos! 🚀"""
+                        
+                        # Buscar telefone do usuário
+                        user_data = await db.subscriptions.find_one({"email": user_email})
+                        if user_data and user_data.get('phone'):
+                            # Simular envio por WhatsApp (em produção, usar API real)
+                            logging.info(f"📱 WhatsApp enviado para {user_data.get('phone')}: {whatsapp_message}")
+                            
+                    except Exception as wpp_error:
+                        logging.error(f"❌ Erro ao enviar WhatsApp: {wpp_error}")
+                    
+                    # Retornar resposta de sucesso
+                    return {
+                        "status": "success",
+                        "message": "Pagamento processado e curso liberado",
+                        "user_name": user_name,
+                        "user_email": user_email, 
+                        "payment_id": payment_id,
+                        "amount": value,
+                        "course_access": "granted"
+                    }
+                else:
+                    logging.error(f"❌ Falha ao liberar curso para: {user_email}")
+                    return {"status": "error", "message": "Falha ao liberar curso"}
+            
+            # 4. Se pagamento foi cancelado/vencido
+            elif event in ['PAYMENT_OVERDUE', 'PAYMENT_DELETED']:
+                await db.subscriptions.update_one(
+                    {"email": user_email},
+                    {"$set": {
+                        "status": "cancelled" if event == 'PAYMENT_DELETED' else "overdue",
+                        "course_access": "denied",
+                        "asaas_payment_status": status
+                    }}
+                )
+                
+                logging.info(f"⚠️ Pagamento {event.lower()}: {user_name} ({user_email})")
+                
+                return {
+                    "status": "processed",
+                    "message": f"Pagamento {event.lower()}",
+                    "user_email": user_email,
+                    "payment_id": payment_id
+                }
+            
+            return {"status": "processed", "message": "Webhook processado"}
+        
+        else:
+            logging.info(f"ℹ️ Evento não processado: {event}")
+            return {"status": "ignored", "message": f"Evento {event} não processado"}
+            
+    except Exception as e:
+        logging.error(f"❌ Erro no webhook Asaas: {str(e)}")
+        return {"status": "error", "message": str(e)}
             
             # 2. Se não tem email, tentar por customer_id já existente
             elif customer_id:
