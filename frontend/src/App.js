@@ -1182,7 +1182,7 @@ const Home = () => {
                   <CheckCircle className="h-8 w-8 text-white" />
                 </div>
                 <h4 className="font-semibold text-white mb-2">Processo Simplificado</h4>
-                <p className="text-blue-100 text-sm">6 etapas rápidas sem validação automática</p>
+                <p className="text-blue-100 text-sm">6 etapas rápidas e intuitivas</p>
               </CardContent>
             </Card>
             
