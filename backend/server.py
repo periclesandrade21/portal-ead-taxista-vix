@@ -33,6 +33,11 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
+# Asaas API Configuration
+ASAAS_API_URL = os.environ.get('ASAAS_API_URL', 'https://sandbox.asaas.com/api/v3')
+ASAAS_TOKEN = os.environ.get('ASAAS_TOKEN', '')
+ASAAS_WEBHOOK_URL = os.environ.get('ASAAS_WEBHOOK_URL', '')
+
 # Utility Functions for Video Management
 def extract_youtube_id(url: str) -> str:
     """Extract YouTube video ID from URL"""
