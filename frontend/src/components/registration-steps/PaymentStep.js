@@ -7,25 +7,70 @@ import { CheckCircle, ExternalLink, ArrowRight, CreditCard, Smartphone, QrCode }
 const PaymentStep = ({ data, updateData, onComplete }) => {
   const [isRedirecting, setIsRedirecting] = useState(false);
 
-  const handleCompleteRegistration = () => {
+  const handleCompleteRegistration = async () => {
     setIsRedirecting(true);
     
-    // Simulate registration completion
-    setTimeout(() => {
-      alert(`🎉 Cadastro concluído com sucesso!\n\n` +
-            `Nome: ${data.fullName}\n` +
-            `Email: ${data.email}\n` +
-            `Telefone: ${data.cellPhone}\n\n` +
-            `✅ Todos os dados foram salvos\n` +
-            `📧 Senha de acesso enviada por email\n` +
-            `📱 Senha também enviada por WhatsApp\n\n` +
-            `🔄 Redirecionando para pagamento...`);
-      
-      // Complete the registration process
-      if (onComplete) {
-        onComplete(data);
+    try {
+      // Fazer cadastro real na API
+      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${BACKEND_URL}/api/subscribe`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: data.fullName,
+          email: data.email,
+          phone: data.cellPhone,
+          cpf: data.cpf,
+          carPlate: data.vehiclePlate,
+          licenseNumber: data.licenseNumber,
+          city: data.city,
+          lgpd_consent: data.termsAccepted || true
+        })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        
+        // Mostrar popup de sucesso do cadastro
+        alert(`🎉 Cadastro realizado com sucesso!\n\n` +
+              `Nome: ${data.fullName}\n` +
+              `Email: ${data.email}\n` +
+              `Telefone: ${data.cellPhone}\n\n` +
+              `✅ ${result.message}\n` +
+              `📧 Email: ${result.password_sent_email ? '✅ Enviado' : '❌ Falhou'}\n` +
+              `📱 WhatsApp: ${result.password_sent_whatsapp ? '✅ Enviado' : '❌ Falhou'}\n` +
+              `🔐 Senha temporária: ${result.temporary_password}`);
+        
+        // Mostrar popup sobre documentos e liberação do curso
+        setTimeout(() => {
+          alert(`📋 Informações Importantes:\n\n` +
+                `🔄 Seu curso será liberado quando:\n` +
+                `• Pagamento for confirmado via PIX\n` +
+                `• Documentos forem conferidos pela equipe\n\n` +
+                `📱 Você receberá uma mensagem no WhatsApp confirmando:\n` +
+                `• Liberação do acesso ao curso\n` +
+                `• Instruções para entrar no portal\n\n` +
+                `💳 Prossiga agora com o pagamento!`);
+          
+          // Finalizar e abrir popup de pagamento
+          if (onComplete) {
+            onComplete({ ...data, subscriptionData: result });
+          }
+        }, 1500);
+        
+      } else {
+        const errorData = await response.json();
+        alert(`❌ Erro no cadastro:\n\n${errorData.detail || 'Erro desconhecido'}`);
+        setIsRedirecting(false);
       }
-    }, 2000);
+      
+    } catch (error) {
+      console.error('Erro ao fazer cadastro:', error);
+      alert(`❌ Erro de conexão:\n\n${error.message}\n\nTente novamente.`);
+      setIsRedirecting(false);
+    }
   };
 
   const coursePrice = 150.00;
