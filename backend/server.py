@@ -1928,26 +1928,6 @@ Bons estudos! 🚀"""
     except Exception as e:
         logging.error(f"❌ Erro no webhook Asaas: {str(e)}")
         return {"status": "error", "message": str(e)}
-            
-            # 2. Se não tem email, tentar por customer_id já existente
-            elif customer_id:
-                subscription_filter = {"asaas_customer_id": customer_id}
-                existing_user = await db.subscriptions.find_one(subscription_filter)
-                if existing_user:
-                    logging.info(f"Usuário encontrado por customer_id: {customer_id}")
-                else:
-                    # 3. Como fallback, pegar qualquer usuário pendente
-                    logging.info(f"Customer ID {customer_id} não encontrado, usando fallback para usuário pendente")
-                    pending_users = await db.subscriptions.find({"status": "pending"}).to_list(10)
-                    if pending_users:
-                        # Usar o primeiro usuário pendente
-                        subscription_filter = {"id": pending_users[0]["id"]}
-                        logging.info(f"Usando usuário pendente como fallback: {pending_users[0].get('email', 'N/A')}")
-                    else:
-                        logging.warning("Nenhum usuário pendente encontrado para fallback")
-                        return {"message": "Nenhum usuário pendente para processar pagamento", "status": "warning"}
-            
-            if subscription_filter:
                 # Preparar dados de atualização
                 update_timestamp = datetime.now(timezone.utc).isoformat()
                 update_data = {
