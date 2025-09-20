@@ -481,24 +481,50 @@ const Home = () => {
     if (registrationData.paymentData) {
       const paymentData = registrationData.paymentData;
       
-      // Abrir popup específico de pagamento PIX
+      // Abrir popup específico de pagamento PIX melhorado
       setTimeout(() => {
-        const pixInfo = paymentData.pix_qrcode ? 
-          `\n\n📱 QR Code PIX gerado com sucesso!` : 
-          `\n\n⚠️ QR Code será enviado por email`;
+        const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        }).format(value);
+        
+        const formatDate = (dateStr) => {
+          if (!dateStr) return 'Data não informada';
+          try {
+            return new Date(dateStr).toLocaleDateString('pt-BR');
+          } catch {
+            return dateStr;
+          }
+        };
+        
+        const pixStatus = paymentData.pix_qrcode ? 
+          `📱 QR Code PIX PRONTO PARA PAGAMENTO!` : 
+          `⚠️ QR Code será enviado por email`;
           
-        alert(`🎉 TUDO PRONTO PARA O PAGAMENTO!\n\n` +
-              `✅ Cadastro: Concluído\n` +
-              `💳 Pagamento: PIX Criado\n` +
-              `💰 Valor: R$ ${paymentData.amount.toFixed(2)}\n` +
-              `📅 Vencimento: ${paymentData.due_date}\n` +
-              `🆔 ID: ${paymentData.payment_id}${pixInfo}\n\n` +
-              `📋 PRÓXIMOS PASSOS:\n` +
-              `1. ✅ Pague via PIX\n` +
-              `2. 🔄 Aguarde confirmação automática\n` +
-              `3. 📱 Receba confirmação no WhatsApp\n` +
-              `4. 🎓 Acesse seu curso!\n\n` +
-              `💡 O pagamento PIX é instantâneo e seu curso será liberado automaticamente!`);
+        alert(`🚀 CADASTRO CONCLUÍDO COM SUCESSO!\n\n` +
+              `👤 DADOS CONFIRMADOS:\n` +
+              `✅ Cadastro pessoal completo\n` +
+              `✅ Documentos enviados\n` +
+              `✅ Pagamento PIX gerado\n\n` +
+              `💳 DETALHES DO PAGAMENTO:\n` +
+              `💰 Valor: ${formatCurrency(paymentData.amount)}\n` +
+              `📅 Vencimento: ${formatDate(paymentData.due_date)}\n` +
+              `🆔 Código: ${paymentData.payment_id}\n` +
+              `${pixStatus}\n\n` +
+              `⚡ PAGAMENTO INSTANTÂNEO:\n` +
+              `1. 📱 Pague via PIX agora\n` +
+              `2. ⚡ Confirmação em segundos\n` +
+              `3. 🎓 Curso liberado automaticamente\n` +
+              `4. 📲 Acesso enviado no WhatsApp\n\n` +
+              `🎯 Você está a um clique do seu curso!\n` +
+              `Clique OK para finalizar o pagamento!`);
+        
+        // Redirecionar para o link de pagamento da Asaas
+        if (paymentData.payment_url) {
+          setTimeout(() => {
+            window.open(paymentData.payment_url, '_blank');
+          }, 1000);
+        }
         
         // Definir step como pagamento
         setCurrentStep('payment');
