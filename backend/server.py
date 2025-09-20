@@ -2429,8 +2429,16 @@ async def validate_documents(request: dict):
             if not doc_info:
                 continue
                 
-            # Simulate AI validation
-            validation_result = await simulate_ai_validation(doc_type, doc_info)
+            # Auto-approve all documents (AI validation disabled)
+            validation_result = {
+                'status': 'approved',
+                'confidence': 1.0,
+                'message': 'Documento aprovado automaticamente',
+                'extracted_data': {},
+                'timestamp': datetime.now(timezone.utc).isoformat(),
+                'processing_time': 0.5,
+                'ai_notes': 'Validação por IA desabilitada - aprovação automática'
+            }
             validation_results[doc_type] = validation_result
         
         # Determine overall validation status
