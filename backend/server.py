@@ -1019,10 +1019,13 @@ async def login_student(login_request: LoginRequest):
             )
         
         # Verificar se pagamento foi confirmado
-        if user.get("status") != "paid":
+        user_status = user.get("status", "denied")
+        course_access = user.get("course_access", "denied")
+        
+        if user_status not in ["paid", "granted"] or course_access != "granted":
             raise HTTPException(
-                status_code=403, 
-                detail="Acesso liberado apenas após confirmação do pagamento"
+                status_code=402, 
+                detail="Acesso liberado apenas após confirmação do pagamento. Entre em contato se já pagou."
             )
         
         # Retornar dados do usuário (sem informações sensíveis)
