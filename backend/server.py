@@ -3108,6 +3108,47 @@ async def admin_login(request: dict):
         logging.error(f"❌ Erro no login admin: {str(e)}")
         raise HTTPException(status_code=500, detail="Erro interno do servidor")
 
+@api_router.get("/debug/asaas-info/{payment_id}")
+async def debug_asaas_payment(payment_id: str):
+    """Debug - verificar dados do pagamento Asaas"""
+    try:
+        # Buscar no nosso banco
+        payment_record = await db.asaas_payments.find_one({"asaas_payment_id": payment_id})
+        
+        if not payment_record:
+            raise HTTPException(status_code=404, detail="Pagamento não encontrado")
+        
+        # Verificar na Asaas
+        headers = {
+            'access_token': ASAAS_TOKEN,
+            'Content-Type': 'application/json'
+        }
+        
+        asaas_response = requests.get(
+            f"{ASAAS_API_URL}/payments/{payment_id}",
+            headers=headers,
+            timeout=30
+        )
+        
+        asaas_data = asaas_response.json() if asaas_response.status_code == 200 else None
+        
+        return {
+            "our_record": {
+                "amount": payment_record.get("amount"),
+                "user_name": payment_record.get("user_name"),
+                "created_at": payment_record.get("created_at")
+            },
+            "asaas_data": asaas_data,
+            "comparison": {
+                "our_amount": payment_record.get("amount"),
+                "asaas_amount": asaas_data.get("value") if asaas_data else None,
+                "match": payment_record.get("amount") == asaas_data.get("value") if asaas_data else False
+            }
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/admin/set-temp-password")
 async def set_temp_password(request: dict):
     """Definir senha temporária para usuário - DEBUG"""
