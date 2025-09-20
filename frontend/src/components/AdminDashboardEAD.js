@@ -51,13 +51,13 @@ const AdminDashboardEAD = () => {
 
   // Estados do Dashboard
   const [dashboardStats, setDashboardStats] = useState({
-    totalDrivers: 1247,
-    certifiedDrivers: 892,
-    avgProgress: 75,
-    approvalRate: 87,
-    pendingCertifications: 23,
-    activeCourses: 4,
-    lastMonthGrowth: 12
+    totalDrivers: 0,
+    certifiedDrivers: 0,
+    avgProgress: 0,
+    approvalRate: 0,
+    pendingCertifications: 0,
+    activeCourses: 0,
+    lastMonthGrowth: 0
   });
 
   // Estados de Motoristas
