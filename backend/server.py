@@ -588,16 +588,17 @@ def validate_name_format(name: str) -> dict:
             result["errors"].append("Cada parte do nome deve ter pelo menos 2 caracteres")
             return result
     
-    # Lista de palavras proibidas/suspeitas
+    # Lista de palavras proibidas/suspeitas (reduzida para ser menos restritiva)
     forbidden_words = [
-        "teste", "test", "admin", "administrador", "usuario", "user", 
         "fake", "falso", "exemplo", "example", "aaa", "bbb", "ccc",
         "123", "abc", "xyz", "qwerty", "asdf", "null", "undefined"
     ]
     
     name_lower = name.lower()
+    # Verificar apenas palavras completas, não substrings
+    name_words = name_lower.split()
     for word in forbidden_words:
-        if word in name_lower:
+        if word in name_words:
             result["errors"].append("Nome parece ser fictício ou de teste")
             return result
     
