@@ -59,10 +59,11 @@ def test_1_create_asaas_customer():
     """Test 1: Create Asaas customer with realistic data"""
     print_test_header("TEST 1: Create Asaas Customer")
     
-    # Realistic test data as specified in review
+    # Realistic test data as specified in review with unique timestamp
+    timestamp = int(time.time())
     customer_data = {
-        "name": "Maria Silva Costa",
-        "email": f"maria.asaas.teste.{int(time.time())}@email.com",
+        "name": f"Maria Silva Costa {timestamp}",  # Unique name
+        "email": f"maria.asaas.teste.{timestamp}@email.com",
         "cpf": "11144477735",  # Valid CPF with correct verification digits
         "phone": "27999888777"
     }
