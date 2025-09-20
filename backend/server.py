@@ -375,19 +375,20 @@ def validate_taxi_plate(plate: str) -> bool:
     return False
 
 def validate_taxi_license(license_number: str) -> bool:
-    """Valida formato de alvará de táxi"""
+    """Valida formato de alvará de táxi - versão mais flexível"""
     if not license_number:
         return False
     
     license_number = license_number.upper().strip()
     
-    # Padrões aceitos para alvará de táxi
+    # Padrões aceitos para alvará de táxi (muito flexíveis)
     patterns = [
         r'^TA-\d{4,6}$',           # TA-12345
-        r'^TAX-\d{4}-\d{4}$',      # TAX-2023-1234
+        r'^TAX-\d{4}-\d{4}$',      # TAX-2023-1234  
         r'^T-\d{4,7}$',            # T-1234567
-        r'^[A-Z]{2,3}-\d{4,6}$',   # Outros prefixos com letras
-        r'^\d{4,8}$',              # Apenas números (formato simples)
+        r'^[A-Z]{1,4}-\d{3,8}$',   # Qualquer letra com números
+        r'^\d{3,8}$',              # Apenas números (formato simples)
+        r'^[A-Z]{1,4}\d{3,8}$',    # Letras + números sem hífen
     ]
     
     for pattern in patterns:
