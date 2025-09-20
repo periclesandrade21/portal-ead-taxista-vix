@@ -1199,7 +1199,7 @@ const Home = () => {
           
           <div className="text-center">
             <button
-              onClick={handleMultiStepRegister}
+              onClick={() => setShowNewRegistration(true)}
               className="bg-white text-blue-600 hover:bg-blue-50 px-12 py-4 rounded-lg text-xl font-bold transition-all duration-300 transform hover:scale-105 mb-6 shadow-lg"
             >
               📝 Fazer Inscrição Agora
