@@ -1155,6 +1155,102 @@ async def get_default_course_price():
         logging.error(f"Erro ao buscar preço do curso padrão: {str(e)}")
         return {"price": 150.0}  # Fallback
 
+@api_router.post("/create-payment")
+async def create_payment_asaas(request: dict):
+    """Criar pagamento na Asaas após cadastro"""
+    try:
+        # Extrair dados do usuário
+        user_data = request.get('userData', {})
+        subscription_data = request.get('subscriptionData', {})
+        
+        name = user_data.get('fullName') or subscription_data.get('name', '')
+        email = user_data.get('email') or subscription_data.get('email', '')
+        cpf = user_data.get('cpf') or subscription_data.get('cpf', '')
+        phone = user_data.get('cellPhone') or subscription_data.get('phone', '')
+        
+        if not all([name, email, cpf, phone]):
+            raise HTTPException(status_code=400, detail="Dados incompletos para criar pagamento")
+        
+        # Buscar preço do curso
+        course_price_response = await get_default_course_price()
+        course_price = course_price_response.get('price', 150.00)
+        
+        # 1. Criar cliente na Asaas
+        customer = await create_asaas_customer(name, email, cpf, phone)
+        if not customer:
+            raise HTTPException(status_code=500, detail="Erro ao criar cliente na Asaas")
+        
+        # 2. Criar cobrança PIX
+        description = f"Curso EAD Taxista ES - {name}"
+        external_reference = f"ead-taxi-{email}-{int(datetime.now().timestamp())}"
+        
+        payment = await create_asaas_payment(
+            customer['id'], 
+            course_price, 
+            description, 
+            external_reference
+        )
+        
+        if not payment:
+            raise HTTPException(status_code=500, detail="Erro ao criar cobrança na Asaas")
+        
+        # 3. Obter QR Code PIX
+        pix_qrcode = await get_asaas_pix_qrcode(payment['id'])
+        
+        # 4. Salvar dados da cobrança no banco
+        payment_record = {
+            "id": str(uuid.uuid4()),
+            "asaas_payment_id": payment['id'],
+            "asaas_customer_id": customer['id'],
+            "user_email": email,
+            "user_name": name,
+            "user_cpf": cpf,
+            "amount": course_price,
+            "status": "pending",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "external_reference": external_reference,
+            "payment_method": "PIX",
+            "due_date": payment.get('dueDate'),
+            "pix_qrcode": pix_qrcode.get('payload') if pix_qrcode else None,
+            "pix_qrcode_image": pix_qrcode.get('encodedImage') if pix_qrcode else None
+        }
+        
+        await db.asaas_payments.insert_one(payment_record)
+        
+        # 5. Atualizar subscription com dados do pagamento
+        await db.subscriptions.update_one(
+            {"email": email},
+            {
+                "$set": {
+                    "asaas_payment_id": payment['id'],
+                    "asaas_customer_id": customer['id'],
+                    "payment_status": "pending",
+                    "payment_created_at": datetime.now(timezone.utc).isoformat()
+                }
+            }
+        )
+        
+        logging.info(f"✅ Pagamento Asaas criado: {payment['id']} - {name} - R$ {course_price}")
+        
+        return {
+            "success": True,
+            "payment_id": payment['id'],
+            "customer_id": customer['id'],
+            "amount": course_price,
+            "status": payment['status'],
+            "due_date": payment['dueDate'],
+            "payment_url": payment.get('invoiceUrl'),
+            "pix_qrcode": pix_qrcode.get('payload') if pix_qrcode else None,
+            "pix_qrcode_image": pix_qrcode.get('encodedImage') if pix_qrcode else None,
+            "message": "Pagamento PIX criado com sucesso!"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"❌ Erro ao criar pagamento: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Erro interno: {str(e)}")
+
 @api_router.post("/courses/default/set-price")
 async def set_default_course_price(price_data: dict):
     """Definir preço do curso padrão"""
