@@ -726,9 +726,9 @@ const StudentPortalComplete = () => {
                   <CheckCircle className="h-4 w-4 text-green-600" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">2/4</div>
+                  <div className="text-2xl font-bold">0/{modules.length || 1}</div>
                   <p className="text-xs text-muted-foreground">
-                    50% do curso completo
+                    {modules.length > 0 ? '0% do curso completo' : 'Aguardando módulos'}
                   </p>
                 </CardContent>
               </Card>
@@ -739,9 +739,9 @@ const StudentPortalComplete = () => {
                   <Trophy className="h-4 w-4 text-yellow-600" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">8.5</div>
+                  <div className="text-2xl font-bold">-</div>
                   <p className="text-xs text-muted-foreground">
-                    Excelente desempenho
+                    Sem avaliações ainda
                   </p>
                 </CardContent>
               </Card>
@@ -752,7 +752,7 @@ const StudentPortalComplete = () => {
                   <Clock className="h-4 w-4 text-blue-600" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">24h</div>
+                  <div className="text-2xl font-bold">0h</div>
                   <p className="text-xs text-muted-foreground">
                     Este mês
                   </p>
@@ -761,13 +761,15 @@ const StudentPortalComplete = () => {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Certificado</CardTitle>
+                  <CardTitle className="text-sm font-medium">Status do Curso</CardTitle>
                   <Award className="h-4 w-4 text-purple-600" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">50%</div>
+                  <div className="text-2xl font-bold">
+                    {user?.course_access === 'granted' ? '✅' : '⏳'}
+                  </div>
                   <p className="text-xs text-muted-foreground">
-                    Para liberação
+                    {user?.course_access === 'granted' ? 'Liberado' : 'Aguardando'}
                   </p>
                 </CardContent>
               </Card>
