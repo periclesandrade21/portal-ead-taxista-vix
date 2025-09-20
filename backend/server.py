@@ -1028,14 +1028,22 @@ async def login_student(login_request: LoginRequest):
                 detail="Acesso liberado apenas após confirmação do pagamento. Entre em contato se já pagou."
             )
         
-        # Retornar dados do usuário (sem informações sensíveis)
+        # Retornar dados completos do usuário (sem informações sensíveis)
         user_data = {
             "id": user.get("id"),
             "name": user.get("name"),
             "email": user.get("email"),
+            "phone": user.get("phone"),
+            "cpf": user.get("cpf"),
+            "city": user.get("city"),
+            "car_plate": user.get("car_plate"),
+            "license_number": user.get("license_number"),
             "status": user.get("status"),
             "course_access": user.get("course_access", "denied"),
-            "created_at": user.get("created_at")
+            "payment_status": user.get("payment_status", "pending"),
+            "course_progress": user.get("course_progress", 0),
+            "created_at": user.get("created_at"),
+            "photo": user.get("photo", None)
         }
         
         logging.info(f"Login realizado com sucesso: {email_normalized}")
