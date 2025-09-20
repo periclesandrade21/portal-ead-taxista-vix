@@ -59,29 +59,52 @@ const PaymentStep = ({ data, updateData, onComplete }) => {
         if (paymentResponse.ok) {
           const paymentResult = await paymentResponse.json();
           
-          // Mostrar popup sobre pagamento PIX criado
+          // Mostrar popup melhorado sobre pagamento
           setTimeout(() => {
-            alert(`💳 Pagamento PIX Criado!\n\n` +
-                  `✅ ${paymentResult.message}\n` +
-                  `💰 Valor: R$ ${paymentResult.amount.toFixed(2)}\n` +
-                  `📅 Vencimento: ${paymentResult.due_date}\n\n` +
-                  `📋 Próximos passos:\n` +
-                  `1. Pague via PIX usando o QR Code\n` +
-                  `2. Aguarde confirmação automática\n` +
-                  `3. Receba acesso por WhatsApp\n\n` +
-                  `🔄 Redirecionando para pagamento...`);
+            const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', {
+              style: 'currency',
+              currency: 'BRL'
+            }).format(value);
             
-            // Mostrar popup sobre documentos e liberação do curso
+            const formatDate = (dateStr) => {
+              if (!dateStr) return 'Data não informada';
+              try {
+                return new Date(dateStr).toLocaleDateString('pt-BR');
+              } catch {
+                return dateStr;
+              }
+            };
+            
+            alert(`🎉 PAGAMENTO PIX GERADO COM SUCESSO!\n\n` +
+                  `✅ ${paymentResult.message}\n\n` +
+                  `💰 VALOR: ${formatCurrency(paymentResult.amount)}\n` +
+                  `📅 VENCIMENTO: ${formatDate(paymentResult.due_date)}\n` +
+                  `🆔 ID PAGAMENTO: ${paymentResult.payment_id}\n\n` +
+                  `📱 COMO PAGAR:\n` +
+                  `1. Abra seu banco ou aplicativo PIX\n` +
+                  `2. Escaneie o QR Code na próxima tela\n` +
+                  `3. Confirme o pagamento de ${formatCurrency(paymentResult.amount)}\n` +
+                  `4. O curso será liberado automaticamente!\n\n` +
+                  `⚡ PIX é instantâneo - você receberá acesso em segundos!`);
+            
+            // Mostrar popup sobre processo completo
             setTimeout(() => {
-              alert(`📋 Informações Importantes:\n\n` +
-                    `🔄 Seu curso será liberado quando:\n` +
-                    `• Pagamento PIX for confirmado\n` +
-                    `• Documentos forem conferidos pela equipe\n\n` +
-                    `📱 Você receberá uma mensagem no WhatsApp confirmando:\n` +
-                    `• Liberação do acesso ao curso\n` +
-                    `• Instruções para entrar no portal\n` +
-                    `• Login e senha de acesso\n\n` +
-                    `💳 Finalize seu pagamento PIX agora!`);
+              alert(`📚 PROCESSO DE LIBERAÇÃO DO CURSO\n\n` +
+                    `🔄 APÓS SEU PAGAMENTO PIX:\n` +
+                    `✅ Confirmação automática em segundos\n` +
+                    `✅ Curso liberado imediatamente\n` +
+                    `✅ Acesso ao portal de estudos\n\n` +
+                    `📱 VOCÊ RECEBERÁ NO WHATSAPP:\n` +
+                    `• Confirmação do pagamento\n` +
+                    `• Link para acessar o curso\n` +
+                    `• Suas credenciais de login\n` +
+                    `• Instruções de uso do portal\n\n` +
+                    `🎓 CONTEÚDO DO CURSO (28 horas):\n` +
+                    `• Direção Defensiva (8h)\n` +
+                    `• Relações Humanas (14h)\n` +
+                    `• Primeiros Socorros (2h)\n` +
+                    `• Mecânica Básica (4h)\n\n` +
+                    `💳 Clique OK para ir à página de pagamento!`);
               
               // Finalizar e abrir popup de pagamento
               if (onComplete) {
@@ -91,7 +114,7 @@ const PaymentStep = ({ data, updateData, onComplete }) => {
                   paymentData: paymentResult
                 });
               }
-            }, 1500);
+            }, 2000);
           }, 1500);
           
         } else {
