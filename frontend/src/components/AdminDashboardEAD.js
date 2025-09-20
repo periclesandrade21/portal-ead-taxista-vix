@@ -723,13 +723,42 @@ const AdminDashboardEAD = () => {
   const handleDeleteUser = async (userId) => {
     try {
       const userToDelete = users.find(u => u.id === userId);
-      if (!userToDelete) return;
+      if (!userToDelete) {
+        alert('❌ Usuário não encontrado!');
+        return;
+      }
       
-      setUsers(prev => prev.filter(u => u.id !== userId));
-      alert(`✅ Usuário ${userToDelete.name} removido com sucesso!`);
+      // Confirmação antes de excluir
+      const confirmDelete = window.confirm(`Tem certeza que deseja excluir o usuário "${userToDelete.name}"?\n\nEsta ação não pode ser desfeita.`);
+      if (!confirmDelete) return;
+      
+      // Chamar API para excluir do banco
+      try {
+        const response = await axios.delete(`${BACKEND_URL}/api/subscriptions/${userId}`);
+        
+        if (response.status === 200) {
+          // Remover do estado local
+          setUsers(prev => prev.filter(u => u.id !== userId));
+          setSubscriptions(prev => prev.filter(s => s.id !== userId));
+          
+          // Recalcular estatísticas
+          const newStats = calculateRealStats(subscriptions.filter(s => s.id !== userId), payments);
+          setDashboardStats(newStats);
+          
+          alert(`✅ Usuário "${userToDelete.name}" removido com sucesso!`);
+        } else {
+          throw new Error('Falha na exclusão');
+        }
+      } catch (apiError) {
+        console.error('Erro na API ao excluir usuário:', apiError);
+        // Se a API falhar, ainda remover do estado local para feedback imediato
+        setUsers(prev => prev.filter(u => u.id !== userId));
+        alert(`⚠️ Usuário removido localmente (possível erro na API)`);
+      }
+      
     } catch (error) {
       console.error('Erro ao excluir usuário:', error);
-      alert('Erro ao excluir usuário. Tente novamente.');
+      alert('❌ Erro ao excluir usuário. Tente novamente.');
     }
   };
 
