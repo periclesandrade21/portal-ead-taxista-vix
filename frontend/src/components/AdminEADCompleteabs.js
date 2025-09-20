@@ -1370,8 +1370,18 @@ export const DocumentsTab = ({
                     <div className="bg-white p-3 rounded border">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-medium text-sm">🏠 Comprovante</span>
-                        <Badge className="bg-yellow-100 text-yellow-800 text-xs">
-                          ⏳ Pendente
+                        <Badge className={
+                          student.documents_status === 'approved' || student.status === 'granted' 
+                            ? "bg-green-100 text-green-800 text-xs" 
+                            : student.documents_status === 'rejected' 
+                              ? "bg-red-100 text-red-800 text-xs"
+                              : "bg-yellow-100 text-yellow-800 text-xs"
+                        }>
+                          {student.documents_status === 'approved' || student.status === 'granted' 
+                            ? '✅ Aprovado' 
+                            : student.documents_status === 'rejected' 
+                              ? '❌ Rejeitado'
+                              : '⏳ Pendente'}
                         </Badge>
                       </div>
                       <div className="text-xs text-gray-600 space-y-1">
