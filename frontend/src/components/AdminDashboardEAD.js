@@ -321,16 +321,8 @@ const AdminDashboardEAD = () => {
     // Usar apenas dados reais da API - sem dados mockados
     console.log('📊 Carregando apenas dados reais da API...');
     
-    // Dados reais já foram carregados pelas funções fetch
-    // Não carregar mais dados mockados
-      {
-        id: '3', name: 'Carlos Eduardo', cpf: '456.789.123-00', cnh: '4567891230',
-        license_number: 'TAX003', city: 'Serra', phone: '(27) 99999-0003',
-        email: 'carlos@email.com', status: 'pending', course_progress: 25,
-        documents_status: 'rejected', last_access: '2024-09-17', photo: null
-      }
-    ];
-    setDrivers(mockDrivers);
+    // Dados reais já foram carregados pelas funções fetch - não fazer nada aqui
+    console.log('✅ Sistema configurado para usar apenas dados reais');
 
       // Carregar inscrições (mock para manter compatibilidade)
       const mockSubscriptions = mockDrivers.map(driver => ({
