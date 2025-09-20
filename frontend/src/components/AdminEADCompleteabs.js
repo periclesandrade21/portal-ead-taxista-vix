@@ -248,7 +248,7 @@ export const PaymentsTab = ({ paymentStats, adminStats, dateFilter, setDateFilte
               <div className="flex justify-between items-center">
                 <span className="font-medium">{stat.city}</span>
                 <div className="text-right">
-                  <span className="font-bold">R$ {stat.revenue.toLocaleString()}</span>
+                  <span className="font-bold">R$ {(stat.revenue || 0).toLocaleString()}</span>
                   <span className="text-sm text-gray-500 ml-2">({stat.paid} pagos)</span>
                 </div>
               </div>
