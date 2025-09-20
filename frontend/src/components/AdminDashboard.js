@@ -997,7 +997,7 @@ const AdminDashboard = () => {
                           <span className="font-medium">{data.month}</span>
                         </div>
                         <div className="text-right">
-                          <div className="font-bold text-green-600">R$ {data.receita.toLocaleString()}</div>
+                          <div className="font-bold text-green-600">R$ {(data.receita || 0).toLocaleString()}</div>
                           <div className="text-sm text-gray-500">{data.pagamentos} pagamentos</div>
                         </div>
                       </div>
