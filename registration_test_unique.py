@@ -76,7 +76,7 @@ def test_registration_flow():
     ]
     
     test_data = {
-        "name": f"{random.choice(unique_names)} {random_id}",
+        "name": random.choice(unique_names),  # Remove random_id from name
         "email": f"teste.fluxo.{timestamp}.{random_id}@email.com",
         "phone": f"27{random.randint(900000000, 999999999)}",
         "cpf": generate_valid_cpf(),
