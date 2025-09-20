@@ -84,6 +84,29 @@ def test_1_create_asaas_customer():
         print_error(f"Customer data preparation failed: {str(e)}")
         return False, None
 
+def generate_valid_cpf():
+    """Generate a valid CPF for testing"""
+    import random
+    
+    # Generate first 9 digits
+    cpf = [random.randint(0, 9) for _ in range(9)]
+    
+    # Calculate first verification digit
+    sum1 = sum(cpf[i] * (10 - i) for i in range(9))
+    digit1 = 11 - (sum1 % 11)
+    if digit1 >= 10:
+        digit1 = 0
+    cpf.append(digit1)
+    
+    # Calculate second verification digit
+    sum2 = sum(cpf[i] * (11 - i) for i in range(10))
+    digit2 = 11 - (sum2 % 11)
+    if digit2 >= 10:
+        digit2 = 0
+    cpf.append(digit2)
+    
+    return ''.join(map(str, cpf))
+
 def test_2_subscription_creation(customer_data):
     """Test 2: Create subscription via /api/subscribe"""
     print_test_header("TEST 2: Subscription Creation (/api/subscribe)")
@@ -94,11 +117,12 @@ def test_2_subscription_creation(customer_data):
     
     # Prepare subscription data with unique identifiers
     timestamp = str(int(time.time()))
+    unique_cpf = generate_valid_cpf()
     subscription_data = {
         "name": customer_data["name"],
         "email": customer_data["email"],
-        "phone": customer_data["phone"],
-        "cpf": f"111{timestamp[-8:]}",  # Generate unique CPF-like number
+        "phone": f"27999{timestamp[-6:]}",  # Unique phone
+        "cpf": unique_cpf,  # Generate valid unique CPF
         "carPlate": f"MSC-{timestamp[-4:]}-T",
         "licenseNumber": f"TA-{timestamp[-5:]}",
         "city": "Vitória",
