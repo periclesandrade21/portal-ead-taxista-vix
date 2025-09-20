@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Implementar melhorias no Admin EAD Taxistas: 1) Adicionar descontos/doação e reset de senha na gestão de inscrições, 2) Excluir aba duplicada 'Gestão de Motoristas', 3) Criar aba completa de Relatórios com 9 tipos essenciais, 4) Excluir botão 'Portal Admin' do frontend."
+user_problem_statement: "PROBLEMAS CRÍTICOS REPORTADOS: 1) Admin EAD nada está funcionando - usuário não consegue acessar, 2) Cadastro não está cadastrando aluno - validações muito restritivas, 3) API do WhatsApp dando erro - testado e funcionando corretamente, problema era temporário"
 
 backend:
   - task: "Sistema de gestão de descontos e doações"
