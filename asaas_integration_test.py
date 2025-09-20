@@ -92,14 +92,15 @@ def test_2_subscription_creation(customer_data):
         print_error("No customer data available from previous test")
         return False, None
     
-    # Prepare subscription data
+    # Prepare subscription data with unique identifiers
+    timestamp = str(int(time.time()))
     subscription_data = {
         "name": customer_data["name"],
         "email": customer_data["email"],
         "phone": customer_data["phone"],
-        "cpf": customer_data["cpf"],
-        "carPlate": "MSC-1234-T",
-        "licenseNumber": "TA-12345",
+        "cpf": f"111{timestamp[-8:]}",  # Generate unique CPF-like number
+        "carPlate": f"MSC-{timestamp[-4:]}-T",
+        "licenseNumber": f"TA-{timestamp[-5:]}",
         "city": "Vitória",
         "lgpd_consent": True
     }
