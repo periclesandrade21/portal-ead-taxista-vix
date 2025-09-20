@@ -358,7 +358,7 @@ export const CitiesTab = ({ cities }) => (
                   </div>
                   
                   <div className="text-center p-3 bg-blue-50 rounded-lg">
-                    <div className="text-xl font-bold text-blue-600">R$ {city.revenue.toLocaleString()}</div>
+                    <div className="text-xl font-bold text-blue-600">R$ {(city.revenue || 0).toLocaleString()}</div>
                     <p className="text-sm text-blue-700">Receita Total</p>
                   </div>
                   
