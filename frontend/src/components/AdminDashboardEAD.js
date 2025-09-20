@@ -113,7 +113,15 @@ const AdminDashboardEAD = () => {
   const [subscriptions, setSubscriptions] = useState([]);
   const [users, setUsers] = useState([]);
   const [payments, setPayments] = useState([]);
-  const [adminStats, setAdminStats] = useState({});
+  const [adminStats, setAdminStats] = useState({
+    totalRevenue: 0,
+    monthlyRevenue: 0,
+    weeklyRevenue: 0,
+    dailyRevenue: 0,
+    paidSubscriptions: 0,
+    totalSubscriptions: 0,
+    pendingSubscriptions: 0
+  });
   const [cities, setCities] = useState([]);
   const [paymentStats, setPaymentStats] = useState([]);
   const [adminUsers, setAdminUsers] = useState([]);
