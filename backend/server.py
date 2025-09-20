@@ -3429,6 +3429,9 @@ async def create_asaas_payment(customer_id: str, value: float, description: str,
             "installmentValue": float(value)
         }
         
+        # Log detalhado dos dados sendo enviados
+        logging.info(f"🔍 Enviando para Asaas: {json.dumps(payment_data, indent=2, default=str)}")
+        
         response = requests.post(
             f"{ASAAS_API_URL}/payments",
             json=payment_data,
@@ -3439,6 +3442,7 @@ async def create_asaas_payment(customer_id: str, value: float, description: str,
         if response.status_code in [200, 201]:
             payment = response.json()
             logging.info(f"✅ Cobrança Asaas criada: {payment.get('id')} - R$ {value}")
+            logging.info(f"🔍 Resposta Asaas: {json.dumps(payment, indent=2, default=str)}")
             return payment
         else:
             logging.error(f"❌ Erro ao criar cobrança Asaas: {response.status_code} - {response.text}")
