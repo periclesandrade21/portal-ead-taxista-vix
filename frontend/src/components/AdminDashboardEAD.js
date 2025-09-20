@@ -177,23 +177,32 @@ const AdminDashboardEAD = () => {
     }
   };
 
-  const calculateRealStats = (subscriptions, payments) => {
-    const totalDrivers = subscriptions.length;
-    const certifiedDrivers = subscriptions.filter(s => s.status === 'granted' || s.course_progress === 100).length;
-    const avgProgress = totalDrivers > 0 ? Math.round(subscriptions.reduce((sum, s) => sum + (s.course_progress || 0), 0) / totalDrivers) : 0;
-    const paidDrivers = subscriptions.filter(s => s.payment_status === 'paid').length;
-    const approvalRate = totalDrivers > 0 ? Math.round((paidDrivers / totalDrivers) * 100) : 0;
-    const pendingCertifications = subscriptions.filter(s => s.status === 'pending').length;
-    
-    return {
-      totalDrivers,
-      certifiedDrivers,
-      avgProgress,
-      approvalRate,
-      pendingCertifications,
-      activeCourses: 1, // Curso EAD Taxista
-      lastMonthGrowth: Math.max(0, totalDrivers - 5) // Simular crescimento
-    };
+  const calculateRealStats = (subscriptions = [], payments = []) => {
+    try {
+      const totalDrivers = subscriptions.length || 0;
+      const certifiedDrivers = subscriptions.filter(s => s && (s.status === 'granted' || s.course_progress === 100)).length || 0;
+      const avgProgress = totalDrivers > 0 ? Math.round(subscriptions.reduce((sum, s) => sum + (s?.course_progress || 0), 0) / totalDrivers) : 0;
+      const paidDrivers = subscriptions.filter(s => s && s.payment_status === 'paid').length || 0;
+      const approvalRate = totalDrivers > 0 ? Math.round((paidDrivers / totalDrivers) * 100) : 0;
+      const pendingCertifications = subscriptions.filter(s => s && s.status === 'pending').length || 0;
+      
+      return {
+        totalDrivers,
+        certifiedDrivers: certifiedDrivers,
+        averageProgress: avgProgress,
+        totalAlerts: pendingCertifications,
+        lastMonthGrowth: Math.max(0, totalDrivers - 5) // Simular crescimento
+      };
+    } catch (error) {
+      console.error('Erro ao calcular estatísticas:', error);
+      return {
+        totalDrivers: 0,
+        certifiedDrivers: 0,
+        averageProgress: 0,
+        totalAlerts: 0,
+        lastMonthGrowth: 0
+      };
+    }
   };
 
   const loadAdminData = async () => {
