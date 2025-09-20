@@ -390,7 +390,7 @@ def test_6_complete_flow_validation():
         "name": "Maria Silva Costa",
         "email": f"maria.complete.flow.{timestamp}@email.com",
         "phone": "27999888777",
-        "cpf": "12345678901",
+        "cpf": "11144477735",  # Valid CPF with correct verification digits
         "carPlate": "MCF-1234-T",
         "licenseNumber": "TA-54321",
         "city": "Vitória",
