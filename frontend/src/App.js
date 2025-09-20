@@ -470,9 +470,24 @@ const Home = () => {
 
   const handleRegistrationComplete = (registrationData) => {
     console.log('Registration completed:', registrationData);
-    // Redirect to student portal or show success message
+    
+    // Salvar dados da inscrição para o popup de pagamento
+    setUserSubscription(registrationData.subscriptionData);
+    
+    // Fechar modal de cadastro
     setShowNewRegistration(false);
-    alert('🎉 Cadastro concluído com sucesso! Você já pode acessar o curso.');
+    
+    // Abrir popup de pagamento
+    setCurrentStep('payment');
+    
+    // Mostrar popup informativo sobre o próximo passo
+    setTimeout(() => {
+      alert(`💳 Agora finalize seu pagamento!\n\n` +
+            `✅ Cadastro realizado com sucesso\n` +
+            `💰 Valor: R$ ${coursePrice.toFixed(2)}\n` +
+            `💳 Forma: PIX Instantâneo\n\n` +
+            `🔄 Você será direcionado para a página de pagamento.`);
+    }, 500);
   };
 
   console.log('showNewRegistration state:', showNewRegistration); // DEBUG
