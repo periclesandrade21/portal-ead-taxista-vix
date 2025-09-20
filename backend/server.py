@@ -2959,6 +2959,31 @@ async def get_admin_users():
         logger.error(f"Error getting admin users: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/admin/set-temp-password")
+async def set_temp_password(request: dict):
+    """Definir senha temporária para usuário - DEBUG"""
+    try:
+        email = request.get('email')
+        password = request.get('password')
+        
+        if not email or not password:
+            raise HTTPException(status_code=400, detail="Email e senha são obrigatórios")
+        
+        result = await db.subscriptions.update_one(
+            {"email": email},
+            {"$set": {"temporary_password": password}}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Usuário não encontrado")
+        
+        return {"message": f"Senha temporária definida para {email}", "password": password}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/admin/clear-all-data")
 async def clear_all_data(request: dict):
     """Limpar todos os dados do sistema para testes - CUIDADO!"""
