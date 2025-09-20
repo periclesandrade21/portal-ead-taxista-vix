@@ -642,6 +642,42 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
+  - task: "Admin EAD Login System"
+    implemented: true
+    working: false
+    file: "server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL ISSUE - Admin EAD login não funcionando. Testes abrangentes revelaram: 1) ENDPOINT EXISTS: /api/auth/login existe mas requer formato de email, não username. 2) NO ADMIN USER: Nenhum usuário admin encontrado no sistema com credenciais admin@sindtaxi-es.org/admin123. 3) AUTHENTICATION SYSTEM: Sistema de autenticação existe mas não há usuários admin cadastrados. 4) IMPACT: Administradores não conseguem acessar o sistema EAD. 5) ROOT CAUSE: Falta de usuário admin no banco de dados ou credenciais incorretas. URGENTE: Criar usuário admin no sistema ou verificar credenciais corretas."
+
+  - task: "Registration Flow System"
+    implemented: true
+    working: false
+    file: "server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL ISSUE - Cadastro não funcionando. Testes detalhados revelaram: 1) ENDPOINT EXISTS: /api/subscribe existe e está funcional. 2) VALIDATION ISSUES: Validação muito restritiva causando falhas: a) Formato de placa inválido (requer ABC-1234-T, ABC1D23 ou ABC1234), b) CPF duplicado/inválido, c) Telefone duplicado. 3) DATA CONFLICTS: Dados de teste conflitam com registros existentes no banco. 4) IMPACT: Novos usuários não conseguem se cadastrar. 5) ROOT CAUSE: Validação backend muito rigorosa e possíveis dados duplicados. URGENTE: Revisar validações de placa, CPF e telefone no server.py."
+
+  - task: "WhatsApp API Integration"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ WhatsApp API funcionando corretamente. Análise detalhada confirmou: 1) ENDPOINTS EXIST: /api/subscribe e /api/auth/reset-password existem e respondem corretamente. 2) WHATSAPP FIELDS: Campos password_sent_whatsapp presentes nas respostas da API. 3) FUNCTIONALITY: API retorna status WhatsApp como mencionado na revisão (password_sent_whatsapp: true). 4) DEPENDENCY: Funcionalidade depende do cadastro funcionar primeiro. 5) STATUS: WhatsApp API está operacional, problema é com validação de cadastro que impede testes completos. API do WhatsApp não tem erro - o problema está na validação de dados do cadastro."
+
 agent_communication:
   - agent: "main"
     message: "Iniciando implementação do bot IA. Prioridades: 1) Bot IA funcional, 2) Ajustes no formulário, 3) Autoplay video, 4) Preparar estrutura para fluxo cadastro+pagamento"
@@ -662,7 +698,9 @@ agent_communication:
   - agent: "testing"
     message: "✅ ASAAS PAYMENT FLOW TESTING COMPLETED SUCCESSFULLY - Comprehensive testing of complete payment flow executed with 13/13 tests passed. All Asaas integration endpoints working perfectly: 1) POST /api/subscribe creates subscriptions with 'pending' status correctly, 2) POST /api/webhook/asaas-payment processes PAYMENT_CONFIRMED events and updates status to 'paid' with course access granted, 3) POST /api/payment/verify-status returns correct payment status and course access information. Backend logs confirm complete flow working: subscription creation → webhook processing → course access granted. The Asaas sandbox integration is fully operational and ready for production use. Chat bot system also remains fully functional with all 9 tests passing."
   - agent: "testing"
-    message: "✅ SIMPLIFIED PAYMENT INTERFACE TESTING COMPLETED SUCCESSFULLY - Comprehensive testing of the new simplified payment interface executed with all 8 test scenarios passed: 1) Registration form accepts specified test data (João Teste Silva, joao.teste@email.com, 27999999999, TST-1234, 54321, Vitória) and submits successfully, 2) Redirects correctly to simplified payment page with title '🎓 Finalizar Pagamento', 3) Summary section '📋 Resumo do Cadastro' displays all user data correctly, 4) Main payment button '💳 Finalizar Pagamento' opens correct Asaas sandbox URL (https://sandbox.asaas.com/i/bsnw3pmz2yiacw1w) in new tab, 5) Verification button '✅ Verificar Status do Pagamento' is functional, 6) Interface is fully responsive on mobile devices, 7) Clean and simplified design confirmed (no complex grid layouts), 8) Video autoplay working with ?autoplay=1 parameter. The interface successfully removes complexity while maintaining all essential functionality. Ready for production use."
+    message: "✅ SIMPLIFIED PAYMENT INTERFACE TESTING COMPLETED SUCCESSFULLY - Comprehensive testing of the new simplified payment interface executed with all 8 test scenarios passed: 1) Registration form accepts specified test data (João Teste Silva, joao.teste@email.com, 27999999999, TST-1234, 54321, Vitória) and submits successfully, 2) Redirects correctly to simplified payment page with title '🎓 Finalizar Pagamento', 3) Summary section '📋 Resumo do Cadastro' displays all user data correctly, 4) Main payment but"
+  - agent: "testing"
+    message: "🚨 CRITICAL BACKEND ISSUES IDENTIFIED - Comprehensive testing of the 3 reported problems revealed: 1) ADMIN EAD LOGIN: ❌ FAILED - No admin user exists in system with admin/admin123 credentials. Login endpoint exists (/api/auth/login) but requires email format and no admin email found. 2) REGISTRATION FLOW: ❌ FAILED - Backend validation too strict causing registration failures. Issues: invalid car plate format (requires ABC-1234-T), CPF validation errors, duplicate data conflicts. 3) WHATSAPP API: ✅ WORKING - API endpoints exist and return WhatsApp status correctly. Issue is dependency on registration working first. BACKEND HEALTH: ✅ Backend is healthy, database connected (2 subscriptions found). URGENT FIXES NEEDED: Create admin user in database, fix registration validation rules for car plates and CPF."ton '💳 Finalizar Pagamento' opens correct Asaas sandbox URL (https://sandbox.asaas.com/i/bsnw3pmz2yiacw1w) in new tab, 5) Verification button '✅ Verificar Status do Pagamento' is functional, 6) Interface is fully responsive on mobile devices, 7) Clean and simplified design confirmed (no complex grid layouts), 8) Video autoplay working with ?autoplay=1 parameter. The interface successfully removes complexity while maintaining all essential functionality. Ready for production use."
   - agent: "testing"
     message: "✅ CORA INTERFACE CHANGES TESTING COMPLETED SUCCESSFULLY - All requested changes have been implemented and tested successfully: 1) Cora documentation link (https://developers.cora.com.br/docs/instrucoes-iniciais) is present, clickable, and opens in new tab, 2) Section title changed from '📋 Resumo do Cadastro' to '👤 Dados do Taxista' as requested, 3) Old '📋 Resumo do Cadastro' section completely removed, 4) '💳 Finalizar Pagamento' button maintained and functional (opens Asaas sandbox), 5) '✅ Verificar Status do Pagamento' button maintained and functional, 6) All elements fully responsive on mobile devices, 7) User data correctly displayed in new section format. Form submission working correctly (resolved duplicate email issue). Complete flow tested: registration → payment page → all interface elements verified. All 6 test scenarios passed successfully. Ready for production use."
   - agent: "testing"
