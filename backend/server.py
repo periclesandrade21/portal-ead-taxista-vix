@@ -3120,7 +3120,7 @@ async def debug_asaas_payment(payment_id: str):
         
         # Verificar na Asaas
         headers = {
-            'Authorization': f'Bearer {ASAAS_TOKEN}',
+            'access_token': ASAAS_TOKEN,
             'Content-Type': 'application/json'
         }
         
@@ -3401,7 +3401,7 @@ async def create_asaas_customer(name: str, email: str, cpf: str, phone: str):
     """Criar cliente na Asaas"""
     try:
         headers = {
-            'Authorization': f'Bearer {ASAAS_TOKEN}',
+            'access_token': ASAAS_TOKEN,
             'Content-Type': 'application/json'
         }
         
@@ -3450,7 +3450,7 @@ async def create_asaas_payment(customer_id: str, value: float, description: str,
     """Criar cobrança na Asaas"""
     try:
         headers = {
-            'Authorization': f'Bearer {ASAAS_TOKEN}',
+            'access_token': ASAAS_TOKEN,
             'Content-Type': 'application/json'
         }
         
@@ -3497,7 +3497,7 @@ async def get_asaas_pix_qrcode(payment_id: str):
     """Obter QR Code PIX da cobrança"""
     try:
         headers = {
-            'Authorization': f'Bearer {ASAAS_TOKEN}',
+            'access_token': ASAAS_TOKEN,
             'Content-Type': 'application/json'
         }
         
