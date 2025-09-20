@@ -1181,9 +1181,9 @@ async def create_payment_asaas(request: dict):
         if not customer:
             raise HTTPException(status_code=500, detail="Erro ao criar cliente na Asaas")
         
-        # 2. Criar cobrança PIX
-        description = f"Curso EAD Taxista ES - {name}"
-        external_reference = f"ead-taxi-{email}-{int(datetime.now().timestamp())}"
+        # 2. Criar cobrança PIX com descrição detalhada
+        description = f"Curso EAD Taxista Espírito Santo - {name} - 28h de conteúdo completo"
+        external_reference = f"ead-taxi-{email.replace('@', '-').replace('.', '-')}-{int(datetime.now().timestamp())}"
         
         payment = await create_asaas_payment(
             customer['id'], 
