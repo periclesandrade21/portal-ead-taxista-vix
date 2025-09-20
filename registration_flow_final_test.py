@@ -214,7 +214,7 @@ def test_error_handling():
             if response.status_code in expected_statuses:
                 if response.headers.get('content-type', '').startswith('application/json'):
                     error_detail = response.json().get('detail', '')
-                    if scenario['expected_error'].lower() in error_detail.lower():
+                    if isinstance(error_detail, str) and scenario['expected_error'].lower() in error_detail.lower():
                         print_success(f"   ✅ {scenario['name']}: Correctly rejected")
                         print_info(f"      Error: {error_detail}")
                         tests_passed += 1
