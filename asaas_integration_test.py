@@ -63,7 +63,7 @@ def test_1_create_asaas_customer():
     customer_data = {
         "name": "Maria Silva Costa",
         "email": f"maria.asaas.teste.{int(time.time())}@email.com",
-        "cpf": "12345678901",  # Valid format CPF
+        "cpf": "11144477735",  # Valid CPF with correct verification digits
         "phone": "27999888777"
     }
     
