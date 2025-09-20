@@ -414,7 +414,7 @@ def test_6_complete_flow_validation():
     
     # Step 1: Create subscription
     subscription_data = {
-        "name": "Maria Silva Costa",
+        "name": f"Maria Silva Costa {timestamp}",  # Unique name
         "email": f"maria.complete.flow.{timestamp}@email.com",
         "phone": f"27999{str(timestamp)[-6:]}",  # Unique phone
         "cpf": unique_cpf,  # Generate valid unique CPF
