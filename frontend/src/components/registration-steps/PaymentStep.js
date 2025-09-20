@@ -34,15 +34,19 @@ const PaymentStep = ({ data, updateData, onComplete }) => {
       if (subscribeResponse.ok) {
         const subscribeResult = await subscribeResponse.json();
         
-        // Mostrar popup de sucesso do cadastro
-        alert(`🎉 Cadastro realizado com sucesso!\n\n` +
-              `Nome: ${data.fullName}\n` +
-              `Email: ${data.email}\n` +
-              `Telefone: ${data.cellPhone}\n\n` +
-              `✅ ${subscribeResult.message}\n` +
-              `📧 Email: ${subscribeResult.password_sent_email ? '✅ Enviado' : '❌ Falhou'}\n` +
-              `📱 WhatsApp: ${subscribeResult.password_sent_whatsapp ? '✅ Enviado' : '❌ Falhou'}\n` +
-              `🔐 Senha temporária: ${subscribeResult.temporary_password}`);
+        // Mostrar popup melhorado de sucesso do cadastro
+        alert(`🎉 CADASTRO CONCLUÍDO COM SUCESSO!\n\n` +
+              `👤 DADOS CONFIRMADOS:\n` +
+              `• Nome: ${data.fullName}\n` +
+              `• Email: ${data.email}\n` +
+              `• Telefone: ${data.cellPhone}\n` +
+              `• Cidade: ${data.city}\n\n` +
+              `✅ ${subscribeResult.message}\n\n` +
+              `🔐 CREDENCIAIS DE ACESSO:\n` +
+              `📧 Email: ${subscribeResult.password_sent_email ? '✅ Enviado com sucesso' : '❌ Falha no envio'}\n` +
+              `📱 WhatsApp: ${subscribeResult.password_sent_whatsapp ? '✅ Enviado com sucesso' : '❌ Falha no envio'}\n` +
+              `🔑 Senha temporária: ${subscribeResult.temporary_password}\n\n` +
+              `💡 Guarde esta senha para acessar o Portal do Aluno!`);
         
         // ETAPA 2: Criar pagamento na Asaas
         const paymentResponse = await fetch(`${BACKEND_URL}/api/create-payment`, {
