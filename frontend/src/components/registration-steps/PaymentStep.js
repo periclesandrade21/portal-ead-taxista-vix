@@ -11,9 +11,10 @@ const PaymentStep = ({ data, updateData, onComplete }) => {
     setIsRedirecting(true);
     
     try {
-      // Fazer cadastro real na API
       const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-      const response = await fetch(`${BACKEND_URL}/api/subscribe`, {
+      
+      // ETAPA 1: Fazer cadastro real na API
+      const subscribeResponse = await fetch(`${BACKEND_URL}/api/subscribe`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -30,38 +31,77 @@ const PaymentStep = ({ data, updateData, onComplete }) => {
         })
       });
 
-      if (response.ok) {
-        const result = await response.json();
+      if (subscribeResponse.ok) {
+        const subscribeResult = await subscribeResponse.json();
         
         // Mostrar popup de sucesso do cadastro
         alert(`🎉 Cadastro realizado com sucesso!\n\n` +
               `Nome: ${data.fullName}\n` +
               `Email: ${data.email}\n` +
               `Telefone: ${data.cellPhone}\n\n` +
-              `✅ ${result.message}\n` +
-              `📧 Email: ${result.password_sent_email ? '✅ Enviado' : '❌ Falhou'}\n` +
-              `📱 WhatsApp: ${result.password_sent_whatsapp ? '✅ Enviado' : '❌ Falhou'}\n` +
-              `🔐 Senha temporária: ${result.temporary_password}`);
+              `✅ ${subscribeResult.message}\n` +
+              `📧 Email: ${subscribeResult.password_sent_email ? '✅ Enviado' : '❌ Falhou'}\n` +
+              `📱 WhatsApp: ${subscribeResult.password_sent_whatsapp ? '✅ Enviado' : '❌ Falhou'}\n` +
+              `🔐 Senha temporária: ${subscribeResult.temporary_password}`);
         
-        // Mostrar popup sobre documentos e liberação do curso
-        setTimeout(() => {
-          alert(`📋 Informações Importantes:\n\n` +
-                `🔄 Seu curso será liberado quando:\n` +
-                `• Pagamento for confirmado via PIX\n` +
-                `• Documentos forem conferidos pela equipe\n\n` +
-                `📱 Você receberá uma mensagem no WhatsApp confirmando:\n` +
-                `• Liberação do acesso ao curso\n` +
-                `• Instruções para entrar no portal\n\n` +
-                `💳 Prossiga agora com o pagamento!`);
+        // ETAPA 2: Criar pagamento na Asaas
+        const paymentResponse = await fetch(`${BACKEND_URL}/api/create-payment`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userData: data,
+            subscriptionData: subscribeResult
+          })
+        });
+
+        if (paymentResponse.ok) {
+          const paymentResult = await paymentResponse.json();
           
-          // Finalizar e abrir popup de pagamento
-          if (onComplete) {
-            onComplete({ ...data, subscriptionData: result });
-          }
-        }, 1500);
+          // Mostrar popup sobre pagamento PIX criado
+          setTimeout(() => {
+            alert(`💳 Pagamento PIX Criado!\n\n` +
+                  `✅ ${paymentResult.message}\n` +
+                  `💰 Valor: R$ ${paymentResult.amount.toFixed(2)}\n` +
+                  `📅 Vencimento: ${paymentResult.due_date}\n\n` +
+                  `📋 Próximos passos:\n` +
+                  `1. Pague via PIX usando o QR Code\n` +
+                  `2. Aguarde confirmação automática\n` +
+                  `3. Receba acesso por WhatsApp\n\n` +
+                  `🔄 Redirecionando para pagamento...`);
+            
+            // Mostrar popup sobre documentos e liberação do curso
+            setTimeout(() => {
+              alert(`📋 Informações Importantes:\n\n` +
+                    `🔄 Seu curso será liberado quando:\n` +
+                    `• Pagamento PIX for confirmado\n` +
+                    `• Documentos forem conferidos pela equipe\n\n` +
+                    `📱 Você receberá uma mensagem no WhatsApp confirmando:\n` +
+                    `• Liberação do acesso ao curso\n` +
+                    `• Instruções para entrar no portal\n` +
+                    `• Login e senha de acesso\n\n` +
+                    `💳 Finalize seu pagamento PIX agora!`);
+              
+              // Finalizar e abrir popup de pagamento
+              if (onComplete) {
+                onComplete({ 
+                  ...data, 
+                  subscriptionData: subscribeResult,
+                  paymentData: paymentResult
+                });
+              }
+            }, 1500);
+          }, 1500);
+          
+        } else {
+          const paymentError = await paymentResponse.json();
+          alert(`❌ Erro ao criar pagamento:\n\n${paymentError.detail || 'Erro desconhecido'}\n\nTente novamente.`);
+          setIsRedirecting(false);
+        }
         
       } else {
-        const errorData = await response.json();
+        const errorData = await subscribeResponse.json();
         alert(`❌ Erro no cadastro:\n\n${errorData.detail || 'Erro desconhecido'}`);
         setIsRedirecting(false);
       }
