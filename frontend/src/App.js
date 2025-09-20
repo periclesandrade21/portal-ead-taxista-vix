@@ -477,17 +477,46 @@ const Home = () => {
     // Fechar modal de cadastro
     setShowNewRegistration(false);
     
-    // Abrir popup de pagamento
-    setCurrentStep('payment');
-    
-    // Mostrar popup informativo sobre o próximo passo
-    setTimeout(() => {
-      alert(`💳 Agora finalize seu pagamento!\n\n` +
-            `✅ Cadastro realizado com sucesso\n` +
-            `💰 Valor: R$ ${coursePrice.toFixed(2)}\n` +
-            `💳 Forma: PIX Instantâneo\n\n` +
-            `🔄 Você será direcionado para a página de pagamento.`);
-    }, 500);
+    // Verificar se há dados de pagamento da Asaas
+    if (registrationData.paymentData) {
+      const paymentData = registrationData.paymentData;
+      
+      // Abrir popup específico de pagamento PIX
+      setTimeout(() => {
+        const pixInfo = paymentData.pix_qrcode ? 
+          `\n\n📱 QR Code PIX gerado com sucesso!` : 
+          `\n\n⚠️ QR Code será enviado por email`;
+          
+        alert(`🎉 TUDO PRONTO PARA O PAGAMENTO!\n\n` +
+              `✅ Cadastro: Concluído\n` +
+              `💳 Pagamento: PIX Criado\n` +
+              `💰 Valor: R$ ${paymentData.amount.toFixed(2)}\n` +
+              `📅 Vencimento: ${paymentData.due_date}\n` +
+              `🆔 ID: ${paymentData.payment_id}${pixInfo}\n\n` +
+              `📋 PRÓXIMOS PASSOS:\n` +
+              `1. ✅ Pague via PIX\n` +
+              `2. 🔄 Aguarde confirmação automática\n` +
+              `3. 📱 Receba confirmação no WhatsApp\n` +
+              `4. 🎓 Acesse seu curso!\n\n` +
+              `💡 O pagamento PIX é instantâneo e seu curso será liberado automaticamente!`);
+        
+        // Definir step como pagamento
+        setCurrentStep('payment');
+        
+      }, 500);
+      
+    } else {
+      // Fallback para pagamento antigo
+      setCurrentStep('payment');
+      
+      setTimeout(() => {
+        alert(`💳 Finalize seu pagamento!\n\n` +
+              `✅ Cadastro realizado com sucesso\n` +
+              `💰 Valor: R$ ${coursePrice.toFixed(2)}\n` +
+              `💳 Forma: PIX Instantâneo\n\n` +
+              `🔄 Direcionando para pagamento...`);
+      }, 500);
+    }
   };
 
   console.log('showNewRegistration state:', showNewRegistration); // DEBUG
