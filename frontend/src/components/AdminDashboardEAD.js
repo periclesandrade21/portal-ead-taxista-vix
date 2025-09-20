@@ -796,16 +796,37 @@ const AdminDashboardEAD = () => {
   // Funções para cursos com preços
   const handleEditPrice = async () => {
     try {
-      setCoursesWithPrices(prev => prev.map(course => 
-        course.id === editPriceModal.courseId 
-          ? { ...course, price: editPriceModal.currentPrice }
-          : course
-      ));
-      setEditPriceModal({ show: false, courseId: null, currentPrice: 0 });
-      alert('✅ Preço atualizado com sucesso!');
+      const newPrice = parseFloat(editPriceModal.currentPrice);
+      
+      if (isNaN(newPrice) || newPrice <= 0) {
+        alert('❌ Por favor, insira um valor válido maior que zero.');
+        return;
+      }
+
+      // Chamar API para atualizar o preço real
+      const response = await axios.post(`${BACKEND_URL}/api/courses/default/set-price`, {
+        price: newPrice
+      });
+
+      if (response.data.message) {
+        // Atualizar estado local
+        setCoursesWithPrices(prev => prev.map(course => 
+          course.id === editPriceModal.courseId 
+            ? { ...course, price: newPrice }
+            : course
+        ));
+        
+        setEditPriceModal({ show: false, courseId: null, currentPrice: 0 });
+        
+        alert(`✅ Preço atualizado com sucesso!\n\n` +
+              `Novo valor: R$ ${newPrice.toFixed(2)}\n` +
+              `Este valor será usado em todos os novos cadastros.`);
+              
+        console.log('✅ Preço do curso atualizado via API');
+      }
     } catch (error) {
       console.error('Erro ao atualizar preço:', error);
-      alert('Erro ao atualizar preço.');
+      alert(`❌ Erro ao atualizar preço: ${error.response?.data?.detail || error.message}`);
     }
   };
 
