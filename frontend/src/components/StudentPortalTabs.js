@@ -411,15 +411,15 @@ export const ProfileTab = ({
             <div className="space-y-3">
               <div className="flex justify-between items-center p-3 border rounded-lg">
                 <span className="text-sm text-gray-600">Tempo de Estudo</span>
-                <span className="font-bold text-blue-600">24h</span>
+                <span className="font-bold text-blue-600">0h</span>
               </div>
               <div className="flex justify-between items-center p-3 border rounded-lg">
                 <span className="text-sm text-gray-600">Progresso Total</span>
-                <span className="font-bold text-green-600">75%</span>
+                <span className="font-bold text-green-600">0%</span>
               </div>
               <div className="flex justify-between items-center p-3 border rounded-lg">
                 <span className="text-sm text-gray-600">Média Geral</span>
-                <span className="font-bold text-purple-600">8.5</span>
+                <span className="font-bold text-purple-600">-</span>
               </div>
             </div>
           </div>
