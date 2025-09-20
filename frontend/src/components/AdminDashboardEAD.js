@@ -217,9 +217,9 @@ const AdminDashboardEAD = () => {
       await fetchCities();
       await fetchAdminUsers();
       
-      // Calcular estatísticas reais
-      const realStats = calculateRealStats(subscriptions, payments);
-      setDashboardStats(realStats);
+      // Calcular estatísticas reais de forma segura
+      const realStats = calculateRealStats(subscriptions || [], payments || []);
+      setDashboardStats(prev => ({ ...prev, ...realStats }));
       
       console.log('✅ Dados reais carregados e estatísticas calculadas');
       
