@@ -3187,20 +3187,26 @@ async def create_asaas_customer(name: str, email: str, cpf: str, phone: str):
             'Content-Type': 'application/json'
         }
         
+        # Limpar CPF (remover pontos e hífens)
+        clean_cpf = ''.join(filter(str.isdigit, cpf))
+        
         customer_data = {
-            "name": name,
-            "email": email,
-            "cpfCnpj": cpf,
-            "phone": phone,
-            "mobilePhone": phone,
+            "name": str(name).strip(),
+            "email": str(email).strip().lower(),
+            "cpfCnpj": clean_cpf,
+            "phone": str(phone).strip(),
+            "mobilePhone": str(phone).strip(),
             "postalCode": "29000000",  # CEP padrão ES
             "address": "Rua Principal",
             "addressNumber": "123",
-            "complement": "",
+            "complement": "Taxista EAD",
             "province": "Centro", 
             "city": "Vitória",
             "state": "ES",
-            "country": "Brasil"
+            "country": "Brasil",
+            # Campos adicionais
+            "personType": "FISICA",
+            "company": "Taxista Autônomo"
         }
         
         response = requests.post(
