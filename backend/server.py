@@ -3031,25 +3031,37 @@ async def get_all_cities():
 
 @app.get("/api/admin-users")
 async def get_admin_users():
-    """Get admin users for admin dashboard"""
+    """Get admin users for admin dashboard - DADOS REAIS"""
     try:
-        mock_admin_users = [
-            {
-                "id": "admin_1",
-                "username": "admin",
-                "email": "admin@sindtaxi-es.org",
-                "role": "super_admin",
-                "active": True,
-                "created_at": datetime.now(timezone.utc).isoformat(),
-                "last_login": datetime.now(timezone.utc).isoformat()
-            }
-        ]
+        # Buscar usuários admin reais do banco
+        admin_users_cursor = db.admin_users.find({})
+        admin_users = await admin_users_cursor.to_list(length=None)
         
-        return mock_admin_users
+        real_admin_users = []
+        for admin in admin_users:
+            admin_data = {
+                "id": admin.get("id", str(admin.get("_id", ""))),
+                "username": admin.get("username", ""),
+                "full_name": admin.get("full_name", ""),
+                "role": admin.get("role", "admin"),
+                "active": admin.get("active", True),
+                "created_at": admin.get("created_at", datetime.now(timezone.utc).isoformat()),
+                "last_login": admin.get("last_login", "Nunca logou")
+            }
+            real_admin_users.append(admin_data)
+        
+        logging.info(f"✅ Retornando {len(real_admin_users)} usuários admin reais")
+        
+        # Se não há usuários admin, retornar lista vazia
+        if not real_admin_users:
+            logging.warning("⚠️ Nenhum usuário admin encontrado no banco")
+            return []
+        
+        return real_admin_users
         
     except Exception as e:
-        logger.error(f"Error getting admin users: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logging.error(f"❌ Erro ao buscar usuários admin: {str(e)}")
+        return []
 
 @app.post("/api/admin/login")
 async def admin_login(request: dict):
