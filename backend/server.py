@@ -3066,6 +3066,116 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Asaas Payment Integration Functions
+async def create_asaas_customer(name: str, email: str, cpf: str, phone: str):
+    """Criar cliente na Asaas"""
+    try:
+        headers = {
+            'access_token': ASAAS_TOKEN,
+            'Content-Type': 'application/json'
+        }
+        
+        customer_data = {
+            "name": name,
+            "email": email,
+            "cpfCnpj": cpf,
+            "phone": phone,
+            "mobilePhone": phone,
+            "postalCode": "29000000",  # CEP padrão ES
+            "address": "Rua Principal",
+            "addressNumber": "123",
+            "complement": "",
+            "province": "Centro", 
+            "city": "Vitória",
+            "state": "ES",
+            "country": "Brasil"
+        }
+        
+        response = requests.post(
+            f"{ASAAS_API_URL}/customers",
+            json=customer_data,
+            headers=headers,
+            timeout=30
+        )
+        
+        if response.status_code in [200, 201]:
+            customer = response.json()
+            logging.info(f"✅ Cliente Asaas criado: {customer.get('id')} - {name}")
+            return customer
+        else:
+            logging.error(f"❌ Erro ao criar cliente Asaas: {response.status_code} - {response.text}")
+            return None
+            
+    except Exception as e:
+        logging.error(f"❌ Exceção ao criar cliente Asaas: {str(e)}")
+        return None
+
+async def create_asaas_payment(customer_id: str, value: float, description: str, external_reference: str):
+    """Criar cobrança na Asaas"""
+    try:
+        headers = {
+            'access_token': ASAAS_TOKEN,
+            'Content-Type': 'application/json'
+        }
+        
+        # Data de vencimento: 7 dias a partir de hoje
+        due_date = (datetime.now() + timedelta(days=7)).strftime('%Y-%m-%d')
+        
+        payment_data = {
+            "customer": customer_id,
+            "billingType": "PIX",  # PIX como padrão
+            "dueDate": due_date,
+            "value": value,
+            "description": description,
+            "externalReference": external_reference,
+            "postalService": False
+        }
+        
+        response = requests.post(
+            f"{ASAAS_API_URL}/payments",
+            json=payment_data,
+            headers=headers,
+            timeout=30
+        )
+        
+        if response.status_code in [200, 201]:
+            payment = response.json()
+            logging.info(f"✅ Cobrança Asaas criada: {payment.get('id')} - R$ {value}")
+            return payment
+        else:
+            logging.error(f"❌ Erro ao criar cobrança Asaas: {response.status_code} - {response.text}")
+            return None
+            
+    except Exception as e:
+        logging.error(f"❌ Exceção ao criar cobrança Asaas: {str(e)}")
+        return None
+
+async def get_asaas_pix_qrcode(payment_id: str):
+    """Obter QR Code PIX da cobrança"""
+    try:
+        headers = {
+            'access_token': ASAAS_TOKEN,
+            'Content-Type': 'application/json'
+        }
+        
+        response = requests.get(
+            f"{ASAAS_API_URL}/payments/{payment_id}/pixQrCode",
+            headers=headers,
+            timeout=30
+        )
+        
+        if response.status_code == 200:
+            pix_data = response.json()
+            logging.info(f"✅ QR Code PIX obtido para cobrança: {payment_id}")
+            return pix_data
+        else:
+            logging.error(f"❌ Erro ao obter QR Code PIX: {response.status_code} - {response.text}")
+            return None
+            
+    except Exception as e:
+        logging.error(f"❌ Exceção ao obter QR Code PIX: {str(e)}")
+        return None
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
