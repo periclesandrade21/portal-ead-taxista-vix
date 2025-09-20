@@ -1048,11 +1048,10 @@ async def login_student(login_request: LoginRequest):
         
         logging.info(f"Login realizado com sucesso: {email_normalized}")
         
-        return LoginResponse(
-            success=True,
-            message="Login realizado com sucesso",
-            user=user_data
-        )
+        return {
+            "success": True,
+            "user": user_data
+        }
         
     except HTTPException:
         # Re-raise HTTPException para manter status code correto
