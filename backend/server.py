@@ -352,17 +352,20 @@ def generate_password(length=10):
     return ''.join(password)
 
 def validate_taxi_plate(plate: str) -> bool:
-    """Valida formato de placa de táxi do Espírito Santo"""
+    """Valida formato de placa de táxi do Espírito Santo - versão mais flexível"""
     if not plate:
         return False
     
     plate = plate.upper().strip()
     
-    # Padrões aceitos para placas de táxi do ES
+    # Padrões aceitos para placas de táxi do ES (mais flexíveis)
     patterns = [
-        r'^[A-Z]{3}-\d{4}-T$',      # ABC-1234-T (formato tradicional)
+        r'^[A-Z]{3}-\d{4}-[A-Z]$',     # ABC-1234-T (formato tradicional)
+        r'^[A-Z]{3}-\d{4}$',           # ABC-1234 (sem letra final)
         r'^[A-Z]{3}\d{1}[A-Z]{1}\d{2}$',  # ABC1D23 (Mercosul)
-        r'^[A-Z]{3}\d{4}$',         # ABC1234 (formato sem hífen)
+        r'^[A-Z]{3}\d{4}$',            # ABC1234 (formato sem hífen)
+        r'^[A-Z]{2,4}-\d{3,5}$',       # Formatos variados
+        r'^[A-Z]{2,4}\d{3,5}$',        # Formatos sem hífen
     ]
     
     for pattern in patterns:
