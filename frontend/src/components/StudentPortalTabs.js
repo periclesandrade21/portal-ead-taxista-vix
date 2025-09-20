@@ -153,7 +153,7 @@ export const GradesTab = ({ modules, userProgress }) => (
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="text-center">
-            <div className="text-3xl font-bold text-blue-600 mb-2">8.5</div>
+            <div className="text-3xl font-bold text-blue-600 mb-2">-</div>
             <p className="text-sm text-gray-600">Média Geral</p>
           </div>
           <div className="text-center">
@@ -161,7 +161,7 @@ export const GradesTab = ({ modules, userProgress }) => (
             <p className="text-sm text-gray-600">Módulos Aprovados</p>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-purple-600 mb-2">75%</div>
+            <div className="text-3xl font-bold text-purple-600 mb-2">0%</div>
             <p className="text-sm text-gray-600">Progresso Total</p>
           </div>
         </div>
