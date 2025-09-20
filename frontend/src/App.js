@@ -1198,6 +1198,12 @@ const Home = () => {
           </div>
           
           <div className="text-center">
+            <button
+              onClick={handleMultiStepRegister}
+              className="bg-white text-blue-600 hover:bg-blue-50 px-12 py-4 rounded-lg text-xl font-bold transition-all duration-300 transform hover:scale-105 mb-6 shadow-lg"
+            >
+              📝 Fazer Inscrição Agora
+            </button>
             <p className="text-blue-200 text-sm mt-4">
               💡 Processo 100% online • Certificado válido nacionalmente • Suporte 24h
             </p>
