@@ -1183,7 +1183,7 @@ const AdminDashboardEAD = () => {
                   <Users className="h-4 w-4 text-blue-600" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{dashboardStats.totalDrivers.toLocaleString()}</div>
+                  <div className="text-2xl font-bold">{(dashboardStats.totalDrivers || 0).toLocaleString()}</div>
                   <p className="text-xs text-muted-foreground">
                     +{dashboardStats.lastMonthGrowth}% do mês passado
                   </p>
