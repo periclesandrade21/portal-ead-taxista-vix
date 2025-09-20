@@ -61,8 +61,18 @@ def test_1_create_asaas_customer():
     
     # Realistic test data as specified in review with unique timestamp
     timestamp = int(time.time())
+    # Use realistic Brazilian names that vary
+    names = [
+        "Maria Silva Costa",
+        "Ana Paula Santos", 
+        "Carla Oliveira Lima",
+        "Fernanda Souza Alves",
+        "Juliana Costa Pereira"
+    ]
+    unique_name = names[timestamp % len(names)]
+    
     customer_data = {
-        "name": f"Maria Silva Costa {timestamp}",  # Unique name
+        "name": unique_name,
         "email": f"maria.asaas.teste.{timestamp}@email.com",
         "cpf": "11144477735",  # Valid CPF with correct verification digits
         "phone": "27999888777"
