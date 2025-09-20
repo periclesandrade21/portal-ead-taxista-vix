@@ -409,15 +409,16 @@ def test_6_complete_flow_validation():
     
     # Use unique timestamp for this test
     timestamp = int(time.time())
+    unique_cpf = generate_valid_cpf()
     
     # Step 1: Create subscription
     subscription_data = {
         "name": "Maria Silva Costa",
         "email": f"maria.complete.flow.{timestamp}@email.com",
-        "phone": "27999888777",
-        "cpf": "11144477735",  # Valid CPF with correct verification digits
-        "carPlate": "MCF-1234-T",
-        "licenseNumber": "TA-54321",
+        "phone": f"27999{str(timestamp)[-6:]}",  # Unique phone
+        "cpf": unique_cpf,  # Generate valid unique CPF
+        "carPlate": f"MCF-{str(timestamp)[-4:]}-T",
+        "licenseNumber": f"TA-{str(timestamp)[-5:]}",
         "city": "Vitória",
         "lgpd_consent": True
     }
