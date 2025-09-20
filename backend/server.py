@@ -2804,6 +2804,38 @@ async def get_registration(registration_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 # Admin Dashboard Endpoints
+@app.delete("/api/subscriptions/{subscription_id}")
+async def delete_subscription(subscription_id: str):
+    """Excluir subscription por ID - para Admin EAD"""
+    try:
+        # Buscar subscription
+        subscription = await db.subscriptions.find_one({"id": subscription_id})
+        if not subscription:
+            raise HTTPException(status_code=404, detail="Usuário não encontrado")
+        
+        # Excluir subscription
+        result = await db.subscriptions.delete_one({"id": subscription_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Usuário não foi excluído")
+        
+        # Também excluir dados relacionados de pagamento se existirem
+        await db.asaas_payments.delete_many({"user_email": subscription.get("email")})
+        
+        logging.info(f"✅ Subscription excluída: {subscription_id} - {subscription.get('name')}")
+        
+        return {
+            "success": True,
+            "message": f"Usuário {subscription.get('name')} excluído com sucesso",
+            "deleted_id": subscription_id
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"❌ Erro ao excluir subscription: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro interno do servidor")
+
 @app.get("/api/subscriptions")
 async def get_all_subscriptions():
     """Get all subscriptions for admin dashboard - DADOS REAIS"""
