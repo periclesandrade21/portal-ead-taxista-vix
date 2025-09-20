@@ -2859,34 +2859,41 @@ async def get_all_users():
 
 @app.get("/api/payments")
 async def get_all_payments():
-    """Get all payments for admin dashboard"""
+    """Get all payments for admin dashboard - DADOS REAIS"""
     try:
-        mock_payments = [
-            {
-                "id": "pay_1",
-                "user_name": "João Silva Santos",
-                "amount": 150,
-                "status": "completed",
-                "method": "pix",
-                "created_at": datetime.now(timezone.utc).isoformat(),
-                "asaas_id": "pay_12345"
-            },
-            {
-                "id": "pay_2",
-                "user_name": "Maria Oliveira", 
-                "amount": 150,
-                "status": "completed",
-                "method": "pix",
-                "created_at": datetime.now(timezone.utc).isoformat(),
-                "asaas_id": "pay_67890"
-            }
-        ]
+        # Buscar pagamentos reais do banco
+        payments_cursor = db.asaas_payments.find({})
+        payments = await payments_cursor.to_list(length=None)
         
-        return mock_payments
+        real_payments = []
+        for payment in payments:
+            # Mapear dados do pagamento
+            payment_data = {
+                "id": payment.get("id", str(payment.get("_id", ""))),
+                "user_name": payment.get("user_name", ""),
+                "user_email": payment.get("user_email", ""),
+                "amount": payment.get("amount", 0),
+                "status": "completed" if payment.get("status") == "received" else payment.get("status", "pending"),
+                "method": payment.get("payment_method", "PIX").lower(),
+                "created_at": payment.get("created_at", datetime.now(timezone.utc).isoformat()),
+                "asaas_id": payment.get("asaas_payment_id", ""),
+                "asaas_customer_id": payment.get("asaas_customer_id", ""),
+                "due_date": payment.get("due_date", ""),
+                "external_reference": payment.get("external_reference", "")
+            }
+            real_payments.append(payment_data)
+        
+        logging.info(f"✅ Retornando {len(real_payments)} pagamentos reais do banco")
+        
+        if not real_payments:
+            logging.info("⚠️ Nenhum pagamento encontrado no banco")
+            return []
+            
+        return real_payments
         
     except Exception as e:
-        logger.error(f"Error getting payments: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logging.error(f"❌ Erro ao buscar pagamentos reais: {e}")
+        return []
 
 @app.get("/api/courses")
 async def get_all_courses():
