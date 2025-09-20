@@ -677,10 +677,8 @@ test_plan:
 test_plan:
   current_focus:
     - "Admin EAD Login System"
-    - "Registration Flow System"
   stuck_tasks: 
     - "Admin EAD Login System"
-    - "Registration Flow System"
   test_all: false
   test_priority: "high_first"
 
