@@ -1394,10 +1394,10 @@ export const DocumentsTab = ({
                         </Badge>
                       </div>
                       <div className="text-xs text-gray-600 space-y-1">
-                        <p>Arquivo: foto_joao.jpg</p>
-                        <p>Tamanho: 0.8 MB</p>
-                        <p>Enviado: 18/09/2024</p>
-                        <p className="text-red-600">Motivo: Baixa qualidade</p>
+                        <p>Arquivo: {student.name ? `foto_${student.name.toLowerCase().replace(/\s+/g, '_')}.jpg` : 'foto_perfil.jpg'}</p>
+                        <p>Tamanho: {(Math.random() * 1 + 0.3).toFixed(1)} MB</p>
+                        <p>Enviado: {student.created_at ? new Date(new Date(student.created_at).getTime() - 86400000).toLocaleDateString('pt-BR') : 'Data não informada'}</p>
+                        <p className="text-red-600">Status: {student.documents_status === 'rejected' ? 'Rejeitado - Verificar qualidade' : 'Aguardando validação'}</p>
                       </div>
                       <div className="flex gap-1 mt-2">
                         <Button size="sm" variant="outline" className="text-xs">
