@@ -79,17 +79,19 @@ const PaymentStep = ({ data, updateData, onComplete }) => {
               }
             };
             
-            alert(`🎉 PAGAMENTO PIX GERADO COM SUCESSO!\n\n` +
+            alert(`💳 PAGAMENTO PIX CRIADO COM SUCESSO!\n\n` +
                   `✅ ${paymentResult.message}\n\n` +
-                  `💰 VALOR: ${formatCurrency(paymentResult.amount)}\n` +
-                  `📅 VENCIMENTO: ${formatDate(paymentResult.due_date)}\n` +
-                  `🆔 ID PAGAMENTO: ${paymentResult.payment_id}\n\n` +
-                  `📱 COMO PAGAR:\n` +
-                  `1. Abra seu banco ou aplicativo PIX\n` +
-                  `2. Escaneie o QR Code na próxima tela\n` +
-                  `3. Confirme o pagamento de ${formatCurrency(paymentResult.amount)}\n` +
-                  `4. O curso será liberado automaticamente!\n\n` +
-                  `⚡ PIX é instantâneo - você receberá acesso em segundos!`);
+                  `💰 VALOR DO CURSO: ${formatCurrency(paymentResult.amount)}\n` +
+                  `📅 PRAZO PARA PAGAMENTO: ${formatDate(paymentResult.due_date)}\n` +
+                  `🆔 CÓDIGO DO PAGAMENTO: ${paymentResult.payment_id}\n\n` +
+                  `🚀 COMO FINALIZAR SEU PAGAMENTO:\n` +
+                  `1️⃣ Abra seu aplicativo bancário ou PIX\n` +
+                  `2️⃣ Escaneie o QR Code PIX na tela seguinte\n` +
+                  `3️⃣ Confirme o pagamento de ${formatCurrency(paymentResult.amount)}\n` +
+                  `4️⃣ Aguarde a confirmação automática (instantânea)\n\n` +
+                  `⚡ IMPORTANTE: O PIX é processado em tempo real!\n` +
+                  `Após o pagamento, você receberá acesso imediato ao curso.\n\n` +
+                  `📞 Precisa de ajuda? WhatsApp: (27) 99999-9999`);
             
             // Mostrar popup sobre processo completo
             setTimeout(() => {
