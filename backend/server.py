@@ -2803,48 +2803,47 @@ async def get_registration(registration_id: str):
 # Admin Dashboard Endpoints
 @app.get("/api/subscriptions")
 async def get_all_subscriptions():
-    """Get all subscriptions for admin dashboard"""
+    """Get all subscriptions for admin dashboard - DADOS REAIS"""
     try:
-        # In a real app, this would fetch from database
-        # For now, return mock data to demonstrate
-        mock_subscriptions = [
-            {
-                "id": "1",
-                "name": "João Silva Santos",
-                "email": "joao@email.com",
-                "phone": "(27) 99999-0001",
-                "cpf": "123.456.789-00",
-                "car_plate": "ABC-1234",
-                "license_number": "TAX001",
-                "city": "Vitória",
-                "payment_status": "paid",
-                "payment_value": 150,
-                "created_at": datetime.now(timezone.utc).isoformat(),
-                "course_progress": 100,
-                "status": "certified"
-            },
-            {
-                "id": "2", 
-                "name": "Maria Oliveira",
-                "email": "maria@email.com",
-                "phone": "(27) 99999-0002",
-                "cpf": "987.654.321-00",
-                "car_plate": "DEF-5678",
-                "license_number": "TAX002",
-                "city": "Vila Velha",
-                "payment_status": "paid",
-                "payment_value": 150,
-                "created_at": datetime.now(timezone.utc).isoformat(),
-                "course_progress": 75,
-                "status": "in_progress"
-            }
-        ]
+        # Buscar subscriptions reais do banco
+        subscriptions_cursor = db.subscriptions.find({})
+        subscriptions = await subscriptions_cursor.to_list(length=None)
         
-        return mock_subscriptions
+        real_subscriptions = []
+        for sub in subscriptions:
+            # Converter ObjectId para string e formatar dados
+            subscription_data = {
+                "id": sub.get("id", str(sub.get("_id", ""))),
+                "name": sub.get("name", ""),
+                "email": sub.get("email", ""),
+                "phone": sub.get("phone", ""),
+                "cpf": sub.get("cpf", ""),
+                "car_plate": sub.get("car_plate", ""),
+                "license_number": sub.get("license_number", ""),
+                "city": sub.get("city", ""),
+                "payment_status": sub.get("status", "pending"),
+                "payment_value": 150.0,  # Valor padrão do curso
+                "created_at": sub.get("created_at", datetime.now(timezone.utc).isoformat()),
+                "course_progress": 0 if sub.get("status") == "pending" else 100,
+                "status": sub.get("course_access", "pending"),
+                "course_access": sub.get("course_access", "denied"),
+                "asaas_payment_id": sub.get("asaas_payment_id", ""),
+                "asaas_customer_id": sub.get("asaas_customer_id", "")
+            }
+            real_subscriptions.append(subscription_data)
+        
+        logging.info(f"✅ Retornando {len(real_subscriptions)} subscriptions reais do banco")
+        
+        # Se não há dados reais, retornar lista vazia em vez de mock
+        if not real_subscriptions:
+            logging.info("⚠️ Nenhuma subscription encontrada no banco")
+            return []
+            
+        return real_subscriptions
         
     except Exception as e:
-        logger.error(f"Error getting subscriptions: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logging.error(f"❌ Erro ao buscar subscriptions reais: {e}")
+        return []
 
 @app.get("/api/users")
 async def get_all_users():
