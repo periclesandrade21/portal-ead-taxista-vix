@@ -179,20 +179,48 @@ const AdminDashboardEAD = () => {
 
   const loadAdminData = async () => {
     try {
-      // Carregar dados reais da API
-      await fetchSubscriptions();
-      await fetchUsers();
-      await fetchPayments();
-      await fetchCourses();
-      await fetchCities();
-      await fetchAdminUsers();
+      console.log('🔄 Iniciando carregamento de dados admin...');
       
-      // Carregar dados mock para funcionalidades que ainda não têm API
+      // Carregar dados mock primeiro para garantir que a interface funciona
       await loadMockData();
+      console.log('✅ Dados mock carregados');
+      
+      // Tentar carregar dados reais da API (sem bloquear a interface)
+      try {
+        await fetchSubscriptions();
+        console.log('✅ Subscriptions carregadas');
+      } catch (e) { console.warn('⚠️ Erro ao carregar subscriptions:', e.message); }
+      
+      try {
+        await fetchUsers();
+        console.log('✅ Users carregados');
+      } catch (e) { console.warn('⚠️ Erro ao carregar users:', e.message); }
+      
+      try {
+        await fetchPayments();
+        console.log('✅ Payments carregados');
+      } catch (e) { console.warn('⚠️ Erro ao carregar payments:', e.message); }
+      
+      try {
+        await fetchCourses();
+        console.log('✅ Courses carregados');
+      } catch (e) { console.warn('⚠️ Erro ao carregar courses:', e.message); }
+      
+      try {
+        await fetchCities();
+        console.log('✅ Cities carregadas');
+      } catch (e) { console.warn('⚠️ Erro ao carregar cities:', e.message); }
+      
+      try {
+        await fetchAdminUsers();
+        console.log('✅ Admin users carregados');
+      } catch (e) { console.warn('⚠️ Erro ao carregar admin users:', e.message); }
+      
+      console.log('✅ Carregamento de dados admin concluído');
       
     } catch (error) {
-      console.error('Erro ao carregar dados:', error);
-      // Em caso de erro, carregar dados mock
+      console.error('❌ Erro crítico ao carregar dados admin:', error);
+      // Garantir que pelo menos os dados mock estão carregados
       await loadMockData();
     }
   };
