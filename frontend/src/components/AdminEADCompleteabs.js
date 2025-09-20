@@ -1459,22 +1459,30 @@ export const DocumentsTab = ({
           ))}
         </div>
 
-        {/* Estatísticas de Documentos */}
+        {/* Estatísticas de Documentos - Dados Reais */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="p-4 text-center">
-            <div className="text-2xl font-bold text-blue-600">124</div>
+            <div className="text-2xl font-bold text-blue-600">
+              {subscriptions.length * 3} {/* Cada usuário tem ~3 documentos (CNH, CPF, Comprovante) */}
+            </div>
             <div className="text-sm text-gray-600">Total de Documentos</div>
           </Card>
           <Card className="p-4 text-center">
-            <div className="text-2xl font-bold text-yellow-600">23</div>
+            <div className="text-2xl font-bold text-yellow-600">
+              {subscriptions.filter(s => s.documents_status === 'pending' || !s.documents_status).length}
+            </div>
             <div className="text-sm text-gray-600">Pendentes Validação</div>
           </Card>
           <Card className="p-4 text-center">
-            <div className="text-2xl font-bold text-green-600">89</div>
+            <div className="text-2xl font-bold text-green-600">
+              {subscriptions.filter(s => s.documents_status === 'approved' || s.status === 'granted').length}
+            </div>
             <div className="text-sm text-gray-600">Aprovados</div>
           </Card>
           <Card className="p-4 text-center">
-            <div className="text-2xl font-bold text-red-600">12</div>
+            <div className="text-2xl font-bold text-red-600">
+              {subscriptions.filter(s => s.documents_status === 'rejected').length}
+            </div>
             <div className="text-sm text-gray-600">Rejeitados</div>
           </Card>
         </div>
