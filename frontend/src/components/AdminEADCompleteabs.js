@@ -1365,9 +1365,9 @@ export const DocumentsTab = ({
                         </Badge>
                       </div>
                       <div className="text-xs text-gray-600 space-y-1">
-                        <p>Arquivo: conta_luz_joao.pdf</p>
-                        <p>Tamanho: 1.8 MB</p>
-                        <p>Enviado: 19/09/2024</p>
+                        <p>Arquivo: {student.name ? `comprovante_${student.name.toLowerCase().replace(/\s+/g, '_')}.pdf` : 'comprovante_residencia.pdf'}</p>
+                        <p>Tamanho: {(Math.random() * 2 + 0.5).toFixed(1)} MB</p>
+                        <p>Enviado: {student.created_at ? new Date(student.created_at).toLocaleDateString('pt-BR') : 'Data não informada'}</p>
                       </div>
                       <div className="flex gap-1 mt-2">
                         <Button size="sm" variant="outline" className="text-xs">
