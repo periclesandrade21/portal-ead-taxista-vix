@@ -3237,10 +3237,13 @@ async def create_asaas_payment(customer_id: str, value: float, description: str,
             "customer": customer_id,
             "billingType": "PIX",  # PIX como padrão
             "dueDate": due_date,
-            "value": value,
-            "description": description,
-            "externalReference": external_reference,
-            "postalService": False
+            "value": float(value),  # Garantir que é float
+            "description": str(description),  # Garantir que é string
+            "externalReference": str(external_reference),
+            "postalService": False,
+            # Campos adicionais para melhor identificação
+            "installmentCount": 1,
+            "installmentValue": float(value)
         }
         
         response = requests.post(
