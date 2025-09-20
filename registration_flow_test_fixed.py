@@ -362,7 +362,11 @@ def run_comprehensive_registration_test():
     
     # Test 2: Data persistence verification
     print_info("🧪 Test 2: Data Persistence Verification")
-    result2, subscription_data = test_data_saved_correctly(test_email)
+    persistence_result = test_data_saved_correctly(test_email)
+    if isinstance(persistence_result, tuple):
+        result2, subscription_data = persistence_result
+    else:
+        result2, subscription_data = persistence_result, None
     test_results.append(("Data Persistence", result2))
     
     # Test 3: Complete flow simulation
