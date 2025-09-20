@@ -2950,6 +2950,73 @@ async def get_admin_users():
         logger.error(f"Error getting admin users: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/admin/clear-all-data")
+async def clear_all_data(request: dict):
+    """Limpar todos os dados do sistema para testes - CUIDADO!"""
+    try:
+        # Verificar se tem permissão admin (segurança básica)
+        auth_key = request.get('auth_key')
+        if auth_key != 'admin_clear_2025':
+            raise HTTPException(status_code=403, detail="Acesso negado")
+        
+        # Collections para limpar
+        collections_to_clear = [
+            'subscriptions',
+            'asaas_payments', 
+            'admin_users',
+            'courses',
+            'payments',
+            'users'
+        ]
+        
+        cleared_collections = []
+        for collection_name in collections_to_clear:
+            try:
+                collection = db[collection_name]
+                result = await collection.delete_many({})
+                cleared_collections.append({
+                    'collection': collection_name,
+                    'deleted_count': result.deleted_count
+                })
+                logging.info(f"✅ Limpeza: {collection_name} - {result.deleted_count} documentos removidos")
+            except Exception as e:
+                logging.error(f"❌ Erro limpando {collection_name}: {e}")
+                cleared_collections.append({
+                    'collection': collection_name,
+                    'error': str(e)
+                })
+        
+        # Criar usuário admin padrão
+        admin_user = {
+            "id": str(uuid.uuid4()),
+            "username": "admin",
+            "password": "admin123",  # Em produção: hash da senha
+            "full_name": "Administrador EAD",
+            "role": "admin",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "active": True
+        }
+        
+        await db.admin_users.insert_one(admin_user)
+        logging.info("✅ Usuário admin criado: admin/admin123")
+        
+        return {
+            "success": True,
+            "message": "Todos os dados foram limpos e usuário admin criado",
+            "cleared_collections": cleared_collections,
+            "admin_created": {
+                "username": "admin",
+                "password": "admin123",
+                "full_name": "Administrador EAD"
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"❌ Erro na limpeza geral: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Erro interno: {str(e)}")
+
 # Real Document Validation APIs Integration
 @app.post("/api/validate-cpf")
 async def validate_cpf_real(request: dict):
