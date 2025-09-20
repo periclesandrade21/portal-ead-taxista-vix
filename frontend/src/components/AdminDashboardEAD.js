@@ -162,16 +162,28 @@ const AdminDashboardEAD = () => {
     setLoading(true);
 
     try {
-      // Simular login admin EAD
-      if (loginData.username === 'admin' && loginData.password === 'admin123') {
+      // Login real com API do backend
+      const response = await axios.post(`${BACKEND_URL}/api/admin/login`, {
+        username: loginData.username,
+        password: loginData.password
+      });
+
+      if (response.data.success) {
         setIsAuthenticated(true);
+        console.log('✅ Login admin realizado com sucesso');
         await loadAdminData();
       } else {
-        alert('❌ Credenciais inválidas. Use admin/admin123 para demonstração.');
+        alert('❌ Credenciais inválidas. Verifique usuário e senha.');
       }
     } catch (error) {
-      console.error('Erro no login:', error);
-      alert('Erro ao fazer login. Tente novamente.');
+      console.error('Erro no login admin:', error);
+      if (error.response?.status === 401) {
+        alert('❌ Credenciais inválidas. Verifique usuário e senha.');
+      } else if (error.response?.status === 404) {
+        alert('❌ Usuário não encontrado. Contacte o administrador.');
+      } else {
+        alert('❌ Erro ao conectar com servidor. Tente novamente.');
+      }
     } finally {
       setLoading(false);
     }
